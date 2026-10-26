@@ -1,0 +1,3565 @@
+[
+  {
+    "name": "Wong Retamas",
+    "address": "Av. Las Retamas 190",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.09,
+    "lng": -76.95
+  },
+  {
+    "name": "Wong ATE",
+    "address": "Av. La Molina 378",
+    "district": "Ate",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -76.93
+  },
+  {
+    "name": "Wong Marsano",
+    "address": "Av Santiago de Surco cruce con Av Tinoco",
+    "district": "Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.13,
+    "lng": -77.0
+  },
+  {
+    "name": "Wong La Planicie",
+    "address": "Av. Ricardo Elías Aparicio 715",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -76.93
+  },
+  {
+    "name": "Wong Camacho",
+    "address": "CC. Plaza Camacho Tienda 50",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -76.97
+  },
+  {
+    "name": "Intcomex",
+    "address": "Calle Los Negocios 448",
+    "district": "Surquillo",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 16h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.11,
+    "lng": -77.02
+  },
+  {
+    "name": "La Encantada de Villa",
+    "address": "Calle Conchan del Tajo S/N",
+    "district": "Chorrillos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.21,
+    "lng": -77.01
+  },
+  {
+    "name": "Traperos de Emaus",
+    "address": "Via Mza. B Lote",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "08h30 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -77.03
+  },
+  {
+    "name": "Metro Venezuela",
+    "address": "Av. Alfonso Ugarte",
+    "district": "Breña",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.06,
+    "lng": -77.1
+  },
+  {
+    "name": "Metro Limatambo",
+    "address": "Benjamín Doig 140",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.11,
+    "lng": -76.99
+  },
+  {
+    "name": "Metro La Marina",
+    "address": "Av. la Marina 2500",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -77.09
+  },
+  {
+    "name": "Metro Uni",
+    "address": "Av. Túpac Amaru Cdra. 16",
+    "district": "Rimac",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.03,
+    "lng": -77.05
+  },
+  {
+    "name": "Metro Canadá",
+    "address": "Av. Canadá 1110",
+    "district": "La Victoria",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -77.02
+  },
+  {
+    "name": "Metro Colonial",
+    "address": "Av. Mariscal Oscar Raimundo Benavides 3220",
+    "district": "Callao",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.05,
+    "lng": -77.08
+  },
+  {
+    "name": "Metro Bellavista",
+    "address": "Av. Miguel Grau 1608",
+    "district": "Callao",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.06,
+    "lng": -77.13
+  },
+  {
+    "name": "Metro Independencia",
+    "address": "Av Alfredo Mendiola 3900",
+    "district": "Independencia",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.0,
+    "lng": -77.06
+  },
+  {
+    "name": "Metro Faucett",
+    "address": "Av. República de Venezuela 5415",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.06,
+    "lng": -77.08
+  },
+  {
+    "name": "Metro Próceres",
+    "address": "Av. Próceres de la Independencia 1632",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.03,
+    "lng": -77.01
+  },
+  {
+    "name": "Metro Puruchuco",
+    "address": "Carr. Central 4297",
+    "district": "Ate",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.04,
+    "lng": -76.94
+  },
+  {
+    "name": "Metro Huaylas",
+    "address": "Av. Defensores del Morro 2070",
+    "district": "Chorrillos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 21 h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.18,
+    "lng": -77.01
+  },
+  {
+    "name": "Gerencia de Servicios Públicos y Gestión Ambiental",
+    "address": "Jr. German Stiglich cruce con Calle Pedro Unanue",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.01,
+    "lng": -77.08
+  },
+  {
+    "name": "Mercado Señor de los Milagros",
+    "address": "Av. Santamaría cruce con Av. Santísima Cruz",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.08,
+    "lng": -76.99
+  },
+  {
+    "name": "Palacio Municipal",
+    "address": "Av. Alfredo Mendiola 169​",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "08h30 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.01,
+    "lng": -77.06
+  },
+  {
+    "name": "Centro de Atención de Claro Chimbote",
+    "address": "AV. JOSÉ GALVEZ N° 201 CHIMBOTE - CHIMBOTE - SANTA - ANCASH",
+    "district": "Chimbote",
+    "province": "Santa",
+    "department": "Ancash",
+    "hours": "L-V: 09:00 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -9.0725376,
+    "lng": -78.588903
+  },
+  {
+    "name": "Centro de Atención de Claro Chimbote II Villavicencio",
+    "address": "JR MANUEL VILLAVICENCIO 466",
+    "district": "Ancash",
+    "province": "Ancash",
+    "department": "Ancash",
+    "hours": "L-V: 09:00 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -9.0760931,
+    "lng": -78.5935662
+  },
+  {
+    "name": "Centro de Atención de Claro Cajamarca I",
+    "address": "CENTRO COMERCIAL EL QUINDE - TIENDAS LC301, LC303, LE120 - JR. SOR MANUELA GIL N° 151,URB. SAN CARLOS – CAJAMARCA - CAJAMARCA - CAJAMARCA",
+    "district": "Cajamarca",
+    "province": "Cajamarca",
+    "department": "Cajamarca",
+    "hours": "L-D: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -7.1492954,
+    "lng": -78.5096431
+  },
+  {
+    "name": "Centro de Atención de Claro Trujillo I",
+    "address": "MARISCAL ORBEGOSO N° 503/509 - TRUJILLO - TRUJILLO - LA LIBERTAD",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "L-V: 09:00 - 18:00 S: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -8.1102939,
+    "lng": -79.0284672
+  },
+  {
+    "name": "Centro de Atención de Claro Trujillo II",
+    "address": "CENTRO COMERCIAL REAL PLAZA TDA 01 AV FATINA SN URB EL GOLF",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "L-D: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -8.1318722,
+    "lng": -79.0316772
+  },
+  {
+    "name": "Centro de Atención de Claro Trujillo III",
+    "address": "CENTRO COMERCIAL MALL AVENTURA PLAZA Tda. 1029, 1033, 1037, 1041, 1047 AV AMERICA OESTE 750 - TRUJILLO - TRUJILLO - LA LIBERTAD",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -8.1024506,
+    "lng": -79.048387
+  },
+  {
+    "name": "Centro de Atención de Claro Chiclayo I",
+    "address": "C.C. REAL PLAZA TIENDA N° 102 - AV. MIGUEL DE CERVANTES N° 300 - CHICLAYO - LAMBAYEQUE",
+    "district": "Chiclayo",
+    "province": "Chiclayo",
+    "department": "Lambayeque",
+    "hours": "L-D: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -6.7778416,
+    "lng": -79.8327937
+  },
+  {
+    "name": "Centro de Atención de Claro Chiclayo III",
+    "address": "JR. ELIAS AGUIRRE 766 - CHICLAYO - CHICLAYO - LAMBAYEQUE",
+    "district": "Chiclayo",
+    "province": "Chiclayo",
+    "department": "Lambayeque",
+    "hours": "L-V: 09:00 - 18:00 S: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -6.771929,
+    "lng": -79.8388759
+  },
+  {
+    "name": "Centro de Atención de Claro Piura Real Plaza",
+    "address": "CENTRO COMERCIAL REAL PLAZA PIURA, AV. SANCHEZ CERRO 234, DPTO. 239, LC 161 - PIURA - PIURA - PIURA",
+    "district": "Piura",
+    "province": "Piura",
+    "department": "Piura",
+    "hours": "L-D: 10:00 - 21:00 Domingo: 11:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -5.1851293,
+    "lng": -80.6421152
+  },
+  {
+    "name": "Centro de Atención de Claro Piura Open Plaza",
+    "address": "CENTRO COMERCIAL OPEN PLAZA, AV. ANDRES AVELINO CACERES 147 - URB. MIRAFLORES II PARTE (PISO 2) LC 107 - CASTILLA - CASTILLA - PIURA",
+    "district": "Castilla",
+    "province": "Castilla",
+    "department": "Piura",
+    "hours": "L-S: 10:00 - 21:00 Domingo: 10:00 - 19:10",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -5.181931,
+    "lng": -80.6220568
+  },
+  {
+    "name": "Centro de Atención de Claro Tumbes",
+    "address": "CALLE PLAZA DE ARMAS 104, TUMBES - TUMBES - TUMBES",
+    "district": "Tumbes",
+    "province": "Tumbes",
+    "department": "Tumbes",
+    "hours": "L-V: 09:00 - 18:00 Sábados: 09:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -3.5711405,
+    "lng": -80.4601619
+  },
+  {
+    "name": "Tienda Movistar - C.C. Real Plaza Trujillo",
+    "address": "Av. Vallejo S/N",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "Lunes a Domingo de 10:00 am a 10:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -8.1318722,
+    "lng": -79.0316772
+  },
+  {
+    "name": "Tienda Movistar - C.C. Mall Aventura Plaza, Tda. 1002",
+    "address": "Av. América Oeste con Av. Mansiche s/n",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "Lunes a Domingo de 10:30 am a 10:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -8.1024506,
+    "lng": -79.048387
+  },
+  {
+    "name": "Tienda Movistar",
+    "address": "Calle Comercio s/n, Plaza de Armas",
+    "district": "Cajamarca",
+    "province": "Cajamarca",
+    "department": "Cajamarca",
+    "hours": "Lunes a Viernes de 9:00 am a 6:00 pm Sábados: 9:00 am a 1:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -7.1569789,
+    "lng": -78.5174665
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Calle Elías Aguirre N° 240",
+    "district": "Chiclayo",
+    "province": "Chiclayo",
+    "department": "Lambayeque",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -6.7715698,
+    "lng": -79.8432215
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Luis Gonzáles 245",
+    "district": "Chiclayo",
+    "province": "Chiclayo",
+    "department": "Lambayeque",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -6.7757382,
+    "lng": -79.8428044
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Francisco Bolognesi 473",
+    "district": "Chimbote",
+    "province": "Santa",
+    "department": "Ancash",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -9.0765158,
+    "lng": -78.5939328
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Larco 780, Urb. San Andrés",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La Libertad",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -8.121247,
+    "lng": -79.0361156
+  },
+  {
+    "name": "Saga Falabella S.A. - Tienda Atocongo",
+    "address": "Av. Circunvalación 1830, San Juan de Miraflores",
+    "district": "San Juan de Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0711111,
+    "lng": -76.9944443
+  },
+  {
+    "name": "Saga Falabella S.A. - Tienda Bellavista",
+    "address": "Av. Mariscal Oscar R. Benavides N° 3866",
+    "district": "Callao",
+    "province": "Callao",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.056667,
+    "lng": -77.1013887
+  },
+  {
+    "name": "Tiendas del mejoramietno del Hogar S.A. - Tienda La Victoria",
+    "address": "Av. La Marina N° 2355, Urb. Maranga 1era Etapa",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.078333,
+    "lng": -77.0874999
+  },
+  {
+    "name": "Tiendas del mejoramietno del Hogar S.A. - Tienda San Miguel",
+    "address": "Av. Javier Prado Este N° 1059",
+    "district": "La Victoria",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0902782,
+    "lng": -77.0213891
+  },
+  {
+    "name": "Hipermercados Tottus S.A.C. - Tienda Los Olivos",
+    "address": "Av. Alfredo Mendiola N° 5810",
+    "district": "Los Olivos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.9649996,
+    "lng": -77.0669444
+  },
+  {
+    "name": "Hipermercados Tottus S.A.C. - Tienda San Miguel",
+    "address": "AV. La Marina N° 2355",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.078333,
+    "lng": -77.0874999
+  },
+  {
+    "name": "Hipermercados Tottus S.A.C. - Tienda VMT",
+    "address": "Av. Prolongación Pachacutec N° 6321",
+    "district": "Villa María del Triunfo",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "10h00 a 17h00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.2152774,
+    "lng": -76.9277777
+  },
+  {
+    "name": "Centro de Atención de Claro Huaraz",
+    "address": "AV. MARISCAL TORIBIO DE LUZURIAGA N° 523 GALERIAS – HUARAZ - HUARAZ - ANCASH",
+    "district": "Huaraz",
+    "province": "Huaraz",
+    "department": "Ancash",
+    "hours": "L-V: 09:00 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -9.5275676,
+    "lng": -77.5288048
+  },
+  {
+    "name": "Centro de Atención de Claro Huánuco",
+    "address": "CENTRO COMERCIAL REAL PLAZA, LOCAL B06 - JR. INDEPENDENCIA 1799 - HUÁNUCO - HUÁNUCO - HUÁNUCO",
+    "district": "Huánuco",
+    "province": "Huánuco",
+    "department": "Huánuco",
+    "hours": "L-S: 10:00 - 20:00 D: 11:00 - 18:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -9.919426,
+    "lng": -76.2410322
+  },
+  {
+    "name": "Centro de Atención de Claro Ica",
+    "address": "AV. San Martin 564 Urb. las Morales",
+    "district": "Ica",
+    "province": "Ica",
+    "department": "Ica",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -14.074399,
+    "lng": -75.7396929
+  },
+  {
+    "name": "Centro de Atención de Claro Huancayo",
+    "address": "CENTRO COMERCIAL REAL PLAZA HUANCAYO, LOCAL LS-01 - CRUCE DE LAS AV. GIRALDES Y FERROCARRIL -HUANCAYO - HUANCAYO - JUNIN",
+    "district": "Huancayo",
+    "province": "Huancayo",
+    "department": "Junín",
+    "hours": "L-S: 09:00 - 20:00 D: 12:00 - 18:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -9.919426,
+    "lng": -76.2410322
+  },
+  {
+    "name": "Centro de Atención de Claro Begonias",
+    "address": "AV. LAS BEGONIAS N°798 - ESQUINA CON RIVERA NAVARRETE",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 S: 09:15 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0960695,
+    "lng": -77.0260099
+  },
+  {
+    "name": "Centro de Atención de Claro Chorrillos",
+    "address": "CENTRO COMERCIAL PLAZA LIMA SUR, LOCAL LI - 222A - AV. PASEO DE LA REPÚBLICA 5000 - MATELLINI - CHORRILLOS",
+    "district": "Chorrillos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-S: 10:00-22:00 Domingo: 10:00-20:30",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1742264,
+    "lng": -77.0138575
+  },
+  {
+    "name": "Centro de Atención de Claro Jirón de la Unión",
+    "address": "PS. OLAYA 156, JIRÓN DE LA UNIÓN 449 - CERCADO DE LIMA",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0464024,
+    "lng": -77.0316233
+  },
+  {
+    "name": "Centro de Atención de Claro Jockey Plaza",
+    "address": "CENTRO COMERCIAL JOCKEY PLAZA CENTRO FINANCIERO, TIENDA B12 - AV. JAVIER PRADO ESTE 4200",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 09:30 - 19:30",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0853659,
+    "lng": -76.9788883
+  },
+  {
+    "name": "Centro de Atención de Claro La Molina",
+    "address": "AV. RAUL FERRERO REBAGLIATI NRO. 1354 - URB. EL REMANSO I ETAPA",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.091088,
+    "lng": -76.9523216
+  },
+  {
+    "name": "Centro de Atención de Claro Larco",
+    "address": "AV. LARCO N° 652",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:15 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.123799,
+    "lng": -77.0294048
+  },
+  {
+    "name": "Centro de Atención de Claro Mall del Sur",
+    "address": "CENTRO COMERCIAL MALL DEL SUR, SUB LOTE 1- LOCAL COMERCIAL #TMS 3054- 3058 – AVENIDA LOS LIRIOS N° 301 CALLE CARRETERA ATOCONGO",
+    "district": "San Juan de Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1542815,
+    "lng": -76.9830047
+  },
+  {
+    "name": "Centro de Atención de Claro Mega Plaza",
+    "address": "CENTRO COMERCIAL MEGA PLAZA, SEGUNDO PISO LOCAL 111 - AV. ALFREDO MENDIOLA N° 3698 - INDEPENDENCIA",
+    "district": "Independencia",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 20:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -11.9942378,
+    "lng": -77.0612389
+  },
+  {
+    "name": "Centro de Atención de Claro Primavera",
+    "address": "CENTRO COMERCIAL REAL PLAZA PRIMAVERA, TIENDAS 236/238 - AV. AVIACIÓN N° 3620",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.110431,
+    "lng": -77.001639
+  },
+  {
+    "name": "Centro de Atención de Claro Rivera Navarrete",
+    "address": "AV. RIVERA NAVARRETE 758 - SAN ISIDRO",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:15 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0947479,
+    "lng": -77.0267222
+  },
+  {
+    "name": "Centro de Atención de Claro San Miguel",
+    "address": "CENTRO COMERCIAL PLAZA SAN MIGUEL LOCAL 303 AV.LA MARINA CDRA. 21 SAN MIGUEL",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0774497,
+    "lng": -77.0818676
+  },
+  {
+    "name": "Centro de Atención de Claro Centro Cívico",
+    "address": "CENTRO COMERCIAL REAL PLAZA - CENTRO CIVICO, EDF L1 INT 2040 - AV. INCA GARCILAZO DE LA VEGA 1337 CERCADO DE LIMA",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0564964,
+    "lng": -77.0372609
+  },
+  {
+    "name": "Centro de Atención de Claro Plaza Norte",
+    "address": "CENTRO COMERCIAL PLAZA LIMA NORTE – CENTRO COMERCIAL PLAZA NORTE Av. ALFREDO MENDIOLA 1400 INDEPENDENCIA LOCAL LI-329 3er PISO",
+    "district": "Independencia",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.007004,
+    "lng": -77.0582257
+  },
+  {
+    "name": "Centro de Atención de Claro San Juan de Lurigancho",
+    "address": "AV. GRAN CHIMU 483 - URB. ZÁRATE - SAN JUAN DE LURIGANCHO",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0273421,
+    "lng": -77.0069157
+  },
+  {
+    "name": "Centro de Atención de Claro Minka",
+    "address": "CENTRO COMERCIAL MINKA, LOCAL L428 - CALLE 3 - AV. ARGENTINA N° 3093 - BELLAVISTA - CALLAO",
+    "district": "Bellavista",
+    "province": "Callao",
+    "department": "Callao",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.047897,
+    "lng": -77.111825
+  },
+  {
+    "name": "Centro de Atención de Claro Ayacucho",
+    "address": "Jr. Cuzco 220",
+    "district": "Huamanga",
+    "province": "Ayacucho",
+    "department": "Ayacucho",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -13.1603084,
+    "lng": -74.2236143
+  },
+  {
+    "name": "Centro de Atención de Claro Angamos",
+    "address": "AVENIDA ANGAMOS ESTE 1675 - 1699 - SURQUILLO",
+    "district": "Surquillo",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18.00 Sábado: 10.15 - 14.00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1125196,
+    "lng": -77.0136636
+  },
+  {
+    "name": "Agencia Abancay CSF",
+    "address": "Jr. Lima Nro. 218",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -11.9154752,
+    "lng": -77.0132735
+  },
+  {
+    "name": "Agencia Miraflores",
+    "address": "Av. Ernesto Diez Canseco N° 136",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1222216,
+    "lng": -77.0297849
+  },
+  {
+    "name": "Agencia Lima",
+    "address": "Jr. Antonio Miroquesada N° 233",
+    "district": "Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0488369,
+    "lng": -77.0312451
+  },
+  {
+    "name": "Agencia San Juan de Lurigancho",
+    "address": "Av. Próceres de La Independencia N° 1761 -Apv San Hilarion",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0045103,
+    "lng": -77.0074576
+  },
+  {
+    "name": "Agencia Santa Anita",
+    "address": "Av. Las Alondras N° 353 - 355",
+    "district": "Santa Anita",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0533101,
+    "lng": -76.961986
+  },
+  {
+    "name": "Agencia Aviacion",
+    "address": "Av. Aviación N° 2627",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0926979,
+    "lng": -77.0026939
+  },
+  {
+    "name": "Agencia Coliseo Dibos",
+    "address": "Av. Aviación N° 3594",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.109375,
+    "lng": -77.0006544
+  },
+  {
+    "name": "Agencia Venezuela",
+    "address": "Av. Republica de Venezuela N° 1270",
+    "district": "Breña",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0939369,
+    "lng": -77.0268953
+  },
+  {
+    "name": "Agencia Alfonso Ugarte",
+    "address": "Av. Alfonso Ugarte N° 1292",
+    "district": "Breña",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0551509,
+    "lng": -77.052104
+  },
+  {
+    "name": "Agencia Callao",
+    "address": "Jr. Adolfo King Esq. Jr. Libertad S/N Callao",
+    "district": "Callao",
+    "province": "Callao",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0617851,
+    "lng": -77.1441536
+  },
+  {
+    "name": "Agencia Colonial 1",
+    "address": "Av. Oscar R Benavides (av. Colonial) N° 5751",
+    "district": "Callao",
+    "province": "Callao",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0511577,
+    "lng": -77.0854849
+  },
+  {
+    "name": "Sede Centro Historico",
+    "address": "Jiron Carabaya 543 547 - Lima",
+    "district": "Cercado de Lima",
+    "province": "Callao",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.049137,
+    "lng": -77.0319559
+  },
+  {
+    "name": "Agencia Chorrillos",
+    "address": "Av. Guardia Civil No. 140-142 Urbanización Parcelación La Campiña",
+    "district": "Chorrillos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0892718,
+    "lng": -77.0076418
+  },
+  {
+    "name": "Agencia Comas",
+    "address": "Av. Tupac Amaru N° 1009",
+    "district": "Comas",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -11.9575377,
+    "lng": -77.0533195
+  },
+  {
+    "name": "Agencia Huacho",
+    "address": "Av. 28 de Julio N° 296",
+    "district": "Huacho",
+    "province": "Huacho",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0652638,
+    "lng": -77.0490229
+  },
+  {
+    "name": "Agencia Campo De Marte",
+    "address": "Av. 28 de Julio N° 623 con J. Residencial San Martin",
+    "district": "Jesús María",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0643684,
+    "lng": -77.0397887
+  },
+  {
+    "name": "Agencia Pablo Bermudez",
+    "address": "Jr. Pablo Bermudez N° 239",
+    "district": "Jesús María",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0733142,
+    "lng": -77.0435521
+  },
+  {
+    "name": "Agencia El Agustino",
+    "address": "Av, Jose de la Riva Agüero 1308 Urb Popular",
+    "district": "El Agustino",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.049028,
+    "lng": -77.0009776
+  },
+  {
+    "name": "Agencia Raúl Ferrero",
+    "address": "Av. Raul Ferrero N° 1045 MZ. C LTS. 3 Y 4, URB. El remanso de la Molina",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0898031,
+    "lng": -76.9482713
+  },
+  {
+    "name": "Agencia Las Malvinas",
+    "address": "Av. Republica Argentina 646 Y 650 AA.HH. Ramon Carcamo",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.043718,
+    "lng": -77.0503981
+  },
+  {
+    "name": "Agencia San Isidro",
+    "address": "Av. Rivera Navarrete 737",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0943517,
+    "lng": -77.0263831
+  },
+  {
+    "name": "Agencia Lince",
+    "address": "Av. Arequipa N° 2097",
+    "district": "Lince",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0855061,
+    "lng": -77.0340867
+  },
+  {
+    "name": "Agencia Angamos",
+    "address": "Av. Angamos Oeste N° 291",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1139656,
+    "lng": -77.0311825
+  },
+  {
+    "name": "Agencia El Ejército",
+    "address": "Av. Del Ejercito N° 634",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.115018,
+    "lng": -77.0465656
+  },
+  {
+    "name": "Agencia Republica de Panama",
+    "address": "Av. Alfredo Benavides N° 1420- Esquina de Republica de Panama N° 6201",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.126534,
+    "lng": -77.017864
+  },
+  {
+    "name": "Agencia Larco 1",
+    "address": "Av. Jose A. Larco N° 642",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.126534,
+    "lng": -77.017864
+  },
+  {
+    "name": "Agencia Pardo",
+    "address": "Av. Jose Pardo N° 683-697",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1193351,
+    "lng": -77.0359762
+  },
+  {
+    "name": "Agencia Sucre",
+    "address": "Av. Jose Antonio de Sucre N° 658-660",
+    "district": "Pueblo Libre",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0779177,
+    "lng": -77.065084
+  },
+  {
+    "name": "Agencia Centro Bancario Santa Anita 1",
+    "address": "Esquina Francisco Bolognesi Con Nicolas Aylon S/N Carretera Central K.M 7.5 Centro Comercial Bancario",
+    "district": "Santa Anita",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0564389,
+    "lng": -76.969616
+  },
+  {
+    "name": "Agencia San Borja Norte",
+    "address": "Av. San Borja Norte N° 1002, Esq .Av. San Luis , URB. San Borja",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.093337,
+    "lng": -76.9954779
+  },
+  {
+    "name": "Agencia Conquistadores",
+    "address": "Los Conquistadores N° 1098",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1071069,
+    "lng": -77.037234
+  },
+  {
+    "name": "Agencia Dasso",
+    "address": "Av. Dasso N° 0250 0274 0286 0298",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1073666,
+    "lng": -77.0399233
+  },
+  {
+    "name": "Agencia Dos de Mayo 1",
+    "address": "Dos de Mayo N° 1550",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0923269,
+    "lng": -77.0470019
+  },
+  {
+    "name": "Agencia Faucett 1",
+    "address": "Av. Oscar R Benavides N° 4410 Urb. San Jose",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0545449,
+    "lng": -77.0975624
+  },
+  {
+    "name": "Agencia Salaverry",
+    "address": "Salaverry , General N° 3156- 3160",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0985136,
+    "lng": -77.0561959
+  },
+  {
+    "name": "Sede Central",
+    "address": "Av Dionisio Derteano 102 San Isidro - piso 1",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0951899,
+    "lng": -77.0219469
+  },
+  {
+    "name": "Agencia Corpac",
+    "address": "Av. Canaval Moreyra, Enrique N° 0282",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0972532,
+    "lng": -77.0234332
+  },
+  {
+    "name": "Agencia Petit Thouars",
+    "address": "Petit Thouars N° 3890",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1004232,
+    "lng": -77.0310921
+  },
+  {
+    "name": "Agencia Dos de Mayo 2",
+    "address": "Los Nogales N° 0210",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0552229,
+    "lng": -76.9807674
+  },
+  {
+    "name": "Agencia Limatambo",
+    "address": "Ca. Valdivia, Deán N° 485-495",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0944691,
+    "lng": -77.0250912
+  },
+  {
+    "name": "Agencia Canto Grande",
+    "address": "Av. Canto Grande MZ. HLT.21-22- Urb. Canto Grande",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -11.9694202,
+    "lng": -77.0054664
+  },
+  {
+    "name": "Agencia Chimu 1",
+    "address": "Av. Gran Chimu N° 993 MZ, R-3 LT . 22- URB.Zarate",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.024459,
+    "lng": -76.9968069
+  },
+  {
+    "name": "Agencia Mariscal Cáceres",
+    "address": "Av. Proceres de la independencia N° 5010-5018 MZ. J-15 LT.25- Programa ciudad Mariscal Caceres Sector II",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0259826,
+    "lng": -77.0103849
+  },
+  {
+    "name": "Agencia Maranga",
+    "address": "Av. La Marina N° 2390 ( MZ. E1-3 LOTE 10)",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0769568,
+    "lng": -77.0944655
+  },
+  {
+    "name": "Agencia Chacarilla 1",
+    "address": "Jr. Monterosa Nro.152 Mza. F Lt. 01-04 Chacarilla del Estanque",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1123166,
+    "lng": -76.9912397
+  },
+  {
+    "name": "Agencia El Polo 2",
+    "address": "Jr. El Polo N° 679 Mz. C Lt. 6 Urb. El Derby",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1025391,
+    "lng": -76.9726848
+  },
+  {
+    "name": "Agencia Las Gardenias",
+    "address": "Av. Benavides, Alfredo Nro.5190 Mza. C3 Lt. 000004 Las Gardenias",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.129515,
+    "lng": -76.983211
+  },
+  {
+    "name": "Agencia Monterrico",
+    "address": "Av. La Encalada n° 880 Urb. Centro Comercial",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1071076,
+    "lng": -76.9769529
+  },
+  {
+    "name": "Agencia Camacho",
+    "address": "Av. Javier Prado Este 453",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0805996,
+    "lng": -76.9664245
+  },
+  {
+    "name": "Agencia Gardenias 2",
+    "address": "Av. Benavides, Alfredo N°5157 Las Gardenias",
+    "district": "Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.1290277,
+    "lng": -76.9835247
+  },
+  {
+    "name": "Agencia Juan de Arona",
+    "address": "Av. Juan de Arona N° 809",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0962268,
+    "lng": -77.0274491
+  },
+  {
+    "name": "Agencia La Fontanan",
+    "address": "Av. La Molina N° 1172 Urb. La Fontana",
+    "district": "La Molina",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0732746,
+    "lng": -76.9561354
+  },
+  {
+    "name": "Agencia Lurin",
+    "address": "Av. Teodoro Roosevelt, Mz. E, SUB Lote 06/ Urb. Las Virreynas",
+    "district": "Lurin",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 9:00-18:00 Sábados: 9:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.2772377,
+    "lng": -76.8693269
+  },
+  {
+    "name": "Centro de Atención de Claro Iquitos",
+    "address": "CALLE TACNA 570 - LORETO - MAYNAS - IQUITOS",
+    "district": "Iquitos",
+    "province": "Maynas",
+    "department": "Loreto",
+    "hours": "L-V: 09:15 - 18:00 Sábados: 09:00-13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -3.7521845,
+    "lng": -73.24898
+  },
+  {
+    "name": "Centro de Atención de Claro Tarapoto",
+    "address": "JR. JIMÉNEZ PIMENTEL N° 232 – TARAPOTO - SAN MARTIN - SAN MARTIN",
+    "district": "Tarapoto",
+    "province": "San Martin",
+    "department": "San Martin",
+    "hours": "L-V: 09:15 - 18:00 Sábados: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -6.4891758,
+    "lng": -76.3607982
+  },
+  {
+    "name": "Centro de Atención de Claro Pucallpa",
+    "address": "CENTRO COMERCIAL OPEN PLAZA PUCALLPA – AV. CENTENARIO KM 4500, YARINACOCHA - CORONEL PORTILLO - UCAYALI",
+    "district": "Yarinacocha",
+    "province": "Coronel Portillo",
+    "department": "Ucayali",
+    "hours": "L-V: 09:15 - 18:00 Sábados: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -8.3884348,
+    "lng": -74.5665133
+  },
+  {
+    "name": "Centro de Atención de Claro Santa Clara",
+    "address": "CENTRO COMERCIAL REAL PLAZA, LOCALES 149-150-151 - AV. NICOLÁS AYLLON 8694",
+    "district": "Santa Clara",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0151036,
+    "lng": -76.8856578
+  },
+  {
+    "name": "Centro de Atención de Claro Santa Anita",
+    "address": "CENTRO COMERCIAL MALL AVENTURA PLAZA, LOCAL FL-4A - CARRETERA CENTRAL 111 - SANTA ANITA - LIMA - LIMA",
+    "district": "Santa Anita",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0568036,
+    "lng": -76.9707472
+  },
+  {
+    "name": "Centro de Atención de Claro Unicachi",
+    "address": "URB. PRO INDUSTRIAL AV. ALFREDO MENDIOLA 7026 Int.102",
+    "district": "Comas",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -11.9404964,
+    "lng": -77.0702917
+  },
+  {
+    "name": "Centro de Atención de Claro Malvitec",
+    "address": "AV. ARGENTINA 460 - CENTRO COMERCIAL MALVITEC 2DO PISO, TIENDA LE02",
+    "district": "Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "L-V: 09:15 - 18:00 Sábado: 09:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.0429022,
+    "lng": -77.0479717
+  },
+  {
+    "name": "Sede Miraflores",
+    "address": "Av. Alfredo Benavides N° 2047",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Viernes / 9-12:00 - 14-18:00",
+    "categories": [
+      8
+    ],
+    "system": "JOHNSON & JOHNSON DEL PERU S.A.",
+    "lat": -12.127217,
+    "lng": -77.011053
+  },
+  {
+    "name": "Tienda Movistar",
+    "address": "Jr. Ayacucho N° 734",
+    "district": "Chachapoyas",
+    "province": "Chachapoyas",
+    "department": "Amazonas",
+    "hours": "Lunes a Viernes de 9:00 am a 6:30 pm Sábados: 9:00 am a 1:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -6.2288438,
+    "lng": -77.8706038
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. El Ejército N° 1300",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1095682,
+    "lng": -77.0523116
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. Mariano Melgar N° 247",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1112605,
+    "lng": -77.04956
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. Manuel Tovar N° 275",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1160984,
+    "lng": -77.0443157
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. Malecón Cisneros N° 810",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1224,
+    "lng": -77.040359
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. Arequipa N° 5240",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1184238,
+    "lng": -77.0291967
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. General Suarez N° 189",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1184453,
+    "lng": -77.0274885
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. José Larco N° 400",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1218045,
+    "lng": -77.0291304
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. Aristides Aljovín N° 153",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1308851,
+    "lng": -77.0295022
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. José Larco N° 770",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.125498,
+    "lng": -77.0295533
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. Malecon Armendariz N° 125",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1369736,
+    "lng": -77.0274724
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. Ramón Ribeyro N° 490",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1267405,
+    "lng": -77.0215532
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Ca. Ramón Castilla N° 640",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Sábado de 8am a 3pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1221069,
+    "lng": -77.0124526
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Inca Garcilaso de la Vega 1337",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0566113,
+    "lng": -77.0379778
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Angamos 2681",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1115804,
+    "lng": -77.0020408
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Gral. Salaverry 2370",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0903375,
+    "lng": -77.0520087
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Alfredo Mendiola 7042 SMP / PRIMER NIVEL",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -11.9407289,
+    "lng": -77.0707474
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Pachacútec intersección con, Av 26 de Noviembre s/n",
+    "district": "Villa Maria del Triunfo",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1806759,
+    "lng": -76.9428671
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Guardia Civil 1035",
+    "district": "Chorrillos",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1726593,
+    "lng": -76.9922538
+  },
+  {
+    "name": "Centro Comercial Real Plaza",
+    "address": "Av. Prol. Javier Prado Este 8680, Ate 15494",
+    "district": "Ate",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 9:00am a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0433685,
+    "lng": -76.931571
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Giraldez 347, Esquina Jr. Omar Yali 113 – 119",
+    "district": "Huancayo",
+    "province": "Huancayo",
+    "department": "Junin",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0670732,
+    "lng": -75.207126
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. San Martin 570",
+    "district": "Ica",
+    "province": "Ica",
+    "department": "Ica",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -14.0691066,
+    "lng": -75.7293188
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. José Larco 497",
+    "district": "Miraflores",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.1223297,
+    "lng": -77.0289966
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Grau 429-443",
+    "district": "Piura",
+    "province": "Piura",
+    "department": "Piura",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "warning": "La ficha indica Piura, pero el pin del mapa cae en Lima. Verifica la ubicación con la fuente antes de ir.",
+    "lat": -12.0587805,
+    "lng": -77.029298
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Paseo De La República 3490",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0983086,
+    "lng": -77.0262252
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Avenida Javier Prado Este 4200, C.C Jockey Plaza",
+    "district": "Santiago de Surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0851365,
+    "lng": -76.9765053
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Prol. Javier Prado Este 8680",
+    "district": "Ate",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0400035,
+    "lng": -76.9319602
+  },
+  {
+    "name": "Lamsac",
+    "address": "Vía de Evitamiento, Peaje Monterrico sentido Norte - Sur (calzada derecha previa al peaje)",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0415249,
+    "lng": -77.0183332
+  },
+  {
+    "name": "Lamsac",
+    "address": "Vía de Evitamiento, Peaje Monterrico sentido Sur - Norte (cruce con Separadora Industrial).",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0673129,
+    "lng": -76.9713971
+  },
+  {
+    "name": "Palacio Municipal",
+    "address": "Jirón de la Unión 300",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0454194,
+    "lng": -77.0309147
+  },
+  {
+    "name": "COMAIN (Gerencia de Desarrollo Social)",
+    "address": "Jr. Conde Superunda N° 446",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0430009,
+    "lng": -77.0341287
+  },
+  {
+    "name": "SERPAR",
+    "address": "Jr. Lampa N° 182. Urb Lima",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0450993,
+    "lng": -77.0277077
+  },
+  {
+    "name": "Parque de las leyendas",
+    "address": "Parque de las Leyendas 580",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0728084,
+    "lng": -77.0866242
+  },
+  {
+    "name": "SAT",
+    "address": "Jr. Camaná N° 370-4to piso",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0459932,
+    "lng": -77.0327923
+  },
+  {
+    "name": "Gerencia de Defensa al Ciudadano",
+    "address": "Jr. Lampa N° 154 -13 Puertas",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0450278,
+    "lng": -77.0275969
+  },
+  {
+    "name": "Gerencia de Desarrollo Urbano",
+    "address": "Jr. Cailloma N° 480 -482",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0474478,
+    "lng": -77.0353468
+  },
+  {
+    "name": "Teatro Municipal",
+    "address": "Jirón Ica 377",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0453267,
+    "lng": -77.0349451
+  },
+  {
+    "name": "EMILIMA",
+    "address": "Jirón Ucayali 266",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.047916,
+    "lng": -77.0306305
+  },
+  {
+    "name": "Gerencia de Desarrollo Económico - Planificación - Gobierno Regional -",
+    "address": "Av. Garcilazo de la Vega N° 1348",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.056925,
+    "lng": -77.0383291
+  },
+  {
+    "name": "Gerencia de Transporte Urbano (GTU) y Subgerencia de Sanidad y Promoción de la Salud",
+    "address": "Pje Acuña 127",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0484815,
+    "lng": -77.0311673
+  },
+  {
+    "name": "Instituto Metropolitano Pro Transporte de Lima",
+    "address": "Jirón Cuzco 286",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0500589,
+    "lng": -77.0317577
+  },
+  {
+    "name": "Secretaría General de Concejo (Tramite Documentario)",
+    "address": "Jr. Conde Superunda N° 169 - Cercado de Lima",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0436856,
+    "lng": -77.0331881
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. Pacasmayo Mz B Lt 01",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -11.9598528,
+    "lng": -77.0975952
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av.universitaria 222",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0276998,
+    "lng": -77.0758179
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Car. Ancón Km 4.5 (Av. Alfredo Mendiola 169, San Martín de Porres)",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Abierto al público",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0305764,
+    "lng": -77.0571643
+  },
+  {
+    "name": "Punto de acopio municipal",
+    "address": "Av. Iquitos 500",
+    "district": "La Victoria",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "En stand-by por pandemia",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -12.0650234,
+    "lng": -77.0308786
+  },
+  {
+    "name": "Centro de Atención de Claro Arequipa Cerro Colorado",
+    "address": "CENTRO COMERCIAL MALL CENTER AREQUIPA – AV. AVIACION NRO. 600 AREQUIPA – AREQUIPA - CERRO COLORADO",
+    "district": "Cerro Colorado",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -16.3927735,
+    "lng": -71.5389221
+  },
+  {
+    "name": "Centro de Atención de Claro Arequipa",
+    "address": "AV. EL EJERCITO N° 701,YANAHUARA - AREQUIPA - AREQUIPA",
+    "district": "Yanahuara",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "L-V: 09:00 - 19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -16.3907078,
+    "lng": -71.5444814
+  },
+  {
+    "name": "Centro de Atención de Claro Lambramani",
+    "address": "CENTRO COMERCIAL PARQUE LAMBRAMANI - AV. LAMBRAMANI 325 LC PM 2 INTERMEDIO-1ER PISO - CERCADO - AREQUIPA - AREQUIPA",
+    "district": "Cercado",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -16.4105589,
+    "lng": -71.5204024
+  },
+  {
+    "name": "Centro de Atención de Claro Porongoche II",
+    "address": "CENTRO COMERCIAL MALL AVENTURA PLAZA AREQUIPA - AV. PORONGOCHE N° 500 - CRUCE CON CALLE RAYMONDI LC SM-1-2-3-4 PAUCARPATA - AREQUIPA - AREQUIPA",
+    "district": "Paucarpata",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -16.4173428,
+    "lng": -71.513775
+  },
+  {
+    "name": "Centro de Atención de Claro Cusco",
+    "address": "AV. GARCILAZO N° 1101, ESQUINA CON AV. EL SOL - CUSCO - CUSCO - CUSCO",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "L-V: 09:00 - 19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -13.5318955,
+    "lng": -71.9333567
+  },
+  {
+    "name": "Centro de Atención de Claro Cusco Real Plaza",
+    "address": "C.C. CUSCO REAL PLAZA - SEMINARIO SAN ANTONIO A-2 , LOCAL 117/127 - CUSCO - CUSCO",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "L-D: 10:00 - 21:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -13.5233462,
+    "lng": -71.9504911
+  },
+  {
+    "name": "Centro de Atención de Claro Cusco Centro 5",
+    "address": "CALLE AYACUCHO 227 - CUSCO - CUSCO - CUSCO",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "L-V: 09:00 -19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -13.5203669,
+    "lng": -71.9782645
+  },
+  {
+    "name": "Centro de Atención de Claro San Andrés",
+    "address": "CALLE SAN ANDRES 342 - CUSCO - CUSCO - CUSCO",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "L-V: 09:00 -19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -13.5203131,
+    "lng": -71.9780251
+  },
+  {
+    "name": "Centro de Atención de Claro Porongoche I",
+    "address": "CENTRO COMERCIAL MALL AVENTURA PLAZA AREQUIPA - AV. PORONGOCHE N° 500 - CRUCE CON CALLE RAYMONDI LC SM-1-2-3-4 PAUCARPATA - AREQUIPA - AREQUIPA",
+    "district": "Paucarpata",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -16.4173598,
+    "lng": -71.5137868
+  },
+  {
+    "name": "Centro de Atención de Claro Puerto Maldonado",
+    "address": "AV. LEON VELARDE 586, TAMBOPATA - TAMBOPATA - MADRE DE DIOS",
+    "district": "Tambopata",
+    "province": "Tambopata",
+    "department": "Madre de Dios",
+    "hours": "L-V: 09:00 - 19:00 Sábados: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -12.5964778,
+    "lng": -69.1792841
+  },
+  {
+    "name": "Centro de Atención de Claro Ilo",
+    "address": "JR. ZEPITA N° 422 - ILO - ILO - MOQUEGUA",
+    "district": "Ilo",
+    "province": "Ilo",
+    "department": "Moquegua",
+    "hours": "L-V: 09:00 - 19:00 Sábados: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -17.6449114,
+    "lng": -71.3450292
+  },
+  {
+    "name": "Centro de Atención de Claro Puno",
+    "address": "JR. AREQUIPA 754 - PUNO - PUNO",
+    "district": "Puno",
+    "province": "Puno",
+    "department": "Puno",
+    "hours": "L-V: 09:00 - 19:00 D: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -15.8410206,
+    "lng": -70.0268126
+  },
+  {
+    "name": "Centro de Atención de Claro Juliaca",
+    "address": "Jr. Mariano Nuñez 231",
+    "district": "Juliaca",
+    "province": "Puno",
+    "department": "Puno",
+    "hours": "L-V: 09:00 - 19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -15.5009449,
+    "lng": -70.1292012
+  },
+  {
+    "name": "Centro de Atención de Claro Juliaca Real Plaza",
+    "address": "CENTRO COMERCIAL REAL PLAZA ESQUINA TUMBES CON SAN MARTIN TDAS 101-102-103",
+    "district": "Juliaca",
+    "province": "San Román",
+    "department": "Puno",
+    "hours": "L-D: 10:00 - 22:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -15.4950652,
+    "lng": -70.1305794
+  },
+  {
+    "name": "Centro de Atención de Claro Tacna",
+    "address": "Calle Zela 781",
+    "district": "Tacna",
+    "province": "Tacna",
+    "department": "Tacna",
+    "hours": "L-V: 09:00 - 19:00 Sábado: 10:00 - 17:00",
+    "categories": [
+      3
+    ],
+    "system": "AMERICA MOVIL PERU S.A.C. (CLARO)",
+    "lat": -18.0107674,
+    "lng": -70.2477977
+  },
+  {
+    "name": "Tienda Movistar - C.C. Mall Aventura Plaza R1A-R1B",
+    "address": "Av Porongoche 500",
+    "district": "Arequipa",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "Lunes a Domingo de 10:00 am a 10:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -16.4173428,
+    "lng": -71.513775
+  },
+  {
+    "name": "Tienda Movistar - C.C. Real Plaza Cusco, Tienda Lc 203",
+    "address": "Av. Collasuyo 2964",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "Lunes a Domingo de 10:00 am a 10:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -13.5233462,
+    "lng": -71.9504911
+  },
+  {
+    "name": "Tienda Movistar",
+    "address": "Los Arces 200 B (1er piso)",
+    "district": "Arequipa",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "Lunes a Sábado de 9:00 am a 6:00 pm Sábados: 9:00 am a 1:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -16.3917159,
+    "lng": -71.5473525
+  },
+  {
+    "name": "Tienda Movistar",
+    "address": "Av. El Sol N° 382, primer piso",
+    "district": "Cusco",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "Lunes a Sábado de 9:00 am a 6:00 pm Sábados 9:00 am a 1:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -13.5201221,
+    "lng": -71.9769884
+  },
+  {
+    "name": "Tienda Movistar",
+    "address": "Jr. Puno N° 670",
+    "district": "Tambopata",
+    "province": "Tambopata",
+    "department": "Madre de Dios",
+    "hours": "Lunes a Viernes de 9:00 am a 6:00 pm Sábados: 9:00 am a 1:00 pm",
+    "categories": [
+      3
+    ],
+    "system": "TELEFÓNICA DEL PERÚ S.A.A.",
+    "lat": -12.5964465,
+    "lng": -69.1808304
+  },
+  {
+    "name": "Tienda Entel",
+    "address": "Av. Ejercito 1013, Cayma 04014",
+    "district": "Cayma",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "Abierto al público 8:30 a 7:00pm",
+    "categories": [
+      3
+    ],
+    "system": "ENTEL PERÚ S.A.",
+    "lat": -16.3889722,
+    "lng": -71.549948
+  },
+  {
+    "name": "Oficina de Gestión Documental y Atención a la Ciudadanía (OGDAC) del Ministerio del Ambiente",
+    "address": "Av. Antonio Miró Quesada 425, Magdalena del Mar (Piso 4)",
+    "district": "Magdalena del Mar",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes a Viernes de 8:00 am a 6:00 pm",
+    "categories": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "system": "ALMI INTERNATIONAL S.A.",
+    "lat": -12.095332,
+    "lng": -77.059733
+  },
+  {
+    "name": "ENEL-Centro de servicio: COMAS",
+    "address": "Mall Plaza Comas - Jr. 1 N° 155",
+    "district": "Comas",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:00",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.9371922,
+    "lng": -77.0652342275105
+  },
+  {
+    "name": "ENEL-Centro de servicio: SAN JUAN",
+    "address": "Av. Próceres de la Independencia 3045 3075, San Juan de Lurigancho",
+    "district": "San Juan de Lurigancho",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:01",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.9797587,
+    "lng": -77.0052186
+  },
+  {
+    "name": "ENEL-Centro de servicio: TORRICO",
+    "address": "Esq. Conde de Superunda y Rufino Torrico, Cercado de Lima",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:02",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0431382,
+    "lng": -77.1339191636762
+  },
+  {
+    "name": "ENEL-Centro de servicio: CALLAO",
+    "address": "Av. Saenz Peña 1018 , Bellavista",
+    "district": "Bellavista",
+    "province": "Callao",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:03",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0598205,
+    "lng": -77.1341182
+  },
+  {
+    "name": "ENEL-Centro de servicio: SAN MIGUEL",
+    "address": "Calle César López 155, San Miguel",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:04",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0771046956557,
+    "lng": -77.0904059460899
+  },
+  {
+    "name": "ENEL-Centro de servicio: PUENTE PIEDRA",
+    "address": "Pan Norte Mz C16 Urb Sto Domingo Pte Piedra",
+    "district": "Puente Piedra",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:05",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.8660695672561,
+    "lng": -77.0738800374971
+  },
+  {
+    "name": "ENEL-Centro de servicio: MEGAPLAZA",
+    "address": "Av. Alfredo Mendiola 3698 Tienda 146 2do Piso CC Megaplaza, Independencia",
+    "district": "Independencia",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:06",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.994439352338,
+    "lng": -77.0620744437586
+  },
+  {
+    "name": "ENEL-Centro de servicio : MINKA",
+    "address": "Av. Argentina 3093 Local 265 Pa 4, Callao",
+    "district": "Callao",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:07",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0487735997085,
+    "lng": -77.1110843834126
+  },
+  {
+    "name": "ENEL-Centro de servicio : HUARAL",
+    "address": "Av. Del Solar 201, Huaral",
+    "district": "Huaral",
+    "province": "Huaral",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:08",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.4955467575903,
+    "lng": -77.2084128931798
+  },
+  {
+    "name": "ENEL-Centro de servicio : HUACHO",
+    "address": "Calle Colón 601 Tiendas 110, 112, 114, 116 CC Plaza Del Sol, Huacho",
+    "district": "Huacho",
+    "province": "Huaura",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:09",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -11.1088889417112,
+    "lng": -77.614205259441
+  },
+  {
+    "name": "ENEL-Centro de servicio : BARRANCA",
+    "address": "Calle Alfonso Ugarte 280, Barranca",
+    "district": "Barranca",
+    "province": "Barranca",
+    "department": "Lima",
+    "hours": "Lun - Vie : 08:00 - 17:00 / Sab : 8:00 - 13:10",
+    "categories": [
+      2,
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -10.752211890954,
+    "lng": -77.7591695197033
+  },
+  {
+    "name": "Sonepar Centro de Distribución",
+    "address": "Jr. Yungay N° 1870 Urb. Chacrarios - Lima Cercado - Lima - Perú",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes - Domingo: 8:00 a.m. a 6:00 p.m.",
+    "categories": [
+      5
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.0564674,
+    "lng": -77.0626309
+  },
+  {
+    "name": "Sonpar Las Bambas",
+    "address": "Jiron Las Bambas 449",
+    "district": "Cercado de Lima",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes - Domingo: 8:00 a.m. a 6:00 p.m.",
+    "categories": [
+      5
+    ],
+    "system": "Reverse Logistics Group Peru S.A.C. (RLG)",
+    "lat": -12.0550938,
+    "lng": -77.0325999
+  },
+  {
+    "name": "Samsung Electronics Perú",
+    "address": "Av. La Marina N° 2981",
+    "district": "San Miguel",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes - viernes: 9:00 a.m. a 5:00 p.m. Sábados: 9:00 a.m. a 1 p.m.",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.076449,
+    "lng": -77.096113
+  },
+  {
+    "name": "Samsung Electronics Perú",
+    "address": "Av. Juan de Arona N°745",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lunes - viernes: 9:00 a.m. a 6:00 p.m. Sábados: 9:00 a.m. a 6:00 p.m.",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.096393,
+    "lng": -77.0291021
+  },
+  {
+    "name": "Municipalidad Provincial de Arequipa (Arequipa)",
+    "address": "Asociación Artempa Car. Vía evitamiento km 34",
+    "district": "Arequipa",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -16.3730419,
+    "lng": -71.5764333
+  },
+  {
+    "name": "Municipalidad distrital de San Borja",
+    "address": "Av. Buena Vista 300, Parque Kallpa Wasi, San Borja",
+    "district": "San Borja",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.1058053,
+    "lng": -76.9815101
+  },
+  {
+    "name": "Municipalidad Provincial",
+    "address": "Jr. Apurimac #193, Cajamarca",
+    "district": "Cajamarca",
+    "province": "Cajamarca",
+    "department": "Cajamarca",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -7.1596541,
+    "lng": -78.5223059
+  },
+  {
+    "name": "Municipalidad Provincial",
+    "address": "Jr. Huánuco y Jr. Estrecho (plataforma San Sebastián",
+    "district": "Cajamarca",
+    "province": "Cajamarca",
+    "department": "Cajamarca",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -7.1629396,
+    "lng": -78.5142546
+  },
+  {
+    "name": "RECOLECC",
+    "address": "AV. JAVIER PRADO ESTE NRO. 560 INT. REF (INTERIOR 1801 A - ALT AV RIVERA NAVARRET) LIMA - LIMA - SAN ISIDRO",
+    "district": "San Martín de Porres",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0918764,
+    "lng": -77.0325759
+  },
+  {
+    "name": "Inversiones Legerdan SAC",
+    "address": "Jr. puerto Eten 190 block b dpto. 204, Santiago de surco 15048",
+    "district": "Santiago de surco",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.1346845,
+    "lng": -77.0067645
+  },
+  {
+    "name": "Municipalidad Distrital de Wánchaq",
+    "address": "Prolongación Av. Unión S/n -Está en tercer paradero de TTIO al costado del mercado de TTIO",
+    "district": "Wánchaq",
+    "province": "Cusco",
+    "department": "Cusco",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -13.530873,
+    "lng": -71.9602804
+  },
+  {
+    "name": "Municipalidad Distrital de San Antonio",
+    "address": "Av San Antonio de Padua S/N a un costado del Centro de Operaciones de Emergencia Regional",
+    "district": "San antonio",
+    "province": "Moquegua",
+    "department": "Moquegua",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -17.2086999,
+    "lng": -70.9483981
+  },
+  {
+    "name": "Municipalidad Provincial de Castilla",
+    "address": "Av. 3 de abril S/N, ref. Hospedaje municipal",
+    "district": "Castilla",
+    "province": "Castilla",
+    "department": "Arequipa",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -16.0733993,
+    "lng": -72.4911516
+  },
+  {
+    "name": "Municipalidad Distrital de Amarilis",
+    "address": "Urb Santa María intersecciones de la calle 12 y calle 13",
+    "district": "Amarilis",
+    "province": "Huánuco",
+    "department": "Huánuco",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -9.914832,
+    "lng": -76.226383
+  },
+  {
+    "name": "Municipalidad Provincial de Tocache",
+    "address": "Centro Poblado de Pucayacu S/N",
+    "district": "Tocache",
+    "province": "Tocache",
+    "department": "San Martin",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -8.749761,
+    "lng": -76.120937
+  },
+  {
+    "name": "Muncipalidad provncial de TRUJILLO (SERVICIO DE GESTION AMBIENTAL DE TRUJILLO SEGAT )",
+    "address": "Av. Manuel Vera Enriquez N° 171, distrito y provincia de Trujillo, departamento La Libertad",
+    "district": "Trujillo",
+    "province": "Trujillo",
+    "department": "La libertad",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -8.1061517,
+    "lng": -79.0343196
+  },
+  {
+    "name": "MUNICIPALIDAD DISTRITAL SURCO",
+    "address": "Av. Los Castillos cruce con Jr. Belisario Suarez. Cercado Surco( temporal)",
+    "district": "Santiago de surco",
+    "province": "Santiago de surco",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.1522619,
+    "lng": -77.0135907
+  },
+  {
+    "name": "DIRECTV",
+    "address": "Kuehne + Nagel S.A. Avenida Gasoducto – Lote # 2 S/N Urbanización Las Praderas de Lurín - Lima - Peru",
+    "district": "Lurin",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.290103,
+    "lng": -76.8450726
+  },
+  {
+    "name": "DALKA S.A.C.",
+    "address": "Av. Industrial Lote. 18 - Urbanización: Las Praderas de Lurín (Lote 18 Y19)",
+    "district": "Lurin",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      1,
+      6
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.2923493,
+    "lng": -76.838918
+  },
+  {
+    "name": "SCHNEIDER ELECTRIC PERU S.A.",
+    "address": "BSF Almacenes - Panamericana Sur Km 38 - Punta Hermosa - BODEGA SCHNEIDER B-01",
+    "district": "Punta Hermosa",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.3158269,
+    "lng": -76.829646
+  },
+  {
+    "name": "SCHNEIDER ELECTRIC PERU S.A.",
+    "address": "Carretera Panamericana Sur Km. 29.5 S/N – LURÍN - Unidad C-08 Megacentro",
+    "district": "Lurin",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.2745279,
+    "lng": -76.8920361
+  },
+  {
+    "name": "SCHNEIDER ELECTRIC PERU S.A.",
+    "address": "Av. Antonio Miro Quesada (Ex Juan de Aliaga) N° 425 Prisma Bussiness Tower Of.: 1310 Magdalena del Mar",
+    "district": "Magdalena del Mar",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      9
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0952938,
+    "lng": -77.0622741
+  },
+  {
+    "name": "EPSON PERU S.A.",
+    "address": "Oficina central Av. Canaval y Moreyra 590 – San Isidro",
+    "district": "San Isidro",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0981103,
+    "lng": -77.0195953
+  },
+  {
+    "name": "EPSON PERU S.A.",
+    "address": "Calle 1, Mz. A, Lote 6 Habilitación Fundo, Av. Bocanegra, Callao,",
+    "district": "Callao",
+    "province": "Callao",
+    "department": "-",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0130637,
+    "lng": -77.1075883
+  },
+  {
+    "name": "EPSON PERU S.A.",
+    "address": "Km 38, Punta Hermosa - Almacenes BSF",
+    "district": "Punta Hermosa",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00",
+    "categories": [
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.3158269,
+    "lng": -76.829646
+  },
+  {
+    "name": "MUNICIAPLIDA DISTRITAL DE YANAHUARA",
+    "address": "Km 18 de la carretera a Yura",
+    "district": "Yanahuara",
+    "province": "Arequipa",
+    "department": "Arequipa",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -16.2970521,
+    "lng": -71.6377173
+  },
+  {
+    "name": "Samsung Electronics Perú",
+    "address": "Avenida La Molina 190, Ate, Lima Perú",
+    "district": "Ate",
+    "province": "Lima",
+    "department": "Lima",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -12.0567329,
+    "lng": -76.9652068
+  },
+  {
+    "name": "Grupo Almerco EIRL",
+    "address": "Jr. Huallayco n°1135 - Huánuco",
+    "district": "Huánuco",
+    "province": "Huánuco",
+    "department": "Huánuco",
+    "hours": "Lun - Vie : 09:00 - 17:00 / Sab : 9:00 - 13:00",
+    "categories": [
+      3
+    ],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -9.927187,
+    "lng": -76.2427595
+  }
+]

@@ -1,8 +1,44 @@
 // Interacciones visuales compartidas
 document.addEventListener("DOMContentLoaded", () => {
   const collectionMapElement = document.querySelector("#collection-map");
+  const collectionList = document.querySelector("[data-collection-results]");
+  const collectionCount = document.querySelector("[data-collection-count]");
+  const collectionEmpty = document.querySelector("[data-collection-empty]");
+  const collectionUnavailable = document.querySelector(
+    "[data-collection-unavailable]",
+  );
+  const departmentFilter = document.querySelector(
+    '[data-collection-filter="department"]',
+  );
+  const categoryFilter = document.querySelector(
+    '[data-collection-filter="category"]',
+  );
+  const collectionSearch = document.querySelector("[data-collection-search]");
   let collectionMap;
+  let collectionMarkerLayer;
+  let collectionMarkerIcon;
+  let collectionPoints = [];
   const collectionMarkers = new Map();
+  const collectionCardPoints = new WeakMap();
+  const categoryNames = new Map([
+    [1, "Grandes electrodomésticos"],
+    [2, "Pequeños electrodomésticos"],
+    [3, "Informática y telecomunicaciones"],
+    [4, "Electrónica de consumo"],
+    [5, "Aparatos de alumbrado"],
+    [6, "Herramientas eléctricas y electrónicas"],
+    [7, "Juguetes y equipos deportivos"],
+    [8, "Equipos médicos"],
+    [9, "Instrumentos de vigilancia y control"],
+    [10, "Máquinas expendedoras"],
+  ]);
+  const normalizeText = (value) =>
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase()
+      .trim();
+
   if (collectionMapElement) {
     const mapUnavailable = document.querySelector("[data-map-unavailable]");
     if (!window.L) {
@@ -11,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       collectionMap = window.L
         .map(collectionMapElement, { scrollWheelZoom: false })
-        .setView([-5.1945, -80.6328], 13);
+        .setView([-9.19, -75.015], 5);
       window.L
         .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution:
@@ -19,53 +55,266 @@ document.addEventListener("DOMContentLoaded", () => {
           maxZoom: 19,
         })
         .addTo(collectionMap);
-
-      const markerIcon = window.L.divIcon({
+      collectionMarkerIcon = window.L.divIcon({
         className: "collection-div-icon",
         html: '<span class="collection-marker" aria-hidden="true"></span>',
         iconSize: [24, 32],
         iconAnchor: [12, 29],
         popupAnchor: [0, -27],
       });
-
-      document
-        .querySelectorAll(".collection-card[data-lat][data-lng]")
-        .forEach((card) => {
-          const latitude = Number(card.dataset.lat);
-          const longitude = Number(card.dataset.lng);
-          const title = card.querySelector("h2")?.textContent.trim();
-          const schedule = card
-            .querySelector(".collection-detail span")
-            ?.textContent.trim();
-          if (
-            !Number.isFinite(latitude) ||
-            !Number.isFinite(longitude) ||
-            !title ||
-            !schedule
-          ) {
-            console.error("No se pudo crear el marcador del punto de acopio.", card);
-            return;
-          }
-
-          const popupContent = document.createElement("div");
-          const popupTitle = document.createElement("strong");
-          const popupSchedule = document.createElement("p");
-          popupTitle.textContent = title;
-          popupSchedule.textContent = `Horario: ${schedule}`;
-          popupContent.append(popupTitle, popupSchedule);
-
-          const marker = window.L
-            .marker([latitude, longitude], {
-              alt: title,
-              icon: markerIcon,
-              title,
-            })
-            .addTo(collectionMap)
-            .bindPopup(popupContent);
-          collectionMarkers.set(card, marker);
-        });
+      collectionMarkerLayer = window.L.markerClusterGroup
+        ? window.L.markerClusterGroup({
+            maxClusterRadius: 45,
+            showCoverageOnHover: false,
+          }).addTo(collectionMap)
+        : window.L.featureGroup().addTo(collectionMap);
     }
   }
+
+  const categoryText = (point) =>
+    point.categories
+      .map((category) => categoryNames.get(category))
+      .filter(Boolean)
+      .join(", ") || "Sin categoría declarada";
+
+  const appendDetail = (card, label, value) => {
+    if (!value) return;
+    const detail = document.createElement("div");
+    const detailLabel = document.createElement("b");
+    const detailValue = document.createElement("span");
+    detail.className = "collection-detail";
+    detailLabel.textContent = label;
+    detailValue.textContent = value;
+    detail.append(detailLabel, detailValue);
+    card.append(detail);
+  };
+
+  const createCollectionCard = (point, index) => {
+    const card = document.createElement("article");
+    const top = document.createElement("div");
+    const number = document.createElement("span");
+    const department = document.createElement("span");
+    const title = document.createElement("h2");
+    const address = document.createElement("p");
+    const directions = document.createElement("a");
+    const departmentName =
+      !point.department || point.department.trim() === "-"
+        ? "Sin especificar"
+        : point.department.trim();
+    const addressText = normalizeText(point.address || "");
+    const locationParts = new Map();
+    [point.district, point.province, departmentName]
+      .filter(Boolean)
+      .filter((part) => part !== "Sin especificar")
+      .forEach((part) => {
+        const key = normalizeText(part);
+        if (!addressText.includes(key) && !locationParts.has(key)) {
+          locationParts.set(key, part);
+        }
+      });
+    const addressParts = [point.address, ...locationParts.values()].filter(
+      Boolean,
+    );
+
+    card.className = "collection-card";
+    top.className = "collection-card-top";
+    number.className = "collection-number";
+    number.textContent = String(index + 1).padStart(3, "0");
+    department.className = "tag tag-neutral";
+    department.textContent = departmentName;
+    title.textContent = point.name;
+    address.className = "collection-address";
+    address.textContent = `⌖ ${addressParts.join(" · ") || "Dirección no disponible"}`;
+    top.append(number, department);
+    card.append(top, title, address);
+    appendDetail(card, "Horario", point.hours || "No informado");
+    appendDetail(card, "Recibe", categoryText(point));
+    appendDetail(card, "Sistema", point.system);
+    if (point.warning) {
+      const warning = document.createElement("p");
+      warning.className = "collection-data-warning";
+      warning.textContent = point.warning;
+      card.append(warning);
+    }
+    directions.className = "text-link";
+    directions.href = `https://www.openstreetmap.org/?mlat=${point.lat}&mlon=${point.lng}#map=16/${point.lat}/${point.lng}`;
+    directions.dataset.directions = "";
+    directions.target = "_blank";
+    directions.rel = "noopener noreferrer";
+    directions.textContent = "Ver en el mapa ↗";
+    card.append(directions);
+    collectionCardPoints.set(card, point);
+    return card;
+  };
+
+  const createCollectionMarker = (point) => {
+    const popup = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = point.name;
+    popup.append(title);
+    if (point.address) {
+      const address = document.createElement("p");
+      address.textContent = point.address;
+      popup.append(address);
+    }
+    const schedule = document.createElement("p");
+    schedule.textContent = `Horario: ${point.hours || "No informado"}`;
+    popup.append(schedule);
+    const categories = document.createElement("p");
+    categories.textContent = `Recibe: ${categoryText(point)}`;
+    popup.append(categories);
+    if (point.warning) {
+      const warning = document.createElement("p");
+      warning.textContent = point.warning;
+      popup.append(warning);
+    }
+    const marker = window.L.marker([point.lat, point.lng], {
+      alt: point.name,
+      icon: collectionMarkerIcon,
+      title: point.name,
+    }).bindPopup(popup);
+    collectionMarkers.set(point, marker);
+    return marker;
+  };
+
+  const updateCollectionResults = () => {
+    if (!collectionList) return;
+    const selectedDepartment = normalizeText(departmentFilter?.value || "");
+    const selectedCategory = Number(categoryFilter?.value || 0);
+    const query = normalizeText(collectionSearch?.value || "");
+    const matchingPoints = collectionPoints.filter((point) => {
+      const department =
+        !point.department || point.department.trim() === "-"
+          ? "Sin especificar"
+          : point.department;
+      const matchesDepartment =
+        !selectedDepartment ||
+        normalizeText(department) === selectedDepartment;
+      const matchesCategory =
+        !selectedCategory || point.categories.includes(selectedCategory);
+      const searchableText = normalizeText(
+        [
+          point.name,
+          point.address,
+          point.district,
+          point.province,
+          department,
+          point.system,
+          categoryText(point),
+        ].join(" "),
+      );
+      return (
+        matchesDepartment &&
+        matchesCategory &&
+        (!query || searchableText.includes(query))
+      );
+    });
+
+    const cards = document.createDocumentFragment();
+    matchingPoints.forEach((point, index) => {
+      cards.append(createCollectionCard(point, index));
+    });
+    collectionList.replaceChildren(cards);
+    if (collectionEmpty) collectionEmpty.hidden = matchingPoints.length > 0;
+    if (collectionCount) {
+      collectionCount.textContent = `${matchingPoints.length} ${
+        matchingPoints.length === 1 ? "punto encontrado" : "puntos encontrados"
+      }`;
+    }
+
+    if (!collectionMap || !collectionMarkerLayer) return;
+    const markers = matchingPoints
+      .map((point) => collectionMarkers.get(point))
+      .filter(Boolean);
+    collectionMap.stop();
+    collectionMarkerLayer.clearLayers();
+    if (typeof collectionMarkerLayer.addLayers === "function") {
+      collectionMarkerLayer.addLayers(markers);
+    } else {
+      markers.forEach((marker) => collectionMarkerLayer.addLayer(marker));
+    }
+    if (!markers.length) return;
+
+    const bounds = collectionMarkerLayer.getBounds();
+    if (bounds.isValid()) {
+      collectionMap.fitBounds(bounds, {
+        animate: false,
+        maxZoom: 14,
+        padding: [28, 28],
+      });
+    }
+  };
+
+  const loadCollectionPoints = async () => {
+    if (!collectionList) return;
+    try {
+      const response = await fetch("assets/data/raee-points.json");
+      if (!response.ok) {
+        throw new Error(`La solicitud de puntos respondió ${response.status}.`);
+      }
+      const points = await response.json();
+      if (
+        !Array.isArray(points) ||
+        points.some(
+          (point) =>
+            !point.name ||
+            !Number.isFinite(point.lat) ||
+            !Number.isFinite(point.lng) ||
+            !Array.isArray(point.categories),
+        )
+      ) {
+        throw new Error("El archivo de puntos tiene un formato no válido.");
+      }
+      collectionPoints = points;
+
+      const departments = new Map();
+      collectionPoints.forEach((point) => {
+        const name =
+          !point.department || point.department.trim() === "-"
+            ? "Sin especificar"
+            : point.department.trim();
+        const key = normalizeText(name);
+        if (!departments.has(key)) departments.set(key, name);
+      });
+      [...departments.entries()]
+        .sort((first, second) =>
+          first[1].localeCompare(second[1], "es", { sensitivity: "base" }),
+        )
+        .forEach(([value, label]) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          departmentFilter?.append(option);
+        });
+
+      if (collectionMap && collectionMarkerLayer) {
+        const markers = collectionPoints.map(createCollectionMarker);
+        if (typeof collectionMarkerLayer.addLayers === "function") {
+          collectionMarkerLayer.addLayers(markers);
+        } else {
+          markers.forEach((marker) => collectionMarkerLayer.addLayer(marker));
+        }
+      }
+      updateCollectionResults();
+    } catch (error) {
+      console.error("No se pudieron cargar los puntos de acopio RAEE.", error);
+      if (collectionUnavailable) collectionUnavailable.hidden = false;
+      if (collectionCount) collectionCount.textContent = "Puntos no disponibles";
+    }
+  };
+
+  departmentFilter?.addEventListener("change", updateCollectionResults);
+  categoryFilter?.addEventListener("change", updateCollectionResults);
+  collectionSearch?.addEventListener("input", updateCollectionResults);
+  document
+    .querySelector("[data-collection-reset]")
+    ?.addEventListener("click", () => {
+      if (departmentFilter) departmentFilter.value = "";
+      if (categoryFilter) categoryFilter.value = "";
+      if (collectionSearch) collectionSearch.value = "";
+      updateCollectionResults();
+    });
+  void loadCollectionPoints();
 
   const menuButton = document.querySelector(".menu-toggle");
   const mainNav = document.querySelector(".main-nav");
@@ -275,32 +524,41 @@ document.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", () =>
       showToast("Las calificaciones son parte de esta demostración visual."),
     );
-  document.querySelectorAll("[data-directions]").forEach((link) =>
-    link.addEventListener("click", (event) => {
-      const card = link.closest(".collection-card");
-      const marker = card && collectionMarkers.get(card);
-      if (!collectionMap || !collectionMapElement || !card || !marker) return;
+  collectionList?.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest("[data-directions]");
+    if (!link || !collectionList.contains(link)) return;
 
-      event.preventDefault();
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      const mapBounds = collectionMapElement.getBoundingClientRect();
-      if (mapBounds.bottom < 0 || mapBounds.top > window.innerHeight) {
-        collectionMapElement.scrollIntoView({
-          behavior: prefersReducedMotion ? "auto" : "smooth",
-          block: "center",
-        });
-      }
+    const card = link.closest(".collection-card");
+    const point = card && collectionCardPoints.get(card);
+    const marker = point && collectionMarkers.get(point);
+    if (!collectionMap || !collectionMapElement || !card || !marker) return;
 
-      collectionMap.flyTo(
-        [Number(card.dataset.lat), Number(card.dataset.lng)],
-        16,
-        { animate: !prefersReducedMotion, duration: 1.2 },
-      );
+    event.preventDefault();
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const mapBounds = collectionMapElement.getBoundingClientRect();
+    if (mapBounds.bottom < 0 || mapBounds.top > window.innerHeight) {
+      collectionMapElement.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "center",
+      });
+    }
+
+    const focusMarker = () => {
+      collectionMap.flyTo(marker.getLatLng(), 15, {
+        animate: !prefersReducedMotion,
+        duration: 1.2,
+      });
       marker.openPopup();
-    }),
-  );
+    };
+    if (typeof collectionMarkerLayer.zoomToShowLayer === "function") {
+      collectionMarkerLayer.zoomToShowLayer(marker, focusMarker);
+    } else {
+      focusMarker();
+    }
+  });
 
   document.querySelectorAll("[data-accordion] details").forEach((detail) => {
     detail.addEventListener("toggle", () => {
