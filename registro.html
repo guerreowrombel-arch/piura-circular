@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Crear cuenta | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">↻</span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="proyecto.html">Proyecto</a
+        ><a href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a
+        ><a href="educacion.html">Educación</a>
+        <div class="nav-actions">
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small active" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main class="auth-main register-main">
+      <section class="auth-aside">
+        <p class="eyebrow">PIURA CIRCULAR / COMUNIDAD</p>
+        <h1>Hagamos que<br />las cosas <em>sigan.</em></h1>
+        <p>
+          Crea tu cuenta y sé parte de una comunidad que elige aprovechar mejor
+          sus recursos.
+        </p>
+        <div class="auth-illustration">
+          <span>◎</span><small>UNA COMUNIDAD QUE CONECTA</small>
+        </div>
+      </section>
+      <section class="auth-panel">
+        <form class="form-card demo-form">
+          <p class="eyebrow">NUEVA CUENTA</p>
+          <h2>Únete a la ruta</h2>
+          <p class="form-intro">Completa tus datos para comenzar.</p>
+          <div class="form-grid">
+            <div>
+              <label for="first-name">Nombre</label
+              ><input
+                id="first-name"
+                name="nombre"
+                autocomplete="given-name"
+                required
+              />
+            </div>
+            <div>
+              <label for="last-name">Apellidos</label
+              ><input
+                id="last-name"
+                name="apellidos"
+                autocomplete="family-name"
+                required
+              />
+            </div>
+          </div>
+          <label for="district">Distrito</label
+          ><select id="district" name="distrito" required>
+            <option value="">Selecciona tu distrito</option>
+            <option>Piura</option>
+            <option>Castilla</option>
+            <option>Veintiséis de Octubre</option>
+            <option>Catacaos</option>
+            <option>La Arena</option>
+            <option>La Unión</option>
+            <option>Cura Mori</option>
+            <option>El Tallán</option>
+            <option>Las Lomas</option>
+            <option>Tambogrande</option></select
+          ><label for="register-email">Correo electrónico</label
+          ><input
+            id="register-email"
+            name="email"
+            type="email"
+            placeholder="nombre@correo.com"
+            autocomplete="email"
+            required
+          /><label for="register-password">Contraseña</label>
+          <div class="password-wrap">
+            <input
+              id="register-password"
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              required
+              data-strength-input
+            /><button
+              class="password-toggle"
+              type="button"
+              aria-label="Mostrar contraseña"
+              data-password-toggle="register-password"
+            >
+              ◉
+            </button>
+          </div>
+          <div class="strength-meter" aria-label="Fortaleza de contraseña">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <small class="strength-label" aria-live="polite"
+            >Usa al menos 8 caracteres</small
+          ><label for="confirm-password">Confirmar contraseña</label>
+          <div class="password-wrap">
+            <input
+              id="confirm-password"
+              name="confirm-password"
+              type="password"
+              autocomplete="new-password"
+              required
+            /><button
+              class="password-toggle"
+              type="button"
+              aria-label="Mostrar contraseña"
+              data-password-toggle="confirm-password"
+            >
+              ◉
+            </button>
+          </div>
+          <label class="check-row terms-row"
+            ><input type="checkbox" required /><span
+              >Acepto los
+              <a class="form-link" href="#">términos y condiciones</a></span
+            ></label
+          ><button class="button button-full" type="submit">
+            Crear cuenta <span>↗</span>
+          </button>
+          <p class="form-notice" role="status" aria-live="polite"></p>
+          <p class="auth-switch">
+            ¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a>
+          </p>
+        </form>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Puntos de acopio | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">↻</span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="proyecto.html">Proyecto</a
+        ><a href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a class="active" href="puntos-acopio.html">Puntos de acopio</a
+        ><a href="educacion.html">Educación</a>
+        <div class="nav-actions">
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="page-hero page-hero-compact wrap">
+        <p class="eyebrow">
+          <span class="eyebrow-dot"></span> MÓDULO 03 / ENTREGA RESPONSABLE
+        </p>
+        <h1>Encuentra un lugar<br />para <em>hacerlo bien.</em></h1>
+        <p>
+          Consulta puntos de recepción referenciales en Piura y revisa qué
+          aceptan antes de acercarte.
+        </p>
+      </section>
+      <section class="wrap collection-area">
+        <div class="collection-filters">
+          <div>
+            <label for="district-filter">Distrito</label
+            ><select id="district-filter" data-filter="district">
+              <option value="">Todos los distritos</option>
+              <option>Piura</option>
+              <option>Castilla</option>
+              <option>Veintiséis de Octubre</option>
+              <option>Catacaos</option>
+            </select>
+          </div>
+          <div>
+            <label for="waste-filter">Tipo de equipo</label
+            ><select id="waste-filter" data-filter="waste">
+              <option value="">Todos los tipos</option>
+              <option>Computadoras</option>
+              <option>Celulares</option>
+              <option>Baterías</option>
+              <option>Electrodomésticos</option>
+            </select>
+          </div>
+          <span class="reference-note"
+            >Puntos de ejemplo para esta demostración</span
+          >
+        </div>
+        <div class="collection-layout">
+          <div class="map-panel">
+            <!-- REEMPLAZAR IMAGEN: mapa de Piura con ubicación de puntos de acopio --><img
+              src="assets/img/mapa-piura.jpg"
+              alt="Mapa de referencia de Piura con puntos de acopio marcados"
+              onerror="this.style.display = 'none'"
+            />
+            <div class="map-fallback">
+              <div class="map-grid-lines"></div>
+              <span class="map-label map-label-north">PIURA</span
+              ><span class="map-label map-label-east">CASTILLA</span
+              ><span class="map-label map-label-south">CATACAOS</span
+              ><i class="map-pin pin-one">⌖</i><i class="map-pin pin-two">⌖</i
+              ><i class="map-pin pin-three">⌖</i
+              ><span class="map-legend"><b>⌖</b> Puntos de recepción</span>
+            </div>
+            <div class="map-scale">MAPA REFERENCIAL · NO A ESCALA</div>
+          </div>
+          <div class="collection-list" data-filter-list>
+            <article
+              class="collection-card reveal"
+              data-district="Piura"
+              data-waste="Computadoras Celulares Baterías"
+            >
+              <div class="collection-card-top">
+                <span class="collection-number">01</span
+                ><span class="tag tag-operational">Piura</span>
+              </div>
+              <h2>Centro de acopio municipal</h2>
+              <p class="collection-address">⌖ Av. Grau, zona centro, Piura</p>
+              <div class="collection-detail">
+                <b>Horario</b><span>Lun. a vie. · 8:00 a. m. – 4:00 p. m.</span>
+              </div>
+              <div class="collection-detail">
+                <b>Recibe</b><span>Computadoras, celulares y baterías</span>
+              </div>
+              <div class="collection-detail">
+                <b>Requisitos</b
+                ><span
+                  >Entregar equipos apagados y sin accesorios sueltos.</span
+                >
+              </div>
+              <a class="text-link" href="#" data-directions
+                >Ver indicaciones <b>↗</b></a
+              >
+            </article>
+            <article
+              class="collection-card reveal"
+              data-district="Castilla"
+              data-waste="Celulares Baterías Electrodomésticos"
+            >
+              <div class="collection-card-top">
+                <span class="collection-number">02</span
+                ><span class="tag tag-repair">Castilla</span>
+              </div>
+              <h2>Jornada ambiental vecinal</h2>
+              <p class="collection-address">⌖ Plaza principal de Castilla</p>
+              <div class="collection-detail">
+                <b>Horario</b><span>Sábados · 9:00 a. m. – 1:00 p. m.</span>
+              </div>
+              <div class="collection-detail">
+                <b>Recibe</b
+                ><span>Celulares, baterías y pequeños electrodomésticos</span>
+              </div>
+              <div class="collection-detail">
+                <b>Requisitos</b
+                ><span>Confirmar la fecha de campaña antes de asistir.</span>
+              </div>
+              <a class="text-link" href="#" data-directions
+                >Ver indicaciones <b>↗</b></a
+              >
+            </article>
+            <article
+              class="collection-card reveal"
+              data-district="Veintiséis de Octubre"
+              data-waste="Computadoras Electrodomésticos"
+            >
+              <div class="collection-card-top">
+                <span class="collection-number">03</span
+                ><span class="tag tag-neutral">Veintiséis de Octubre</span>
+              </div>
+              <h2>Reciclatón comunitaria</h2>
+              <p class="collection-address">
+                ⌖ Parque zonal, Veintiséis de Octubre
+              </p>
+              <div class="collection-detail">
+                <b>Horario</b><span>Según programación de campaña</span>
+              </div>
+              <div class="collection-detail">
+                <b>Recibe</b
+                ><span>Computadoras y electrodomésticos pequeños</span>
+              </div>
+              <div class="collection-detail">
+                <b>Requisitos</b
+                ><span
+                  >Se recomienda llevar DNI y asegurar piezas sueltas.</span
+                >
+              </div>
+              <a class="text-link" href="#" data-directions
+                >Ver indicaciones <b>↗</b></a
+              >
+            </article>
+          </div>
+        </div>
+        <p class="empty-state" data-empty-state hidden>
+          No hay puntos de ejemplo con esos filtros. Cambia tu selección.
+        </p>
+        <p class="disclaimer">
+          Los espacios mostrados son referenciales para fines académicos.
+          Verifica disponibilidad, horarios y requisitos directamente con la
+          entidad responsable antes de trasladar tus equipos.
+        </p>
+      </section>
+    </main>
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>

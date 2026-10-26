@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Publicar un equipo | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">↻</span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="proyecto.html">Proyecto</a
+        ><a class="active" href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a
+        ><a href="educacion.html">Educación</a>
+        <div class="nav-actions">
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="page-hero page-hero-compact wrap">
+        <p class="eyebrow">
+          <span class="eyebrow-dot"></span> MÓDULO 01 / PUBLICAR
+        </p>
+        <h1>Todo equipo merece<br />una <em>ruta clara.</em></h1>
+        <p>
+          Cuéntanos sobre el aparato que ya no usas. Con esa información
+          podremos orientarlo mejor.
+        </p>
+      </section>
+      <section class="wrap publish-layout">
+        <form class="publish-form demo-form">
+          <div class="form-section">
+            <div class="form-section-title">
+              <span>01</span>
+              <div>
+                <h2>Sobre el equipo</h2>
+                <p>Los campos marcados con * son necesarios.</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div>
+                <label for="category">Categoría *</label
+                ><select id="category" required>
+                  <option value="">Selecciona una categoría</option>
+                  <option>Computadoras</option>
+                  <option>Celulares</option>
+                  <option>Electrodomésticos</option>
+                  <option>Baterías</option>
+                  <option>Otros</option>
+                </select>
+              </div>
+              <div>
+                <label for="brand">Marca</label
+                ><input id="brand" placeholder="Ej. Lenovo" />
+              </div>
+              <div>
+                <label for="age">Antigüedad aproximada</label
+                ><select id="age">
+                  <option value="">Selecciona</option>
+                  <option>Menos de 1 año</option>
+                  <option>1 a 3 años</option>
+                  <option>4 a 6 años</option>
+                  <option>Más de 6 años</option>
+                  <option>No lo sé</option>
+                </select>
+              </div>
+              <div>
+                <label for="function">¿Enciende o funciona?</label
+                ><select id="function">
+                  <option value="">Selecciona</option>
+                  <option>Sí, funciona</option>
+                  <option>Funciona parcialmente</option>
+                  <option>No funciona</option>
+                  <option>No lo sé</option>
+                </select>
+              </div>
+            </div>
+            <label for="description">Descripción *</label
+            ><textarea
+              id="description"
+              rows="4"
+              placeholder="Describe el estado, accesorios incluidos o algún detalle importante..."
+              required
+            ></textarea>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">
+              <span>02</span>
+              <div>
+                <h2>Elige una condición</h2>
+                <p>Esta decisión nos ayuda a sugerir la ruta adecuada.</p>
+              </div>
+            </div>
+            <div class="condition-grid">
+              <label class="condition-option"
+                ><input
+                  type="radio"
+                  name="condition"
+                  value="Operativo"
+                  required
+                /><span class="condition-symbol">↗</span><b>Operativo</b
+                ><small>Puede seguir en uso</small
+                ><span class="condition-route">Intercambio o venta</span></label
+              ><label class="condition-option"
+                ><input
+                  type="radio"
+                  name="condition"
+                  value="Requiere reparación"
+                /><span class="condition-symbol">⌁</span
+                ><b>Requiere reparación</b><small>Puede ser reparado</small
+                ><span class="condition-route">Técnicos o talleres</span></label
+              ><label class="condition-option"
+                ><input
+                  type="radio"
+                  name="condition"
+                  value="No reutilizable"
+                /><span class="condition-symbol">⌖</span><b>No reutilizable</b
+                ><small>Ya no puede recuperarse</small
+                ><span class="condition-route">Punto de acopio</span></label
+              >
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">
+              <span>03</span>
+              <div>
+                <h2>Agrega fotografías</h2>
+                <p>Una imagen ayuda a entender mejor el estado del equipo.</p>
+              </div>
+            </div>
+            <label class="upload-zone" for="photos"
+              ><span class="upload-icon">↑</span
+              ><b>Selecciona tus fotografías</b
+              ><small>JPG o PNG · hasta 5 imágenes</small
+              ><input
+                id="photos"
+                type="file"
+                accept="image/*"
+                multiple
+                data-photo-input
+            /></label>
+            <div class="photo-preview" data-photo-preview></div>
+          </div>
+          <div class="form-end">
+            <p class="form-notice" role="status" aria-live="polite"></p>
+            <button class="button" type="submit">
+              Publicar equipo <span>↗</span>
+            </button>
+          </div>
+        </form>
+        <aside class="publish-aside">
+          <div class="aside-sticky">
+            <p class="eyebrow">EL CICLO EN TUS MANOS</p>
+            <div class="cycle-diagram">
+              <span class="cycle-node node-a">Equipo<br />en desuso</span
+              ><span class="cycle-node node-b">Nueva<br />persona</span
+              ><span class="cycle-node node-c">Acopio<br />responsable</span
+              ><i class="cycle-arrow arrow-a">↗</i
+              ><i class="cycle-arrow arrow-b">↘</i
+              ><i class="cycle-arrow arrow-c">↖</i
+              ><span class="cycle-center">↻</span>
+            </div>
+            <h3>La condición define el siguiente paso.</h3>
+            <p>
+              Un diagnóstico sencillo puede ayudar a evitar que un equipo
+              termine en el lugar equivocado.
+            </p>
+            <a class="text-link" href="educacion.html"
+              >Aprende sobre RAEE <b>↗</b></a
+            >
+          </div>
+        </aside>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>

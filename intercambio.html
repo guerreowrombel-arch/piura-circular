@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Intercambio de equipos | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">↻</span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="proyecto.html">Proyecto</a
+        ><a href="publicar.html">Publicar</a
+        ><a class="active" href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a
+        ><a href="educacion.html">Educación</a>
+        <div class="nav-actions">
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="page-hero page-hero-compact wrap">
+        <p class="eyebrow">
+          <span class="eyebrow-dot"></span> MÓDULO 02 / INTERCAMBIO
+        </p>
+        <h1>Quizá alguien<br />necesita <em>justo eso.</em></h1>
+        <p>Explora equipos que buscan una segunda oportunidad en Piura.</p>
+      </section>
+      <section class="wrap exchange-area">
+        <div class="filter-bar">
+          <label class="search-field"
+            ><span aria-hidden="true">⌕</span
+            ><span class="sr-only">Buscar equipos</span
+            ><input
+              type="search"
+              placeholder="Buscar un equipo..."
+              data-search-input /></label
+          ><label
+            ><span class="sr-only">Categoría</span
+            ><select data-filter="category">
+              <option value="">Todas las categorías</option>
+              <option>Computadoras</option>
+              <option>Celulares</option>
+              <option>Electrodomésticos</option>
+              <option>Otros</option>
+            </select></label
+          ><label
+            ><span class="sr-only">Zona</span
+            ><select data-filter="zone">
+              <option value="">Todos los distritos</option>
+              <option>Piura</option>
+              <option>Castilla</option>
+              <option>Veintiséis de Octubre</option>
+              <option>Catacaos</option>
+            </select></label
+          ><label
+            ><span class="sr-only">Condición</span
+            ><select data-filter="condition">
+              <option value="">Cualquier condición</option>
+              <option>Operativo</option>
+              <option>Requiere reparación</option>
+            </select></label
+          ><button class="filter-reset" type="button" data-filter-reset>
+            Limpiar
+          </button>
+        </div>
+        <div class="exchange-heading">
+          <div>
+            <p class="eyebrow">PUBLICACIONES DE LA COMUNIDAD</p>
+            <h2>Equipos con otra historia</h2>
+          </div>
+          <span class="result-count" data-result-count>4 equipos</span>
+        </div>
+        <div class="equipment-grid" data-filter-list>
+          <article
+            class="equipment-card reveal"
+            data-category="Computadoras"
+            data-zone="Piura"
+            data-condition="Operativo"
+            data-search="laptop lenovo thinkpad"
+          >
+            <div class="equipment-image">
+              <!-- REEMPLAZAR IMAGEN: laptop Lenovo ThinkPad para intercambio --><img
+                src="assets/img/laptop-thinkpad.jpg"
+                alt="Laptop Lenovo ThinkPad negra"
+                onerror="this.style.display = 'none'"
+              /><span>Imagen aquí</span
+              ><button
+                class="icon-button report-trigger"
+                type="button"
+                aria-label="Reportar publicación"
+                data-report-trigger
+              >
+                ···
+              </button>
+            </div>
+            <div class="equipment-content">
+              <div class="equipment-tags">
+                <span class="tag tag-operational">Operativo</span
+                ><span class="equipment-category">Computadoras</span>
+              </div>
+              <h3>Laptop Lenovo ThinkPad</h3>
+              <p class="equipment-meta">
+                ⌖ Piura centro <span>·</span> Publicado hace 2 días
+              </p>
+              <div class="seller-row">
+                <div class="seller-avatar">M</div>
+                <span>María R.</span><span class="rating">★ 4.8</span>
+              </div>
+              <button
+                class="button button-outline button-full contact-trigger"
+                type="button"
+                data-contact="María R."
+              >
+                Contactar <span>↗</span>
+              </button>
+            </div>
+          </article>
+          <article
+            class="equipment-card reveal"
+            data-category="Celulares"
+            data-zone="Castilla"
+            data-condition="Operativo"
+            data-search="celular samsung galaxy"
+          >
+            <div class="equipment-image">
+              <!-- REEMPLAZAR IMAGEN: celular Samsung Galaxy para intercambio --><img
+                src="assets/img/celular-galaxy.jpg"
+                alt="Teléfono celular Samsung Galaxy"
+                onerror="this.style.display = 'none'"
+              /><span>Imagen aquí</span
+              ><button
+                class="icon-button report-trigger"
+                type="button"
+                aria-label="Reportar publicación"
+                data-report-trigger
+              >
+                ···
+              </button>
+            </div>
+            <div class="equipment-content">
+              <div class="equipment-tags">
+                <span class="tag tag-operational">Operativo</span
+                ><span class="equipment-category">Celulares</span>
+              </div>
+              <h3>Samsung Galaxy A52</h3>
+              <p class="equipment-meta">
+                ⌖ Castilla <span>·</span> Publicado ayer
+              </p>
+              <div class="seller-row">
+                <div class="seller-avatar avatar-coral">J</div>
+                <span>Javier P.</span><span class="rating">★ 4.6</span>
+              </div>
+              <button
+                class="button button-outline button-full contact-trigger"
+                type="button"
+                data-contact="Javier P."
+              >
+                Contactar <span>↗</span>
+              </button>
+            </div>
+          </article>
+          <article
+            class="equipment-card reveal"
+            data-category="Electrodomésticos"
+            data-zone="Veintiséis de Octubre"
+            data-condition="Requiere reparación"
+            data-search="ventilador electrolux reparación"
+          >
+            <div class="equipment-image">
+              <!-- REEMPLAZAR IMAGEN: ventilador Electrolux con reparación pendiente --><img
+                src="assets/img/ventilador.jpg"
+                alt="Ventilador doméstico en buen estado exterior"
+                onerror="this.style.display = 'none'"
+              /><span>Imagen aquí</span
+              ><button
+                class="icon-button report-trigger"
+                type="button"
+                aria-label="Reportar publicación"
+                data-report-trigger
+              >
+                ···
+              </button>
+            </div>
+            <div class="equipment-content">
+              <div class="equipment-tags">
+                <span class="tag tag-repair">Requiere reparación</span
+                ><span class="equipment-category">Electrodomésticos</span>
+              </div>
+              <h3>Ventilador Electrolux</h3>
+              <p class="equipment-meta">
+                ⌖ Veintiséis de Octubre <span>·</span> Hace 3 días
+              </p>
+              <div class="seller-row">
+                <div class="seller-avatar avatar-gold">L</div>
+                <span>Lucía V.</span><span class="rating">★ 4.9</span>
+              </div>
+              <button
+                class="button button-outline button-full contact-trigger"
+                type="button"
+                data-contact="Lucía V."
+              >
+                Contactar <span>↗</span>
+              </button>
+            </div>
+          </article>
+          <article
+            class="equipment-card reveal"
+            data-category="Computadoras"
+            data-zone="Catacaos"
+            data-condition="Operativo"
+            data-search="monitor dell pantalla"
+          >
+            <div class="equipment-image">
+              <!-- REEMPLAZAR IMAGEN: monitor Dell disponible para reutilización --><img
+                src="assets/img/monitor-dell.jpg"
+                alt="Monitor Dell de escritorio"
+                onerror="this.style.display = 'none'"
+              /><span>Imagen aquí</span
+              ><button
+                class="icon-button report-trigger"
+                type="button"
+                aria-label="Reportar publicación"
+                data-report-trigger
+              >
+                ···
+              </button>
+            </div>
+            <div class="equipment-content">
+              <div class="equipment-tags">
+                <span class="tag tag-operational">Operativo</span
+                ><span class="equipment-category">Computadoras</span>
+              </div>
+              <h3>Monitor Dell 22 pulgadas</h3>
+              <p class="equipment-meta">
+                ⌖ Catacaos <span>·</span> Publicado hace 5 días
+              </p>
+              <div class="seller-row">
+                <div class="seller-avatar avatar-green">A</div>
+                <span>Andrés C.</span><span class="rating">★ 4.7</span>
+              </div>
+              <button
+                class="button button-outline button-full contact-trigger"
+                type="button"
+                data-contact="Andrés C."
+              >
+                Contactar <span>↗</span>
+              </button>
+            </div>
+          </article>
+        </div>
+        <p class="empty-state" data-empty-state hidden>
+          No encontramos equipos con esos filtros. Prueba con otra búsqueda.
+        </p>
+        <section class="message-demo">
+          <div class="message-head">
+            <div>
+              <p class="eyebrow">MENSAJERÍA INTERNA / DEMO</p>
+              <h2>Una conversación clara.</h2>
+            </div>
+            <span class="online-mark">● Disponible</span>
+          </div>
+          <div class="message-thread">
+            <div class="message-bubble received">
+              Hola, ¿el equipo sigue disponible?<small>10:42</small>
+            </div>
+            <div class="message-bubble sent">
+              ¡Sí! Podemos coordinar un punto de encuentro.<small>10:44</small>
+            </div>
+            <div class="message-composer">
+              <input
+                aria-label="Escribe un mensaje"
+                placeholder="Escribe un mensaje..."
+                data-message-input
+              /><button
+                type="button"
+                aria-label="Enviar mensaje"
+                data-send-message
+              >
+                ↗
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="ratings-section">
+          <div>
+            <p class="eyebrow">CONFIANZA ENTRE PERSONAS</p>
+            <h2>El intercambio también<br />se construye con respeto.</h2>
+          </div>
+          <div class="rating-example">
+            <span class="rating-stars">★★★★★</span>
+            <p>
+              “La entrega fue sencilla y el equipo estaba tal como lo
+              describieron.”
+            </p>
+            <small>Intercambio realizado · Castilla</small
+            ><button class="text-link" type="button" data-rating-trigger>
+              Calificar una experiencia <b>↗</b>
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+    <dialog class="report-modal" data-report-modal>
+      <form method="dialog" class="modal-card">
+        <button class="modal-close" aria-label="Cerrar" value="cancel">
+          ×
+        </button>
+        <p class="eyebrow">CUIDEMOS LA COMUNIDAD</p>
+        <h2>Reportar publicación</h2>
+        <p>Cuéntanos por qué esta publicación requiere revisión.</p>
+        <label for="report-reason">Motivo</label
+        ><select id="report-reason">
+          <option>Información incorrecta</option>
+          <option>Contenido inapropiado</option>
+          <option>Posible fraude</option>
+          <option>Otro motivo</option></select
+        ><label for="report-detail">Detalle opcional</label
+        ><textarea
+          id="report-detail"
+          rows="3"
+          placeholder="Agrega contexto para revisar el caso..."
+        ></textarea
+        ><button class="button button-full" type="submit">
+          Enviar reporte <span>↗</span>
+        </button>
+        <p class="form-notice" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>
