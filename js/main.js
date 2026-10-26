@@ -1,5 +1,72 @@
 // Interacciones visuales compartidas
 document.addEventListener("DOMContentLoaded", () => {
+  const collectionMapElement = document.querySelector("#collection-map");
+  let collectionMap;
+  const collectionMarkers = new Map();
+  if (collectionMapElement) {
+    const mapUnavailable = document.querySelector("[data-map-unavailable]");
+    if (!window.L) {
+      console.error("Leaflet no se cargó; se mostrarán indicaciones alternativas.");
+      if (mapUnavailable) mapUnavailable.hidden = false;
+    } else {
+      collectionMap = window.L
+        .map(collectionMapElement, { scrollWheelZoom: false })
+        .setView([-5.1945, -80.6328], 13);
+      window.L
+        .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
+        })
+        .addTo(collectionMap);
+
+      const markerIcon = window.L.divIcon({
+        className: "collection-div-icon",
+        html: '<span class="collection-marker" aria-hidden="true"></span>',
+        iconSize: [24, 32],
+        iconAnchor: [12, 29],
+        popupAnchor: [0, -27],
+      });
+
+      document
+        .querySelectorAll(".collection-card[data-lat][data-lng]")
+        .forEach((card) => {
+          const latitude = Number(card.dataset.lat);
+          const longitude = Number(card.dataset.lng);
+          const title = card.querySelector("h2")?.textContent.trim();
+          const schedule = card
+            .querySelector(".collection-detail span")
+            ?.textContent.trim();
+          if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            !title ||
+            !schedule
+          ) {
+            console.error("No se pudo crear el marcador del punto de acopio.", card);
+            return;
+          }
+
+          const popupContent = document.createElement("div");
+          const popupTitle = document.createElement("strong");
+          const popupSchedule = document.createElement("p");
+          popupTitle.textContent = title;
+          popupSchedule.textContent = `Horario: ${schedule}`;
+          popupContent.append(popupTitle, popupSchedule);
+
+          const marker = window.L
+            .marker([latitude, longitude], {
+              alt: title,
+              icon: markerIcon,
+              title,
+            })
+            .addTo(collectionMap)
+            .bindPopup(popupContent);
+          collectionMarkers.set(card, marker);
+        });
+    }
+  }
+
   const menuButton = document.querySelector(".menu-toggle");
   const mainNav = document.querySelector(".main-nav");
   menuButton?.addEventListener("click", () => {
@@ -210,8 +277,28 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   document.querySelectorAll("[data-directions]").forEach((link) =>
     link.addEventListener("click", (event) => {
+      const card = link.closest(".collection-card");
+      const marker = card && collectionMarkers.get(card);
+      if (!collectionMap || !collectionMapElement || !card || !marker) return;
+
       event.preventDefault();
-      showToast("Las direcciones de esta pantalla son referenciales.");
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const mapBounds = collectionMapElement.getBoundingClientRect();
+      if (mapBounds.bottom < 0 || mapBounds.top > window.innerHeight) {
+        collectionMapElement.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "center",
+        });
+      }
+
+      collectionMap.flyTo(
+        [Number(card.dataset.lat), Number(card.dataset.lng)],
+        16,
+        { animate: !prefersReducedMotion, duration: 1.2 },
+      );
+      marker.openPopup();
     }),
   );
 

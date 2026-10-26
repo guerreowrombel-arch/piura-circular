@@ -11,7 +11,19 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <link rel="stylesheet" href="css/styles.css" />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+      defer
+    ></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -78,27 +90,26 @@
         </div>
         <div class="collection-layout">
           <div class="map-panel">
-            <!-- REEMPLAZAR IMAGEN: mapa de Piura con ubicación de puntos de acopio --><img
-              src="assets/img/mapa-piura.jpg"
-              alt="Mapa de referencia de Piura con puntos de acopio marcados"
-              onerror="this.style.display = 'none'"
-            />
-            <div class="map-fallback">
-              <div class="map-grid-lines"></div>
-              <span class="map-label map-label-north">PIURA</span
-              ><span class="map-label map-label-east">CASTILLA</span
-              ><span class="map-label map-label-south">CATACAOS</span
-              ><i class="map-pin pin-one">⌖</i><i class="map-pin pin-two">⌖</i
-              ><i class="map-pin pin-three">⌖</i
-              ><span class="map-legend"><b>⌖</b> Puntos de recepción</span>
+            <div
+              id="collection-map"
+              role="region"
+              aria-label="Mapa interactivo de puntos de acopio en Piura"
+            ></div>
+            <div class="map-legend" aria-hidden="true">
+              <span></span>Puntos de recepción
             </div>
-            <div class="map-scale">MAPA REFERENCIAL · NO A ESCALA</div>
+            <p class="map-unavailable" data-map-unavailable hidden>
+              No se pudo cargar el mapa. Revisa tu conexión a internet o abre
+              las indicaciones desde cada punto.
+            </p>
           </div>
           <div class="collection-list" data-filter-list>
             <article
               class="collection-card reveal"
               data-district="Piura"
               data-waste="Computadoras Celulares Baterías"
+              data-lat="-5.1945"
+              data-lng="-80.6328"
             >
               <div class="collection-card-top">
                 <span class="collection-number">01</span
@@ -118,7 +129,10 @@
                   >Entregar equipos apagados y sin accesorios sueltos.</span
                 >
               </div>
-              <a class="text-link" href="#" data-directions
+              <a
+                class="text-link"
+                href="https://www.openstreetmap.org/?mlat=-5.1945&mlon=-80.6328#map=16/-5.1945/-80.6328"
+                data-directions
                 >Ver indicaciones <b>↗</b></a
               >
             </article>
@@ -126,6 +140,8 @@
               class="collection-card reveal"
               data-district="Castilla"
               data-waste="Celulares Baterías Electrodomésticos"
+              data-lat="-5.2002"
+              data-lng="-80.6236"
             >
               <div class="collection-card-top">
                 <span class="collection-number">02</span
@@ -144,7 +160,10 @@
                 <b>Requisitos</b
                 ><span>Confirmar la fecha de campaña antes de asistir.</span>
               </div>
-              <a class="text-link" href="#" data-directions
+              <a
+                class="text-link"
+                href="https://www.openstreetmap.org/?mlat=-5.2002&mlon=-80.6236#map=16/-5.2002/-80.6236"
+                data-directions
                 >Ver indicaciones <b>↗</b></a
               >
             </article>
@@ -152,6 +171,8 @@
               class="collection-card reveal"
               data-district="Veintiséis de Octubre"
               data-waste="Computadoras Electrodomésticos"
+              data-lat="-5.1800"
+              data-lng="-80.6644"
             >
               <div class="collection-card-top">
                 <span class="collection-number">03</span
@@ -174,7 +195,10 @@
                   >Se recomienda llevar DNI y asegurar piezas sueltas.</span
                 >
               </div>
-              <a class="text-link" href="#" data-directions
+              <a
+                class="text-link"
+                href="https://www.openstreetmap.org/?mlat=-5.1800&mlon=-80.6644#map=16/-5.1800/-80.6644"
+                data-directions
                 >Ver indicaciones <b>↗</b></a
               >
             </article>
