@@ -1,0 +1,104 @@
+CONTEXTO DEL PROYECTO: PIURA CIRCULAR
+=====================================
+
+Documento de traspaso para continuar el desarrollo del repositorio.
+Fecha de actualizacion: 26 de octubre de 2026
+
+REPOSITORIO Y ESTADO
+--------------------
+- Rama principal: main
+- Remoto: origin
+- Ultimo commit verificado: 18cffaf - Integrar puntos RAEE y filtros interactivos
+- Ese commit ya esta enviado a origin/main.
+- Para obtener los cambios mas recientes: git pull origin main
+
+CAMBIOS RECIENTES
+-----------------
+
+1. ac0d19a - Mostrar los seis integrantes en una fila
+   - En escritorio, la seccion del equipo usa seis columnas.
+   - En pantallas pequenas se conserva una distribucion responsive de dos
+     columnas.
+   - Archivo principal: css/styles.css
+
+2. 9f048d5 - Agregar imágenes y actualizar páginas del proyecto
+   - Se agregaron imagenes en assets/img y se conectaron con el contenido.
+   - Se actualizaron index.html, intercambio.html y proyecto.html.
+
+3. 3ffcc91 - Añadir mapa interactivo de puntos de acopio
+   - Se reemplazo el mapa estatico de puntos-acopio.html con un mapa Leaflet.
+   - El mapa usa OpenStreetMap como capa base.
+   - Se agregaron tres marcadores de ejemplo, popups y enlaces para centrar
+     el mapa en cada punto.
+   - Se mantuvo el diseno responsive del sitio.
+   - Archivos principales: puntos-acopio.html, js/main.js y css/styles.css.
+
+4. 18cffaf - Integrar puntos RAEE y filtros interactivos
+   - Se reemplazaron los puntos de ejemplo por datos importados del mapa
+     publico de Google My Maps:
+     https://www.google.com/maps/d/u/0/viewer?mid=1_sOZy77iW86unuPK9Ml-A6ddUvdgtG_m
+   - Se cargan 237 ubicaciones puntuales, distribuidas en 24 departamentos.
+   - Se incorporaron filtros por departamento y categoria RAEE, busqueda por
+     texto y boton para limpiar filtros.
+   - Los filtros actualizan al mismo tiempo las tarjetas y los marcadores.
+   - Los marcadores cercanos se agrupan con Leaflet.markercluster.
+   - Se muestran popups y tarjetas con ubicacion, horario, categorias y sistema
+     de gestion cuando esos datos estan disponibles.
+   - Se agrego un aviso para un registro de Piura cuya coordenada cae en Lima.
+   - Archivos principales: puntos-acopio.html, js/main.js, css/styles.css y
+     assets/data/raee-points.json.
+
+COMO ESTA ORGANIZADO EL MAPA DE RAEE
+-----------------------------------
+- puntos-acopio.html contiene los controles de filtro, el mapa y el contenedor
+  vacio de resultados. La pagina incluye Leaflet y Leaflet.markercluster
+  mediante CDN.
+- assets/data/raee-points.json contiene la copia local de los puntos. El
+  navegador la solicita desde js/main.js mediante fetch().
+- js/main.js carga y valida el JSON, crea las tarjetas y los marcadores,
+  rellena el filtro de departamentos y conecta los controles.
+- css/styles.css define el diseno de los controles, las tarjetas, los grupos de
+  marcadores y los ajustes responsive.
+- Para agregar o actualizar ubicaciones, editar/regenerar el JSON y conservar
+  las propiedades utilizadas por el JavaScript: name, address, district,
+  province, department, hours, categories, system, lat y lng.
+- categories es una lista de codigos numericos RAEE del 1 al 10.
+- El JSON omite telefono, correo, nombre de contacto y enlaces de anexos.
+
+IMPORTANTE SOBRE LA FUENTE DE DATOS
+-----------------------------------
+- La web utiliza una copia estatica; NO esta conectada en vivo a Google My Maps.
+  Los cambios hechos en el mapa de Google no apareceran automaticamente aqui.
+- La copia actual se consulto el 26 de octubre de 2026. La pagina tambien
+  indica esta fecha y recomienda confirmar horarios y recepcion antes de ir.
+- El mapa publico incluye poligonos de departamentos; para las tarjetas y pines
+  se usan las 237 ubicaciones puntuales.
+- Hay una inconsistencia conocida en el origen: "Tienda Entel" figura en
+  Piura, pero sus coordenadas apuntan a Lima. Se conserva el dato original y
+  se advierte al visitante; verificar con la entidad antes de cambiarlo.
+- Las coordenadas y los datos de horarios provienen de la fuente y pueden ser
+  inexactos o quedar desactualizados. No presentarlos como verificados.
+- Para que fetch("assets/data/raee-points.json") funcione, abrir el proyecto
+  mediante un servidor web (por ejemplo, Live Server), no como archivo file://.
+
+VALIDACIONES REALIZADAS
+-----------------------
+- node --check js/main.js
+- git diff --check
+- Se verifico el JSON: 237 puntos, tres registros cuyo departamento indicado
+  es Piura, coordenadas dentro de rangos validos y sin datos de contacto.
+- En navegador se verificaron los filtros, la busqueda, limpiar filtros,
+  el estado sin resultados, los popups, los pines agrupados y la vista movil.
+- La ficha de Entel en Piura se cotejo con las coordenadas del KML y se marco
+  como inconsistencia de origen.
+
+PARA CONTINUAR
+--------------
+1. Ejecutar git pull origin main antes de empezar.
+2. Probar la pagina desde un servidor local, por ejemplo con Live Server.
+3. Si se actualizan puntos, conservar la estructura JSON y revisar ubicaciones
+   sospechosas antes de publicar.
+4. Tras realizar cambios, validar JavaScript y la experiencia responsive.
+
+Nota: el push a main normalmente activa el despliegue conectado en Vercel, pero
+el estado de un despliegue concreto debe confirmarse en el panel de Vercel.
