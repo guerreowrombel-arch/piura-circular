@@ -8,7 +8,8 @@ REPOSITORIO Y ESTADO
 --------------------
 - Rama principal: main
 - Remoto: origin
-- Ultimo commit verificado: 18cffaf - Integrar puntos RAEE y filtros interactivos
+- Ultimo commit verificado: 2d60b5f - Documentar contexto y cambios del proyecto
+- Ultimo commit funcional: 18cffaf - Integrar puntos RAEE y filtros interactivos
 - Ese commit ya esta enviado a origin/main.
 - Para obtener los cambios mas recientes: git pull origin main
 
