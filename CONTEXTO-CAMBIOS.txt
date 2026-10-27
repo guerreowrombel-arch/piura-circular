@@ -276,3 +276,33 @@ NOTIFICACIONES Y MENU DE PERFIL
   Incluye inicial, nombre, correo, enlace a Mensajería e insignias; actualiza el
   total cada 15 segundos cuando la pestaña está visible y se cierra al hacer
   clic fuera o pulsar Escape.
+
+BACKEND DEL PANEL INSTITUCIONAL
+-------------------------------
+- schema.sql añade usuarios.rol (ciudadano o entidad), entidades y
+  puntos_acopio, con las columnas, planes y valores por defecto solicitados.
+  Incluye migración IF NOT EXISTS de rol para usuarios existentes.
+- api/me.js incluye rol en el usuario de sesión y, para rol entidad, agrega
+  entidad.nombre y entidad.plan.
+- api/institucional.js exige sesión y rol entidad. GET devuelve solamente
+  totales agregados por condición, distrito y mes (seis meses); POST cambia
+  entre Básico e Institucional sin procesar pagos.
+- api/puntos.js publica los puntos activos junto al nombre de la entidad.
+  Crear, editar y desactivar requiere sesión de entidad y verifica propiedad
+  usando entidad_id. DELETE establece activo=false. El plan Básico limita a
+  tres puntos activos; Institucional no tiene ese tope.
+- Aplicar schema.sql en Neon antes de probar los nuevos endpoints. Los
+  endpoints usan DATABASE_URL y la sesión JWT ya configurada.
+
+PANEL INSTITUCIONAL
+-------------------
+- institucional.html verifica /api/me antes de mostrar el panel; sin sesión
+  redirige a login.html y las cuentas que no sean entidades vuelven a index.html.
+- El panel presenta los agregados de /api/institucional, gráficos por mes y
+  distrito, gestión de puntos en un mapa Leaflet de Piura, cambio simulado de
+  plan y descarga CSV local.
+- GET /api/puntos?propios=1 requiere sesión de entidad y devuelve todos los
+  puntos de esa entidad, incluidos los desactivados, para administrarlos. El
+  GET público sigue devolviendo solamente puntos activos.
+- puntos-acopio.html combina el catálogo local RAEE con puntos institucionales.
+  El menú de perfil agrega Panel institucional únicamente para rol entidad.

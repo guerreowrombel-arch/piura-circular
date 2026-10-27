@@ -3218,3 +3218,463 @@ p {
     align-self: flex-end;
   }
 }
+
+.profile-institutional-link {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  padding: 10px 0;
+  color: var(--petrol-dark);
+  border-top: 1px solid rgba(15, 82, 87, 0.12);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.profile-institutional-link:focus-visible {
+  outline: 3px solid rgba(226, 105, 78, 0.45);
+  outline-offset: 3px;
+}
+.institutional-access-status {
+  padding-block: 70px;
+  color: var(--muted);
+}
+.institutional-page {
+  padding-bottom: 90px;
+}
+.institutional-hero {
+  padding-top: 54px;
+}
+.institutional-hero h1 {
+  font-size: clamp(2.9rem, 6vw, 5rem);
+}
+.institutional-hero-actions {
+  margin-top: 24px;
+}
+.institutional-section {
+  margin-top: 64px;
+}
+.institutional-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.institutional-section-heading .eyebrow,
+.institutional-card > .eyebrow {
+  margin-bottom: 8px;
+}
+.institutional-section-heading h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.45rem);
+}
+.institutional-section-heading > p {
+  max-width: 320px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.institutional-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.institutional-stat-card {
+  display: grid;
+  min-height: 170px;
+  align-content: space-between;
+  padding: 20px;
+  background: #f5f0e5;
+  border: 1px solid rgba(15, 82, 87, 0.12);
+}
+.institutional-stat-card > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.institutional-stat-card strong {
+  color: var(--petrol);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+}
+.institutional-stat-card small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.institutional-stat-primary {
+  background: var(--petrol);
+  border-color: var(--petrol);
+}
+.institutional-stat-primary > span,
+.institutional-stat-primary small {
+  color: rgba(255, 252, 246, 0.78);
+}
+.institutional-stat-primary strong {
+  color: var(--warm-white);
+}
+.institutional-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+.institutional-card {
+  min-width: 0;
+  padding: clamp(18px, 3vw, 28px);
+  background: var(--warm-white);
+  border: 1px solid rgba(15, 82, 87, 0.15);
+  box-shadow: 0 10px 30px rgba(10, 58, 62, 0.045);
+}
+.institutional-card > h2 {
+  font-size: 1.45rem;
+}
+.institutional-chart {
+  display: grid;
+  gap: 13px;
+  max-height: 390px;
+  overflow: auto;
+  margin: 24px 0 0;
+  padding: 0 4px 0 0;
+  list-style: none;
+}
+.institutional-chart-row {
+  display: grid;
+  grid-template-columns: minmax(95px, 150px) minmax(35px, 1fr) 32px;
+  align-items: center;
+  gap: 10px;
+  min-height: 22px;
+}
+.institutional-chart-label {
+  overflow: hidden;
+  color: #475b5b;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.institutional-chart-track {
+  display: block;
+  height: 11px;
+  overflow: hidden;
+  background: #e9eee5;
+}
+.institutional-chart-bar {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  background: var(--coral);
+}
+.institutional-chart-row:nth-child(even) .institutional-chart-bar {
+  background: var(--petrol);
+}
+.institutional-chart-value {
+  color: var(--petrol-dark);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-align: right;
+}
+.institutional-chart-empty {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.institutional-plan-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.6fr) minmax(0, 1.4fr);
+  gap: 22px;
+  padding: clamp(20px, 3vw, 32px);
+  background: #f5f0e5;
+  border: 1px solid rgba(15, 82, 87, 0.15);
+}
+.institutional-plan-current {
+  align-self: start;
+  padding: 18px;
+  color: var(--warm-white);
+  background: var(--petrol);
+}
+.institutional-plan-kicker {
+  color: rgba(255, 252, 246, 0.72);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.institutional-plan-current h3 {
+  margin-top: 12px;
+  font-size: 1.8rem;
+}
+.institutional-plan-current p {
+  margin: 8px 0 0;
+  color: rgba(255, 252, 246, 0.78);
+  font-size: 0.79rem;
+}
+.institutional-plan-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.institutional-plan-option {
+  padding: 17px;
+  border: 1px solid rgba(15, 82, 87, 0.17);
+  background: var(--warm-white);
+}
+.institutional-plan-option[data-plan-active] {
+  outline: 2px solid var(--coral);
+  outline-offset: -2px;
+}
+.institutional-plan-option h3 {
+  margin-bottom: 12px;
+  color: var(--petrol);
+}
+.institutional-plan-option p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.institutional-plan-card > .button {
+  justify-self: start;
+}
+.institutional-points-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: 18px;
+}
+.institutional-point-form-card > h3,
+.institutional-table-heading h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.institutional-point-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+.institutional-point-form > label {
+  display: grid;
+  gap: 6px;
+  color: var(--petrol-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.institutional-point-form input:not([type="checkbox"]) {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid rgba(15, 82, 87, 0.2);
+  border-radius: 2px;
+}
+.institutional-point-form input:focus-visible {
+  outline: 3px solid rgba(213, 106, 74, 0.35);
+  outline-offset: 1px;
+}
+.institutional-categories {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.institutional-categories legend,
+.institutional-map-label {
+  margin-bottom: 8px;
+  color: var(--petrol-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.institutional-category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.institutional-category-option {
+  display: flex;
+  min-height: 40px;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px;
+  color: #475b5b;
+  background: #f5f0e5;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.institutional-category-option input {
+  flex: 0 0 auto;
+  margin: 2px 0 0;
+  accent-color: var(--petrol);
+}
+.institutional-map-field {
+  display: grid;
+  gap: 5px;
+}
+.institutional-map-label {
+  margin: 0;
+}
+.institutional-map-field > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+.institutional-point-map {
+  height: 300px;
+  margin-top: 6px;
+  background: #e9eee5;
+  border: 1px solid rgba(15, 82, 87, 0.15);
+}
+.institutional-point-map .leaflet-container {
+  font: inherit;
+}
+.institutional-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.institutional-form-actions .button {
+  min-height: 44px;
+  padding-inline: 16px;
+  font-size: 0.8rem;
+}
+.institutional-cancel-button,
+.institutional-table-action {
+  min-height: 38px;
+  padding: 7px 10px;
+  color: var(--petrol);
+  background: transparent;
+  border: 1px solid rgba(15, 82, 87, 0.22);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.institutional-cancel-button:hover,
+.institutional-table-action:hover {
+  background: #edf2eb;
+}
+.institutional-points-card {
+  padding: 0;
+}
+.institutional-table-heading {
+  padding: 22px 24px;
+}
+.institutional-table-heading .eyebrow {
+  margin-bottom: 5px;
+}
+.institutional-table-scroll {
+  overflow-x: auto;
+}
+.institutional-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.institutional-table th,
+.institutional-table td {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(15, 82, 87, 0.12);
+  font-size: 0.72rem;
+  vertical-align: middle;
+}
+.institutional-table th {
+  color: var(--muted);
+  background: #f5f0e5;
+  font-size: 0.66rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.institutional-table td {
+  min-width: 84px;
+}
+.institutional-table td:last-child {
+  min-width: 138px;
+  white-space: nowrap;
+}
+.institutional-table-action {
+  min-height: 32px;
+  margin: 2px;
+  padding: 5px 8px;
+}
+.institutional-empty-row {
+  color: var(--muted);
+  text-align: center;
+}
+.institutional-status {
+  position: sticky;
+  top: calc(var(--header-height) + 10px);
+  z-index: 4;
+  margin: 12px auto;
+  padding: 12px 16px;
+  color: var(--petrol-dark);
+  background: #eaf0dc;
+  border-left: 4px solid var(--petrol);
+  font-size: 0.84rem;
+}
+.institutional-status[data-state="error"] {
+  color: #742d27;
+  background: #f9e9e3;
+  border-left-color: var(--coral);
+}
+.institutional-status[hidden] {
+  display: none;
+}
+@media (max-width: 900px) {
+  .institutional-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .institutional-points-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .institutional-chart-grid {
+    grid-template-columns: 1fr;
+  }
+  .institutional-plan-card {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .institutional-page {
+    padding-bottom: 58px;
+  }
+  .institutional-hero {
+    padding-top: 34px;
+  }
+  .institutional-section {
+    margin-top: 44px;
+  }
+  .institutional-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .institutional-stat-card {
+    min-height: 145px;
+    padding: 14px;
+  }
+  .institutional-stat-card > span {
+    font-size: 0.72rem;
+  }
+  .institutional-stat-card small {
+    font-size: 0.68rem;
+  }
+  .institutional-plan-options {
+    grid-template-columns: 1fr;
+  }
+  .institutional-chart-row {
+    grid-template-columns: minmax(80px, 118px) minmax(30px, 1fr) 26px;
+    gap: 7px;
+  }
+  .institutional-chart-label {
+    font-size: 0.68rem;
+  }
+  .institutional-category-grid {
+    grid-template-columns: 1fr;
+  }
+  .institutional-point-map {
+    height: 260px;
+  }
+  .institutional-table-heading {
+    padding: 18px;
+  }
+  .institutional-status {
+    position: static;
+  }
+}

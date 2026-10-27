@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let collectionPoints = [];
   let userLocation;
   let pointDistances = new Map();
+  let collectionSourceWarning;
   const collectionMarkers = new Map();
   const collectionCardPoints = new WeakMap();
   const categoryNames = new Map([
@@ -262,6 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
       cards.append(createCollectionCard(point, index));
     });
     collectionList.replaceChildren(cards);
+    if (collectionSourceWarning) {
+      collectionList.prepend(collectionSourceWarning);
+    }
     if (collectionEmpty) collectionEmpty.hidden = matchingPoints.length > 0;
     if (collectionCount) {
       collectionCount.textContent = `${matchingPoints.length} ${
@@ -312,7 +316,57 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         throw new Error("El archivo de puntos tiene un formato no válido.");
       }
-      collectionPoints = points;
+      collectionPoints = [...points];
+      try {
+        const institutionalResponse = await fetch("/api/puntos", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const institutionalResult = await institutionalResponse
+          .json()
+          .catch(() => ({}));
+        if (!institutionalResponse.ok) {
+          throw new Error(
+            institutionalResult.error ||
+              `La solicitud de puntos institucionales respondió ${institutionalResponse.status}.`,
+          );
+        }
+        if (!Array.isArray(institutionalResult.puntos)) {
+          throw new Error("La respuesta de puntos institucionales no es válida.");
+        }
+        institutionalResult.puntos.forEach((point) => {
+          const lat = Number(point.lat);
+          const lng = Number(point.lng);
+          if (
+            !point.nombre ||
+            !Number.isFinite(lat) ||
+            !Number.isFinite(lng) ||
+            !Array.isArray(point.categorias)
+          ) {
+            throw new Error("Un punto institucional tiene datos no válidos.");
+          }
+          collectionPoints.push({
+            name: String(point.nombre),
+            address: String(point.direccion || ""),
+            district: String(point.distrito || ""),
+            province: "Piura",
+            department: "Piura",
+            hours: String(point.horario || ""),
+            categories: point.categorias,
+            system: point.entidadNombre
+              ? `Punto de ${point.entidadNombre}`
+              : "Punto institucional",
+            lat,
+            lng,
+          });
+        });
+      } catch (error) {
+        console.error("No se pudieron cargar los puntos institucionales.", error);
+        collectionSourceWarning = document.createElement("p");
+        collectionSourceWarning.className = "collection-data-warning";
+        collectionSourceWarning.textContent =
+          "No se pudieron cargar los puntos de entidades. Se muestra el catálogo general.";
+      }
       updatePointDistances();
 
       const departments = new Map();
@@ -632,6 +686,494 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  const institutionalPage = document.querySelector("[data-institutional-page]");
+  if (institutionalPage) {
+    const accessStatus = document.querySelector(
+      "[data-institutional-access-status]",
+    );
+    const pageStatus = institutionalPage.querySelector(
+      "[data-institutional-status]",
+    );
+    const pointForm = institutionalPage.querySelector("[data-point-form]");
+    const pointTable = institutionalPage.querySelector(
+      "[data-owned-points-body]",
+    );
+    const planButton = institutionalPage.querySelector("[data-change-plan]");
+    const reportButton = institutionalPage.querySelector(
+      "[data-download-report]",
+    );
+    const mapElement = institutionalPage.querySelector(
+      "#institutional-point-map",
+    );
+    const latitudeInput = pointForm?.elements.namedItem("lat");
+    const longitudeInput = pointForm?.elements.namedItem("lng");
+    const coordinateStatus = institutionalPage.querySelector(
+      "[data-point-coordinates]",
+    );
+    let institutionalStats;
+    let institutionalEntity;
+    let currentPlan;
+    let selectedPointMarker;
+    let pointMap;
+
+    const setInstitutionalStatus = (message, isError = false) => {
+      if (!pageStatus) return;
+      pageStatus.textContent = message;
+      pageStatus.dataset.state = isError ? "error" : "success";
+      pageStatus.hidden = !message;
+    };
+    const readInstitutionalResponse = async (response) => {
+      const result = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        window.location.assign("login.html");
+        throw new Error("Redirigiendo al inicio de sesión.");
+      }
+      if (!response.ok) {
+        throw new Error(result.error || "No se pudo completar la solicitud.");
+      }
+      return result;
+    };
+    const renderBarChart = (container, entries, emptyLabel) => {
+      if (!container) return;
+      const validEntries = Array.isArray(entries)
+        ? entries.map((entry) => ({
+            label: String(entry.mes ?? entry.distrito ?? "Sin especificar"),
+            total: Math.max(0, Number(entry.total) || 0),
+          }))
+        : [];
+      if (!validEntries.length) {
+        const empty = document.createElement("li");
+        empty.className = "institutional-chart-empty";
+        empty.textContent = emptyLabel;
+        container.replaceChildren(empty);
+        return;
+      }
+      const maximum = Math.max(1, ...validEntries.map((entry) => entry.total));
+      const rows = document.createDocumentFragment();
+      validEntries.forEach(({ label, total }) => {
+        const row = document.createElement("li");
+        const name = document.createElement("span");
+        const track = document.createElement("span");
+        const bar = document.createElement("span");
+        const value = document.createElement("span");
+        row.className = "institutional-chart-row";
+        name.className = "institutional-chart-label";
+        name.textContent = label;
+        track.className = "institutional-chart-track";
+        bar.className = "institutional-chart-bar";
+        bar.style.width = `${(total / maximum) * 100}%`;
+        track.append(bar);
+        value.className = "institutional-chart-value";
+        value.textContent = String(total);
+        value.setAttribute("aria-label", `${total} publicaciones`);
+        row.append(name, track, value);
+        rows.append(row);
+      });
+      container.replaceChildren(rows);
+    };
+    const renderPlan = (entity) => {
+      if (!entity) return;
+      institutionalEntity = entity;
+      currentPlan = entity.plan === "Institucional" ? "Institucional" : "Básico";
+      const name = institutionalPage.querySelector("[data-current-plan]");
+      const description = institutionalPage.querySelector(
+        "[data-current-plan-description]",
+      );
+      const basicOption = institutionalPage.querySelector(
+        '[data-plan-option="Básico"]',
+      );
+      const institutionalOption = institutionalPage.querySelector(
+        '[data-plan-option="Institucional"]',
+      );
+      if (name) name.textContent = currentPlan;
+      if (description) {
+        description.textContent = `Plan de ${entity.nombre || "la entidad"} activo.`;
+      }
+      basicOption?.toggleAttribute("data-plan-active", currentPlan === "Básico");
+      institutionalOption?.toggleAttribute(
+        "data-plan-active",
+        currentPlan === "Institucional",
+      );
+    };
+    const renderInstitutionalStats = (data) => {
+      institutionalStats = data;
+      const totals = data.publicaciones || {};
+      [
+        ["total", totals.total],
+        ["operativo", totals.operativo],
+        ["reparacion", totals.requiereReparacion],
+        ["acopio", totals.derivadasAcopio],
+      ].forEach(([key, value]) => {
+        const node = institutionalPage.querySelector(`[data-stat="${key}"]`);
+        if (node) node.textContent = String(Math.max(0, Number(value) || 0));
+      });
+      renderBarChart(
+        institutionalPage.querySelector("[data-chart-months]"),
+        data.porMes,
+        "Aún no hay datos mensuales.",
+      );
+      renderBarChart(
+        institutionalPage.querySelector("[data-chart-districts]"),
+        data.porDistrito,
+        "Aún no hay datos por distrito.",
+      );
+      renderPlan(data.entidad || institutionalEntity);
+    };
+    const showCoordinates = (lat, lng) => {
+      if (latitudeInput) latitudeInput.value = String(lat);
+      if (longitudeInput) longitudeInput.value = String(lng);
+      if (coordinateStatus) {
+        coordinateStatus.textContent = `Coordenadas seleccionadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      }
+      if (!window.L || !pointMap) return;
+      if (selectedPointMarker) selectedPointMarker.setLatLng([lat, lng]);
+      else selectedPointMarker = window.L.marker([lat, lng]).addTo(pointMap);
+    };
+    const resetPointForm = () => {
+      pointForm?.reset();
+      if (latitudeInput) latitudeInput.value = "";
+      if (longitudeInput) longitudeInput.value = "";
+      if (selectedPointMarker && pointMap) {
+        pointMap.removeLayer(selectedPointMarker);
+        selectedPointMarker = null;
+      }
+      if (coordinateStatus) {
+        coordinateStatus.textContent =
+          "Haz clic en el mapa para seleccionar las coordenadas.";
+      }
+      const pointId = pointForm?.elements.namedItem("id");
+      if (pointId) pointId.value = "";
+      const submit = pointForm?.querySelector('[type="submit"]');
+      if (submit) submit.textContent = "Agregar punto";
+    };
+    const renderOwnedPoints = (points) => {
+      if (!pointTable) return;
+      const rows = document.createDocumentFragment();
+      if (!points.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.className = "institutional-empty-row";
+        cell.textContent = "Todavía no has agregado puntos de acopio.";
+        row.append(cell);
+        rows.append(row);
+      }
+      points.forEach((point) => {
+        const row = document.createElement("tr");
+        [
+          point.nombre,
+          point.direccion,
+          point.distrito,
+          point.horario || "No informado",
+          point.activo ? "Activo" : "Inactivo",
+        ].forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = String(value ?? "—");
+          row.append(cell);
+        });
+        const actions = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "institutional-table-action";
+        editButton.textContent = "Editar";
+        editButton.addEventListener("click", () => {
+          pointForm.elements.namedItem("id").value = String(point.id);
+          pointForm.elements.namedItem("nombre").value = point.nombre;
+          pointForm.elements.namedItem("direccion").value = point.direccion;
+          pointForm.elements.namedItem("distrito").value = point.distrito;
+          pointForm.elements.namedItem("horario").value = point.horario || "";
+          pointForm
+            .querySelectorAll('input[name="categorias"]')
+            .forEach((input) => {
+              input.checked = point.categorias.includes(Number(input.value));
+            });
+          showCoordinates(Number(point.lat), Number(point.lng));
+          const submit = pointForm.querySelector('[type="submit"]');
+          if (submit) submit.textContent = "Guardar cambios";
+          setInstitutionalStatus(`Editando: ${point.nombre}`);
+          pointForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        actions.append(editButton);
+        const stateButton = document.createElement("button");
+        stateButton.type = "button";
+        stateButton.className = "institutional-table-action";
+        stateButton.textContent = point.activo ? "Desactivar" : "Reactivar";
+        stateButton.addEventListener("click", async () => {
+          stateButton.disabled = true;
+          try {
+            if (point.activo) {
+              const response = await fetch(
+                `/api/puntos?id=${encodeURIComponent(point.id)}`,
+                { method: "DELETE", credentials: "same-origin" },
+              );
+              await readInstitutionalResponse(response);
+            } else {
+              const response = await fetch("/api/puntos", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({ ...point, activo: true }),
+              });
+              await readInstitutionalResponse(response);
+            }
+            await loadOwnedPoints();
+            setInstitutionalStatus(
+              point.activo ? "Punto desactivado." : "Punto reactivado.",
+            );
+          } catch (error) {
+            setInstitutionalStatus(
+              error instanceof Error
+                ? error.message
+                : "No se pudo actualizar el punto.",
+              true,
+            );
+          } finally {
+            stateButton.disabled = false;
+          }
+        });
+        actions.append(stateButton);
+        row.append(actions);
+        rows.append(row);
+      });
+      pointTable.replaceChildren(rows);
+    };
+    const loadOwnedPoints = async () => {
+      const response = await fetch("/api/puntos?propios=1", {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const data = await readInstitutionalResponse(response);
+      if (!Array.isArray(data.puntos)) {
+        throw new Error("La lista de puntos recibida no tiene un formato válido.");
+      }
+      renderOwnedPoints(data.puntos);
+    };
+    const downloadReport = () => {
+      if (!institutionalStats) {
+        setInstitutionalStatus(
+          "Los datos del reporte aún no están disponibles.",
+          true,
+        );
+        return;
+      }
+      const rows = [
+        ["Sección", "Indicador", "Publicaciones"],
+        ["Resumen", "Total", institutionalStats.publicaciones?.total ?? 0],
+        ["Resumen", "Operativo", institutionalStats.publicaciones?.operativo ?? 0],
+        [
+          "Resumen",
+          "Requiere reparación",
+          institutionalStats.publicaciones?.requiereReparacion ?? 0,
+        ],
+        [
+          "Resumen",
+          "Derivadas a acopio",
+          institutionalStats.publicaciones?.derivadasAcopio ?? 0,
+        ],
+        ...(institutionalStats.porMes || []).map((entry) => [
+          "Mes",
+          entry.mes,
+          entry.total,
+        ]),
+        ...(institutionalStats.porDistrito || []).map((entry) => [
+          "Distrito",
+          entry.distrito,
+          entry.total,
+        ]),
+      ];
+      const csvCell = (value) => {
+        let text = String(value ?? "");
+        if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+        return `"${text.replaceAll('"', '""')}"`;
+      };
+      const csv = `\uFEFF${rows.map((row) => row.map(csvCell).join(";")).join("\r\n")}`;
+      const url = URL.createObjectURL(
+        new Blob([csv], { type: "text/csv;charset=utf-8" }),
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "reporte-institucional-piura-circular.csv";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    categoryNames.forEach((name, category) => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      const text = document.createElement("span");
+      label.className = "institutional-category-option";
+      checkbox.type = "checkbox";
+      checkbox.name = "categorias";
+      checkbox.value = String(category);
+      text.textContent = name;
+      label.append(checkbox, text);
+      institutionalPage
+        .querySelector("[data-point-categories]")
+        ?.append(label);
+    });
+    reportButton?.addEventListener("click", downloadReport);
+    planButton?.addEventListener("click", async () => {
+      if (!currentPlan) return;
+      const plan = currentPlan === "Básico" ? "Institucional" : "Básico";
+      planButton.disabled = true;
+      setInstitutionalStatus("Actualizando el plan…");
+      try {
+        const response = await fetch("/api/institucional", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ plan }),
+        });
+        const result = await readInstitutionalResponse(response);
+        renderPlan(result.entidad);
+        setInstitutionalStatus(`Plan actualizado a ${result.entidad.plan}.`);
+        await loadOwnedPoints();
+      } catch (error) {
+        setInstitutionalStatus(
+          error instanceof Error ? error.message : "No se pudo cambiar el plan.",
+          true,
+        );
+      } finally {
+        planButton.disabled = false;
+      }
+    });
+    pointForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(pointForm);
+      const pointId = String(formData.get("id") || "");
+      const lat = Number(formData.get("lat"));
+      const lng = Number(formData.get("lng"));
+      if (!formData.get("lat") || !formData.get("lng")) {
+        setInstitutionalStatus(
+          "Selecciona la ubicación del punto en el mapa.",
+          true,
+        );
+        return;
+      }
+      const payload = {
+        nombre: String(formData.get("nombre") || "").trim(),
+        direccion: String(formData.get("direccion") || "").trim(),
+        distrito: String(formData.get("distrito") || "").trim(),
+        horario: String(formData.get("horario") || "").trim(),
+        categorias: formData
+          .getAll("categorias")
+          .map((category) => Number(category)),
+        lat,
+        lng,
+      };
+      const submit = pointForm.querySelector('[type="submit"]');
+      if (submit) submit.disabled = true;
+      setInstitutionalStatus(
+        pointId ? "Guardando cambios…" : "Agregando punto…",
+      );
+      try {
+        const response = await fetch("/api/puntos", {
+          method: pointId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify(pointId ? { ...payload, id: pointId } : payload),
+        });
+        await readInstitutionalResponse(response);
+        resetPointForm();
+        await loadOwnedPoints();
+        setInstitutionalStatus(
+          pointId ? "Cambios guardados." : "Punto agregado.",
+        );
+      } catch (error) {
+        setInstitutionalStatus(
+          error instanceof Error ? error.message : "No se pudo guardar el punto.",
+          true,
+        );
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+    institutionalPage
+      .querySelector("[data-reset-point-form]")
+      ?.addEventListener("click", resetPointForm);
+
+    const initializeInstitutionalPage = async () => {
+      try {
+        const sessionResponse = await fetch("/api/me", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const session = await sessionResponse.json().catch(() => ({}));
+        if (!sessionResponse.ok) {
+          throw new Error(session.error || "No se pudo comprobar la sesión.");
+        }
+        if (!session.user) {
+          window.location.assign("login.html");
+          return;
+        }
+        if (session.user.rol !== "entidad" || !session.user.entidad) {
+          window.location.assign("index.html");
+          return;
+        }
+        institutionalEntity = session.user.entidad;
+        renderPlan(institutionalEntity);
+        if (accessStatus) accessStatus.hidden = true;
+        institutionalPage.hidden = false;
+        if (window.L && mapElement) {
+          pointMap = window.L
+            .map(mapElement, { scrollWheelZoom: false })
+            .setView([-5.19, -80.63], 12);
+          window.L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+              attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19,
+            },
+          ).addTo(pointMap);
+          pointMap.on("click", (event) => {
+            showCoordinates(event.latlng.lat, event.latlng.lng);
+          });
+        } else if (mapElement) {
+          mapElement.textContent = "No se pudo cargar el mapa de selección.";
+        }
+        const [statsResult, pointsResult] = await Promise.allSettled([
+          fetch("/api/institucional", {
+            credentials: "same-origin",
+            cache: "no-store",
+          })
+            .then(readInstitutionalResponse)
+            .then(renderInstitutionalStats),
+          loadOwnedPoints(),
+        ]);
+        if (statsResult.status === "rejected") {
+          setInstitutionalStatus(
+            statsResult.reason instanceof Error
+              ? statsResult.reason.message
+              : "No se pudieron cargar los datos agregados.",
+            true,
+          );
+        } else if (pointsResult.status === "rejected") {
+          setInstitutionalStatus(
+            pointsResult.reason instanceof Error
+              ? pointsResult.reason.message
+              : "No se pudieron cargar tus puntos de acopio.",
+            true,
+          );
+        } else {
+          setInstitutionalStatus("");
+        }
+      } catch (error) {
+        console.error("No se pudo inicializar el panel institucional.", error);
+        if (accessStatus) {
+          accessStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudo verificar el acceso al panel.";
+          accessStatus.hidden = false;
+        }
+      }
+    };
+    void initializeInstitutionalPage();
+  }
+
   const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
   let refreshUnreadNotifications = () => {};
   if (authenticatedNavigation.length) {
@@ -662,6 +1204,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const messagesLink = document.createElement("a");
           const messagesLabel = document.createElement("span");
           const messagesBadge = document.createElement("span");
+          const institutionalLink = document.createElement("a");
           const logoutButton = document.createElement("button");
           const panelId = `profile-menu-panel-${index + 1}`;
 
@@ -700,6 +1243,12 @@ document.addEventListener("DOMContentLoaded", () => {
           messagesBadge.setAttribute("aria-hidden", "true");
           messagesLink.append(messagesLabel, messagesBadge);
           badgeNodes.push(profileBadge, messagesBadge);
+          if (user.rol === "entidad") {
+            institutionalLink.className = "profile-institutional-link";
+            institutionalLink.href = "institucional.html";
+            institutionalLink.textContent = "Panel institucional";
+            panel.append(institutionalLink);
+          }
 
           logoutButton.type = "button";
           logoutButton.className = "profile-logout";

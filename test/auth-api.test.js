@@ -9,6 +9,8 @@ import currentUser from "../api/me.js";
 import publications from "../api/publicaciones.js";
 import conversations from "../api/conversaciones.js";
 import messages from "../api/mensajes.js";
+import institutional, { isValidPlan } from "../api/institucional.js";
+import points, { validatePoint } from "../api/puntos.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,
@@ -161,6 +163,86 @@ test("message summary endpoint also requires a session", async () => {
   });
 
   assert.equal(response.statusCode, 401);
+});
+
+test("institutional and point-management mutations require a session", async () => {
+  const institutionalResponse = await call(institutional, {
+    method: "GET",
+  });
+  const pointResponse = await call(points, {
+    method: "POST",
+    body: {},
+  });
+
+  assert.equal(institutionalResponse.statusCode, 401);
+  assert.equal(pointResponse.statusCode, 401);
+});
+
+test("the private point list requires an entity session", async () => {
+  const response = await call(points, {
+    url: "/api/puntos?propios=1",
+  });
+
+  assert.equal(response.statusCode, 401);
+});
+
+test("institutional APIs reject unsupported methods", async () => {
+  const institutionalResponse = await call(institutional, {
+    method: "DELETE",
+  });
+  const pointsResponse = await call(points, {
+    method: "PATCH",
+  });
+
+  assert.equal(institutionalResponse.statusCode, 405);
+  assert.equal(institutionalResponse.headers.allow, "GET, POST");
+  assert.equal(pointsResponse.statusCode, 405);
+  assert.equal(pointsResponse.headers.allow, "GET, POST, PUT, DELETE");
+});
+
+test("institutional plans and point fields are validated", () => {
+  assert.equal(isValidPlan("Básico"), true);
+  assert.equal(isValidPlan("Institucional"), true);
+  assert.equal(isValidPlan("Premium"), false);
+
+  const validPoint = {
+    nombre: "Punto",
+    direccion: "Av. Principal 100",
+    distrito: "Piura",
+    categorias: [1, 10],
+    lat: -5.2,
+    lng: -80.6,
+  };
+  assert.equal(validatePoint(validPoint).error, undefined);
+  assert.match(validatePoint({ ...validPoint, lat: -20 }).error, /latitud/i);
+  assert.match(
+    validatePoint({ ...validPoint, lng: -82 }).error,
+    /longitud/i,
+  );
+  assert.match(
+    validatePoint({ ...validPoint, categorias: [1, 11] }).error,
+    /enteros del 1 al 10/i,
+  );
+  assert.match(
+    validatePoint({ ...validPoint, nombre: "x".repeat(151) }).error,
+    /máximo 150 caracteres/i,
+  );
+  assert.match(
+    validatePoint({ ...validPoint, horario: "x".repeat(151) }).error,
+    /horario/i,
+  );
+});
+
+test("invalid point IDs are rejected before database access", async () => {
+  const token = createSessionToken("42");
+  const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+  const invalidPointId = await call(points, {
+    method: "DELETE",
+    headers,
+    url: "/api/puntos?id=abc",
+  });
+
+  assert.equal(invalidPointId.statusCode, 400);
 });
 
 test("publications reject non-object JSON bodies", async () => {
@@ -488,6 +570,66 @@ test("messaging schema, API routes, and interface use the required contracts", a
   assert.match(page, /aria-keyshortcuts="Enter"/);
   assert.match(exchangePage, /data-example-publication/);
   assert.match(exchangePage, /data-contact=/);
+});
+
+test("institutional backend schema, roles, aggregates, and ownership checks are wired", async () => {
+  const [schema, meApi, institutionalApi, pointsApi] = await Promise.all(
+    ["schema.sql", "api/me.js", "api/institucional.js", "api/puntos.js"].map(
+      (file) => readFile(new URL(file, rootDirectory), "utf8"),
+    ),
+  );
+
+  assert.match(schema, /rol TEXT NOT NULL DEFAULT 'ciudadano'/);
+  assert.match(schema, /CHECK \(rol IN \('ciudadano', 'entidad'\)\)/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS entidades/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS puntos_acopio/);
+  assert.match(schema, /plan TEXT NOT NULL DEFAULT 'Básico'/);
+  assert.match(schema, /categorias JSONB NOT NULL/);
+  assert.match(meApi, /SELECT id, nombre, apellidos, distrito, email, rol/);
+  assert.match(meApi, /user\.rol === "entidad"/);
+  assert.match(meApi, /entidad: entity/);
+
+  assert.match(institutionalApi, /entity\.rol !== "entidad"/);
+  assert.match(institutionalApi, /COUNT\(\*\).*AS total/s);
+  assert.match(institutionalApi, /GROUP BY u\.distrito/);
+  assert.match(institutionalApi, /generate_series/);
+  assert.match(institutionalApi, /SET plan = \$\{data\.plan\}/);
+  assert.doesNotMatch(institutionalApi, /u\.email|u\.nombre|u\.apellidos/);
+
+  assert.match(pointsApi, /WHERE p\.activo = TRUE/);
+  assert.match(pointsApi, /e\.nombre AS "entidadNombre"/);
+  assert.match(pointsApi, /entity\.rol !== "entidad"/);
+  assert.match(pointsApi, /AND entidad_id = \$\{entity\.entityId\}/);
+  assert.match(pointsApi, /Tu plan Básico permite hasta 3 puntos\. Cambia al plan Institucional\./);
+  assert.match(pointsApi, /SET activo = FALSE/);
+  assert.match(pointsApi, /categories\.some/);
+  assert.doesNotMatch(pointsApi, /DELETE FROM puntos_acopio/);
+});
+
+test("institutional dashboard is gated and wired to aggregate and point APIs", async () => {
+  const [page, main, pointsApi] = await Promise.all(
+    ["institucional.html", "js/main.js", "api/puntos.js"].map((file) =>
+      readFile(new URL(file, rootDirectory), "utf8"),
+    ),
+  );
+
+  assert.match(page, /data-institutional-page hidden/);
+  assert.match(page, /data-chart-months/);
+  assert.match(page, /data-chart-districts/);
+  assert.match(page, /data-point-form/);
+  assert.match(page, /institutional-point-map/);
+  assert.match(page, /data-download-report/);
+  assert.match(main, /session\.user\.rol !== "entidad"/);
+  assert.match(main, /window\.location\.assign\("login\.html"\)/);
+  assert.match(main, /window\.location\.assign\("index\.html"\)/);
+  assert.match(main, /fetch\("\/api\/puntos\?propios=1"/);
+  assert.match(main, /fetch\("\/api\/institucional"/);
+  assert.match(main, /institutionalLink\.textContent = "Panel institucional"/);
+  assert.match(main, /categoryNames\.forEach/);
+  assert.match(main, /data\.porDistrito/);
+  assert.match(main, /institutionalStats\.porMes/);
+  assert.match(pointsApi, /p\.entidad_id = \$\{entity\.entityId\}/);
+  assert.doesNotMatch(main, /innerHTML/);
 });
 
 test("login and registration forms no longer use the demonstration handler", async () => {

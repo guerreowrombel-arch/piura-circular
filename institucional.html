@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Panel institucional | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+      defer
+    ></script>
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark" aria-hidden="true">↻</span
+        ><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a>
+        <div class="nav-actions" data-auth-nav>
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main>
+      <p class="wrap institutional-access-status" data-institutional-access-status role="status">
+        Verificando acceso al panel…
+      </p>
+      <div class="institutional-page wrap" data-institutional-page hidden>
+        <section class="page-hero page-hero-compact institutional-hero">
+          <p class="eyebrow">
+            <span class="eyebrow-dot"></span> GESTIÓN INSTITUCIONAL / PIURA
+          </p>
+          <h1>Tu impacto,<br /><em>en perspectiva.</em></h1>
+          <p>
+            Consulta el movimiento de los equipos publicados y administra los
+            puntos de acopio de tu entidad.
+          </p>
+          <div class="institutional-hero-actions">
+            <button class="button" type="button" data-download-report>
+              Descargar reporte <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+        </section>
+
+        <p
+          class="institutional-status"
+          data-institutional-status
+          role="status"
+          aria-live="polite"
+          hidden
+        ></p>
+
+        <section class="institutional-section" aria-labelledby="institutional-summary-title">
+          <div class="institutional-section-heading">
+            <div>
+              <p class="eyebrow">PUBLICACIONES DE LA COMUNIDAD</p>
+              <h2 id="institutional-summary-title">Actividad registrada</h2>
+            </div>
+            <p>Datos agregados y anónimos de Piura Circular.</p>
+          </div>
+          <div class="institutional-stat-grid">
+            <article class="institutional-stat-card institutional-stat-primary">
+              <span>Total de publicaciones</span>
+              <strong data-stat="total">0</strong>
+              <small>Equipos compartidos</small>
+            </article>
+            <article class="institutional-stat-card">
+              <span>Operativo</span>
+              <strong data-stat="operativo">0</strong>
+              <small>Listos para otra vida</small>
+            </article>
+            <article class="institutional-stat-card">
+              <span>Requiere reparación</span>
+              <strong data-stat="reparacion">0</strong>
+              <small>Con opción de recuperación</small>
+            </article>
+            <article class="institutional-stat-card">
+              <span>Derivadas a acopio</span>
+              <strong data-stat="acopio">0</strong>
+              <small>No reutilizables</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="institutional-chart-grid" aria-label="Publicaciones por periodo y distrito">
+          <article class="institutional-card">
+            <p class="eyebrow">TENDENCIA / ÚLTIMOS SEIS MESES</p>
+            <h2>Publicaciones por mes</h2>
+            <ol class="institutional-chart" data-chart-months></ol>
+          </article>
+          <article class="institutional-card">
+            <p class="eyebrow">DISTRIBUCIÓN / ORIGEN</p>
+            <h2>Publicaciones por distrito</h2>
+            <ol
+              class="institutional-chart institutional-chart-districts"
+              data-chart-districts
+            ></ol>
+          </article>
+        </section>
+
+        <section class="institutional-section" aria-labelledby="institutional-plan-title">
+          <div class="institutional-section-heading">
+            <div>
+              <p class="eyebrow">CAPACIDAD DE GESTIÓN</p>
+              <h2 id="institutional-plan-title">Plan de la entidad</h2>
+            </div>
+          </div>
+          <article class="institutional-plan-card">
+            <div class="institutional-plan-current">
+              <span class="institutional-plan-kicker">PLAN ACTUAL</span>
+              <h3 data-current-plan>Básico</h3>
+              <p data-current-plan-description></p>
+            </div>
+            <div class="institutional-plan-options">
+              <div class="institutional-plan-option" data-plan-option="Básico">
+                <h3>Básico</h3>
+                <p>Hasta 3 puntos de acopio activos.</p>
+                <p>Panel de impacto y reporte CSV.</p>
+              </div>
+              <div
+                class="institutional-plan-option"
+                data-plan-option="Institucional"
+              >
+                <h3>Institucional</h3>
+                <p>Puntos de acopio activos sin límite.</p>
+                <p>Panel de impacto y reporte CSV.</p>
+              </div>
+            </div>
+            <button class="button button-outline" type="button" data-change-plan>
+              Cambiar de plan (simulado)
+            </button>
+          </article>
+        </section>
+
+        <section class="institutional-section" aria-labelledby="institutional-points-title">
+          <div class="institutional-section-heading">
+            <div>
+              <p class="eyebrow">RED DE RECEPCIÓN</p>
+              <h2 id="institutional-points-title">Mis puntos de acopio</h2>
+            </div>
+            <p>Ubica cada punto haciendo clic en el mapa de Piura.</p>
+          </div>
+          <div class="institutional-points-layout">
+            <article class="institutional-card institutional-point-form-card">
+              <h3>Agregar o editar un punto</h3>
+              <form class="institutional-point-form" data-point-form>
+                <input type="hidden" name="id" />
+                <label>
+                  Nombre
+                  <input name="nombre" type="text" maxlength="150" required />
+                </label>
+                <label>
+                  Dirección
+                  <input name="direccion" type="text" maxlength="150" required />
+                </label>
+                <label>
+                  Distrito
+                  <input name="distrito" type="text" maxlength="150" required />
+                </label>
+                <label>
+                  Horario
+                  <input name="horario" type="text" maxlength="150" />
+                </label>
+                <fieldset class="institutional-categories">
+                  <legend>Tipos de RAEE que recibe</legend>
+                  <div class="institutional-category-grid" data-point-categories></div>
+                </fieldset>
+                <div class="institutional-map-field">
+                  <span class="institutional-map-label">Ubicación en el mapa</span>
+                  <p data-point-coordinates>
+                    Haz clic en el mapa para seleccionar las coordenadas.
+                  </p>
+                  <input type="hidden" name="lat" />
+                  <input type="hidden" name="lng" />
+                  <div
+                    class="institutional-point-map"
+                    id="institutional-point-map"
+                    role="region"
+                    aria-label="Mapa para seleccionar la ubicación del punto de acopio"
+                  ></div>
+                </div>
+                <div class="institutional-form-actions">
+                  <button class="button" type="submit">Agregar punto</button>
+                  <button
+                    class="institutional-cancel-button"
+                    type="button"
+                    data-reset-point-form
+                  >
+                    Limpiar formulario
+                  </button>
+                </div>
+              </form>
+            </article>
+            <article class="institutional-card institutional-points-card">
+              <div class="institutional-table-heading">
+                <div>
+                  <p class="eyebrow">PUNTOS REGISTRADOS</p>
+                  <h3>Tu red activa</h3>
+                </div>
+              </div>
+              <div class="institutional-table-scroll">
+                <table class="institutional-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Dirección</th>
+                      <th scope="col">Distrito</th>
+                      <th scope="col">Horario</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody data-owned-points-body>
+                    <tr>
+                      <td colspan="6">Cargando tus puntos…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark" aria-hidden="true">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b aria-hidden="true">↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>

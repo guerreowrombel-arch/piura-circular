@@ -38,7 +38,7 @@ export default async function currentUser(request, response) {
   try {
     const sql = getDatabase();
     const [user] = await sql`
-      SELECT id, nombre, apellidos, distrito, email
+      SELECT id, nombre, apellidos, distrito, email, rol
       FROM usuarios
       WHERE id = ${userId}
       LIMIT 1
@@ -48,7 +48,26 @@ export default async function currentUser(request, response) {
       sendJson(response, 200, { user: null });
       return;
     }
-    sendJson(response, 200, { user: { ...user, id: String(user.id) } });
+    let entity = null;
+    if (user.rol === "entidad") {
+      const [entityRecord] = await sql`
+        SELECT nombre, plan
+        FROM entidades
+        WHERE usuario_id = ${userId}
+        LIMIT 1
+      `;
+      if (entityRecord) {
+        entity = { nombre: entityRecord.nombre, plan: entityRecord.plan };
+      }
+    }
+    sendJson(response, 200, {
+      user: {
+        ...user,
+        id: String(user.id),
+        rol: user.rol || "ciudadano",
+        ...(entity ? { entidad: entity } : {}),
+      },
+    });
   } catch (error) {
     console.error("No se pudo cargar el perfil de la sesión.", error);
     sendJson(response, 500, {
