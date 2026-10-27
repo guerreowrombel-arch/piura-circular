@@ -11,6 +11,9 @@ import conversations from "../api/conversaciones.js";
 import messages from "../api/mensajes.js";
 import institutional, { isValidPlan } from "../api/institucional.js";
 import points, { validatePoint } from "../api/puntos.js";
+import profile from "../api/perfil.js";
+import changePassword from "../api/password.js";
+import myPublications from "../api/mis-publicaciones.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,
@@ -93,6 +96,53 @@ test("publications require a valid session for POST", async () => {
 
   assert.equal(response.statusCode, 401);
   assert.match(response.json().error, /Inicia sesión/);
+});
+
+test("profile and password endpoints require a session", async () => {
+  const profileResponse = await call(profile);
+  const passwordResponse = await call(changePassword, { method: "POST", body: {} });
+  const myPublicationsResponse = await call(myPublications);
+
+  assert.equal(profileResponse.statusCode, 401);
+  assert.equal(passwordResponse.statusCode, 401);
+  assert.equal(myPublicationsResponse.statusCode, 401);
+});
+
+test("profile, password, and personal-publication routes validate methods and input", async () => {
+  const token = createSessionToken("42");
+  const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+  const unsupportedProfile = await call(profile, {
+    method: "POST",
+    headers,
+  });
+  const invalidProfile = await call(profile, {
+    method: "PUT",
+    headers,
+    body: { nombre: "", apellidos: "Apellido", distrito: "Piura" },
+  });
+  const invalidPassword = await call(changePassword, {
+    method: "POST",
+    headers,
+    body: { actual: "current-password", nueva: "short" },
+  });
+  const invalidPersonalPublication = await call(myPublications, {
+    method: "PUT",
+    headers,
+    body: { id: "invalid", estado: "entregada" },
+  });
+  const invalidDeleteId = await call(myPublications, {
+    method: "DELETE",
+    headers,
+    url: "/api/mis-publicaciones?id=invalid",
+  });
+
+  assert.equal(unsupportedProfile.statusCode, 405);
+  assert.equal(unsupportedProfile.headers.allow, "GET, PUT, DELETE");
+  assert.equal(invalidProfile.statusCode, 400);
+  assert.equal(invalidPassword.statusCode, 400);
+  assert.match(invalidPassword.json().error, /8 y 72 bytes/);
+  assert.equal(invalidPersonalPublication.statusCode, 400);
+  assert.equal(invalidDeleteId.statusCode, 400);
 });
 
 test("conversation and message APIs require a session", async () => {
@@ -406,6 +456,7 @@ test("all site pages expose a shared session navigation", async () => {
     "login.html",
     "registro.html",
     "mensajes.html",
+    "perfil.html",
   ];
 
   for (const page of pages) {
@@ -500,6 +551,42 @@ test("publications are sent to the API and rendered without local publication st
   assert.doesNotMatch(endpoint, /u\.email/);
   assert.match(schema, /CREATE TABLE IF NOT EXISTS publicaciones/);
   assert.match(schema, /REFERENCES usuarios\(id\)/);
+  assert.match(schema, /estado TEXT NOT NULL DEFAULT 'activa'/);
+  assert.match(schema, /ADD COLUMN IF NOT EXISTS estado TEXT NOT NULL DEFAULT 'activa'/);
+  assert.match(endpoint, /WHERE p\.estado = 'activa'/);
+  const summaryQuery = endpoint.match(/if \(summaryOnly\) \{([\s\S]*?)\n      \}/)?.[1];
+  assert.ok(summaryQuery);
+  assert.doesNotMatch(summaryQuery, /estado/);
+});
+
+test("profile and password backend contracts are scoped to the signed-in user", async () => {
+  const [profileApi, passwordApi, myPublicationsApi] = await Promise.all(
+    ["api/perfil.js", "api/password.js", "api/mis-publicaciones.js"].map(
+      (file) => readFile(new URL(file, rootDirectory), "utf8"),
+    ),
+  );
+
+  assert.match(profileApi, /COUNT\(\*\)::int AS publicadas/);
+  assert.match(profileApi, /estado = 'entregada'/);
+  assert.match(profileApi, /condicion IN \('Operativo', 'Requiere reparación'\)/);
+  assert.match(profileApi, /Las cuentas de entidad no se eliminan desde el perfil\./);
+  assert.match(profileApi, /bcrypt\.compare\(data\.password, user\.password_hash\)/);
+  assert.ok(
+    profileApi.indexOf('if (user.rol === "entidad")') <
+      profileApi.indexOf("typeof data.password !== \"string\""),
+  );
+  assert.match(profileApi, /SET\s+nombre = \$\{updatedProfile\.nombre\},\s+apellidos = \$\{updatedProfile\.apellidos\},\s+distrito = \$\{updatedProfile\.distrito\}/);
+  assert.doesNotMatch(profileApi, /SET[^`]*(?:email|rol|password_hash)\s*=/s);
+
+  assert.match(passwordApi, /Buffer\.byteLength\(nueva, "utf8"\)/);
+  assert.match(passwordApi, /BCRYPT_COST = 12/);
+  assert.match(passwordApi, /SET password_hash = \$\{passwordHash\}/);
+
+  assert.match(myPublicationsApi, /WHERE usuario_id = \$\{userId\}/);
+  assert.match(myPublicationsApi, /WHERE id = \$\{publicationId\}\s+AND usuario_id = \$\{userId\}/);
+  assert.match(myPublicationsApi, /fotos ->> 0/);
+  assert.match(myPublicationsApi, /SET estado = 'entregada'/);
+  assert.match(myPublicationsApi, /DELETE FROM publicaciones/);
 });
 
 test("messaging schema, API routes, and interface use the required contracts", async () => {
@@ -592,6 +679,8 @@ test("institutional backend schema, roles, aggregates, and ownership checks are 
   assert.match(institutionalApi, /entity\.rol !== "entidad"/);
   assert.match(institutionalApi, /COUNT\(\*\).*AS total/s);
   assert.match(institutionalApi, /GROUP BY u\.distrito/);
+  assert.match(institutionalApi, /CASE WHEN total < 3 THEN 'Otros' ELSE distrito END/);
+  assert.match(institutionalApi, /SUM\(total\)::int AS total/);
   assert.match(institutionalApi, /generate_series/);
   assert.match(institutionalApi, /SET plan = \$\{data\.plan\}/);
   assert.doesNotMatch(institutionalApi, /u\.email|u\.nombre|u\.apellidos/);
@@ -624,11 +713,40 @@ test("institutional dashboard is gated and wired to aggregate and point APIs", a
   assert.match(main, /window\.location\.assign\("index\.html"\)/);
   assert.match(main, /fetch\("\/api\/puntos\?propios=1"/);
   assert.match(main, /fetch\("\/api\/institucional"/);
+  assert.match(main, /pointMap\.invalidateSize\(\)/);
+  assert.match(main, /setTimeout\(\(\) => pointMap\?\.invalidateSize\(\), 200\)/);
   assert.match(main, /institutionalLink\.textContent = "Panel institucional"/);
   assert.match(main, /categoryNames\.forEach/);
   assert.match(main, /data\.porDistrito/);
   assert.match(main, /institutionalStats\.porMes/);
   assert.match(pointsApi, /p\.entidad_id = \$\{entity\.entityId\}/);
+  assert.doesNotMatch(main, /innerHTML/);
+});
+
+test("profile page and account menu use the profile APIs without unsafe HTML", async () => {
+  const [page, main] = await Promise.all(
+    ["perfil.html", "js/main.js"].map((file) =>
+      readFile(new URL(file, rootDirectory), "utf8"),
+    ),
+  );
+
+  assert.match(page, /Cargando tu perfil…/);
+  assert.match(page, /data-profile-content hidden/);
+  assert.match(page, /data-profile-form/);
+  assert.match(page, /data-password-form/);
+  assert.match(page, /data-delete-account-dialog/);
+  assert.match(page, /Se borrarán tu cuenta, tus publicaciones y tus mensajes/);
+  assert.match(page, /data-my-publications/);
+  assert.match(
+    page,
+    /<option>Piura<\/option>[\s\S]*<option>Tambogrande<\/option>/,
+  );
+  assert.match(main, /fetch\("\/api\/perfil"/);
+  assert.match(main, /fetch\("\/api\/password"/);
+  assert.match(main, /fetch\("\/api\/mis-publicaciones"/);
+  assert.match(main, /result\.impacto/);
+  assert.match(main, /personalProfileLink\.textContent = "Mi perfil"/);
+  assert.match(page, /href="institucional\.html"/);
   assert.doesNotMatch(main, /innerHTML/);
 });
 

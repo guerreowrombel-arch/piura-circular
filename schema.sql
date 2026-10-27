@@ -31,11 +31,17 @@ CREATE TABLE IF NOT EXISTS publicaciones (
   condicion TEXT NOT NULL CHECK (
     condicion IN ('Operativo', 'Requiere reparación', 'No reutilizable')
   ),
+  estado TEXT NOT NULL DEFAULT 'activa'
+    CHECK (estado IN ('activa', 'entregada')),
   fotos JSONB NOT NULL DEFAULT '[]'::jsonb CHECK (
     jsonb_typeof(fotos) = 'array' AND jsonb_array_length(fotos) <= 3
   ),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE publicaciones
+  ADD COLUMN IF NOT EXISTS estado TEXT NOT NULL DEFAULT 'activa'
+  CHECK (estado IN ('activa', 'entregada'));
 
 CREATE INDEX IF NOT EXISTS publicaciones_created_at_idx
   ON publicaciones (created_at DESC);

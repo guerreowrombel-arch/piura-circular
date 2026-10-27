@@ -100,6 +100,7 @@ export default async function publications(request, response) {
           u.distrito AS district
         FROM publicaciones p
         INNER JOIN usuarios u ON u.id = p.usuario_id
+        WHERE p.estado = 'activa'
         ORDER BY p.created_at DESC, p.id DESC
       `;
       sendJson(

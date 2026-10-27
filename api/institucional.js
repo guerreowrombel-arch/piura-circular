@@ -130,11 +130,18 @@ export default async function institutional(request, response) {
       FROM publicaciones
     `;
     const byDistrict = await sql`
-      SELECT u.distrito, COUNT(*)::int AS total
-      FROM publicaciones p
-      INNER JOIN usuarios u ON u.id = p.usuario_id
-      GROUP BY u.distrito
-      ORDER BY total DESC, u.distrito ASC
+      WITH district_totals AS (
+        SELECT u.distrito, COUNT(*)::int AS total
+        FROM publicaciones p
+        INNER JOIN usuarios u ON u.id = p.usuario_id
+        GROUP BY u.distrito
+      )
+      SELECT
+        CASE WHEN total < 3 THEN 'Otros' ELSE distrito END AS distrito,
+        SUM(total)::int AS total
+      FROM district_totals
+      GROUP BY 1
+      ORDER BY total DESC, distrito ASC
     `;
     const byMonth = await sql`
       WITH months AS (

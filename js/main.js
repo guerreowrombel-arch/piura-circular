@@ -687,6 +687,388 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const institutionalPage = document.querySelector("[data-institutional-page]");
+  const profilePage = document.querySelector("[data-profile-page]");
+  if (profilePage) {
+    const loadingStatus = document.querySelector("[data-profile-loading]");
+    const profileContent = profilePage.querySelector("[data-profile-content]");
+    const profileNotice = profilePage.querySelector("[data-profile-notice]");
+    const personalForm = profilePage.querySelector("[data-profile-form]");
+    const passwordForm = profilePage.querySelector("[data-password-form]");
+    const deleteForm = profilePage.querySelector("[data-delete-account-form]");
+    const deleteDialog = profilePage.querySelector("[data-delete-account-dialog]");
+    const publicationList = profilePage.querySelector("[data-my-publications]");
+    const emptyPublications = profilePage.querySelector(
+      "[data-my-publications-empty]",
+    );
+    const profileState = { profile: null, impact: null, publications: [] };
+    const setProfileNotice = (message, isError = false) => {
+      if (!profileNotice) return;
+      profileNotice.textContent = message;
+      profileNotice.dataset.state = isError ? "error" : "success";
+      profileNotice.hidden = !message;
+    };
+    const readProfileResponse = async (response) => {
+      const result = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        window.location.assign("login.html");
+        throw new Error("Redirigiendo al inicio de sesión.");
+      }
+      if (!response.ok) {
+        throw new Error(result.error || "No se pudo completar la solicitud.");
+      }
+      return result;
+    };
+    const updateProfileDisplay = (profile) => {
+      profileState.profile = profile;
+      const fullName = [profile.nombre, profile.apellidos]
+        .map((part) => String(part || "").trim())
+        .filter(Boolean)
+        .join(" ");
+      const initial = profilePage.querySelector("[data-profile-initial]");
+      const name = profilePage.querySelector("[data-profile-name]");
+      const district = profilePage.querySelector("[data-profile-district]");
+      const entityDetails = profilePage.querySelector("[data-profile-entity]");
+      if (initial) initial.textContent = String(profile.nombre || "U").charAt(0).toLocaleUpperCase();
+      if (name) name.textContent = fullName;
+      if (district) district.textContent = profile.distrito || "";
+      if (personalForm) {
+        personalForm.elements.namedItem("nombre").value = profile.nombre || "";
+        personalForm.elements.namedItem("apellidos").value =
+          profile.apellidos || "";
+        personalForm.elements.namedItem("distrito").value =
+          profile.distrito || "";
+        personalForm.elements.namedItem("email").value = profile.email || "";
+      }
+      if (entityDetails) {
+        entityDetails.hidden = profile.rol !== "entidad";
+        const entityName = entityDetails.querySelector("[data-entity-name]");
+        const entityPlan = entityDetails.querySelector("[data-entity-plan]");
+        if (entityName) {
+          entityName.textContent = profile.entidad?.nombre || "Entidad";
+        }
+        if (entityPlan) {
+          entityPlan.textContent = profile.entidad?.plan || "";
+        }
+      }
+      const deleteZone = profilePage.querySelector("[data-delete-account-zone]");
+      if (deleteZone) deleteZone.hidden = profile.rol === "entidad";
+    };
+    const updateImpact = (impact) => {
+      profileState.impact = impact;
+      [
+        ["publicadas", impact.publicadas],
+        ["reutilizadas", impact.reutilizadas],
+        ["acopio", impact.derivadasAcopio],
+      ].forEach(([key, value]) => {
+        const node = profilePage.querySelector(`[data-impact="${key}"]`);
+        if (node) node.textContent = String(Math.max(0, Number(value) || 0));
+      });
+    };
+    const loadProfileData = async () => {
+      const response = await fetch("/api/perfil", {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const result = await readProfileResponse(response);
+      if (!result.perfil || !result.impacto) {
+        throw new Error("La respuesta del perfil no tiene un formato válido.");
+      }
+      updateProfileDisplay(result.perfil);
+      updateImpact(result.impacto);
+    };
+    const formatPublicationDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+      return new Intl.DateTimeFormat("es-PE", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }).format(date);
+    };
+    const renderMyPublications = (publications) => {
+      profileState.publications = publications;
+      if (!publicationList) return;
+      const cards = document.createDocumentFragment();
+      publications.forEach((publication) => {
+        const card = document.createElement("article");
+        const imageFrame = document.createElement("div");
+        const details = document.createElement("div");
+        const category = document.createElement("p");
+        const title = document.createElement("h3");
+        const metadata = document.createElement("p");
+        const condition = document.createElement("span");
+        const state = document.createElement("span");
+        const actions = document.createElement("div");
+        card.className = "profile-publication-card";
+        imageFrame.className = "profile-publication-image";
+        if (
+          typeof publication.foto === "string" &&
+          /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(
+            publication.foto,
+          )
+        ) {
+          const image = document.createElement("img");
+          image.src = publication.foto;
+          image.alt = `Foto de ${publication.categoria || "la publicación"}`;
+          image.loading = "lazy";
+          imageFrame.append(image);
+        } else {
+          const fallback = document.createElement("span");
+          fallback.setAttribute("aria-hidden", "true");
+          fallback.textContent = "↻";
+          imageFrame.append(fallback);
+        }
+        details.className = "profile-publication-details";
+        category.className = "profile-publication-category";
+        category.textContent = String(publication.categoria || "Equipo");
+        title.textContent = String(publication.marca || "Sin marca");
+        metadata.className = "profile-publication-date";
+        metadata.textContent = formatPublicationDate(publication.fecha);
+        const tags = document.createElement("div");
+        tags.className = "profile-publication-tags";
+        condition.className = "profile-publication-tag";
+        condition.textContent = String(publication.condicion || "");
+        state.className = "profile-publication-tag";
+        state.dataset.state = publication.estado;
+        state.textContent =
+          publication.estado === "entregada" ? "Entregada" : "Activa";
+        tags.append(condition, state);
+        actions.className = "profile-publication-actions";
+        if (publication.estado === "activa") {
+          const deliveredButton = document.createElement("button");
+          deliveredButton.type = "button";
+          deliveredButton.className = "profile-publication-action";
+          deliveredButton.textContent = "Marcar como entregada";
+          deliveredButton.addEventListener("click", async () => {
+            if (
+              !window.confirm(
+                "¿Marcar esta publicación como entregada? Esta acción actualizará tu impacto.",
+              )
+            ) {
+              return;
+            }
+            deliveredButton.disabled = true;
+            setProfileNotice("");
+            try {
+              const response = await fetch("/api/mis-publicaciones", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                  id: publication.id,
+                  estado: "entregada",
+                }),
+              });
+              await readProfileResponse(response);
+              await refreshProfileAndPublications();
+              setProfileNotice("Publicación marcada como entregada.");
+            } catch (error) {
+              setProfileNotice(
+                error instanceof Error ? error.message : "No se pudo actualizar la publicación.",
+                true,
+              );
+            } finally {
+              deliveredButton.disabled = false;
+            }
+          });
+          actions.append(deliveredButton);
+        }
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className =
+          "profile-publication-action profile-publication-delete";
+        deleteButton.textContent = "Eliminar";
+        deleteButton.addEventListener("click", async () => {
+          if (
+            !window.confirm(
+              "¿Eliminar esta publicación? Esta acción no se puede deshacer.",
+            )
+          ) {
+            return;
+          }
+          deleteButton.disabled = true;
+          setProfileNotice("");
+          try {
+            const response = await fetch(
+              `/api/mis-publicaciones?id=${encodeURIComponent(publication.id)}`,
+              { method: "DELETE", credentials: "same-origin" },
+            );
+            await readProfileResponse(response);
+            await refreshProfileAndPublications();
+            setProfileNotice("Publicación eliminada.");
+          } catch (error) {
+            setProfileNotice(
+              error instanceof Error ? error.message : "No se pudo eliminar la publicación.",
+              true,
+            );
+          } finally {
+            deleteButton.disabled = false;
+          }
+        });
+        actions.append(deleteButton);
+        details.append(category, title, metadata, tags, actions);
+        card.append(imageFrame, details);
+        cards.append(card);
+      });
+      publicationList.replaceChildren(cards);
+      if (emptyPublications) {
+        emptyPublications.hidden = publications.length > 0;
+      }
+      publicationList.hidden = publications.length === 0;
+    };
+    const loadMyPublications = async () => {
+      const response = await fetch("/api/mis-publicaciones", {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const result = await readProfileResponse(response);
+      if (!Array.isArray(result.publicaciones)) {
+        throw new Error("La lista de publicaciones no tiene un formato válido.");
+      }
+      renderMyPublications(result.publicaciones);
+    };
+    const refreshProfileAndPublications = async () => {
+      await Promise.all([loadProfileData(), loadMyPublications()]);
+    };
+
+    personalForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setProfileNotice("");
+      const submit = personalForm.querySelector('[type="submit"]');
+      if (submit) submit.disabled = true;
+      try {
+        const response = await fetch("/api/perfil", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            nombre: personalForm.elements.namedItem("nombre").value,
+            apellidos: personalForm.elements.namedItem("apellidos").value,
+            distrito: personalForm.elements.namedItem("distrito").value,
+          }),
+        });
+        const result = await readProfileResponse(response);
+        if (result.perfil) {
+          updateProfileDisplay({
+            ...profileState.profile,
+            ...result.perfil,
+          });
+        }
+        setProfileNotice("Tus datos se guardaron correctamente.");
+      } catch (error) {
+        setProfileNotice(
+          error instanceof Error ? error.message : "No se pudieron guardar tus datos.",
+          true,
+        );
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+
+    passwordForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setProfileNotice("");
+      const actual = passwordForm.elements.namedItem("actual").value;
+      const nueva = passwordForm.elements.namedItem("nueva").value;
+      const confirmacion = passwordForm.elements.namedItem("confirmar").value;
+      if (nueva !== confirmacion) {
+        setProfileNotice("La nueva contraseña y su confirmación no coinciden.", true);
+        return;
+      }
+      if (actual === nueva) {
+        setProfileNotice("La nueva contraseña debe ser distinta de la actual.", true);
+        return;
+      }
+      const submit = passwordForm.querySelector('[type="submit"]');
+      if (submit) submit.disabled = true;
+      try {
+        const response = await fetch("/api/password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ actual, nueva }),
+        });
+        await readProfileResponse(response);
+        passwordForm.reset();
+        const meter = passwordForm.querySelector(".strength-meter");
+        const strengthLabel = passwordForm.querySelector(".strength-label");
+        if (meter) meter.dataset.level = "0";
+        if (strengthLabel) {
+          strengthLabel.textContent = "Usa al menos 8 caracteres";
+        }
+        setProfileNotice("Tu contraseña se actualizó correctamente.");
+      } catch (error) {
+        setProfileNotice(
+          error instanceof Error ? error.message : "No se pudo cambiar la contraseña.",
+          true,
+        );
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+    deleteForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const password = deleteForm.elements.namedItem("password").value;
+      const submit = deleteForm.querySelector('[type="submit"]');
+      if (submit) submit.disabled = true;
+      const errorNotice = deleteDialog?.querySelector("[data-delete-error]");
+      if (errorNotice) {
+        errorNotice.textContent = "";
+        errorNotice.hidden = true;
+      }
+      try {
+        const response = await fetch("/api/perfil", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ password }),
+        });
+        await readProfileResponse(response);
+        window.location.assign("index.html");
+      } catch (error) {
+        if (errorNotice) {
+          errorNotice.textContent =
+            error instanceof Error ? error.message : "No se pudo eliminar la cuenta.";
+          errorNotice.hidden = false;
+        }
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+    profilePage
+      .querySelector("[data-open-delete-dialog]")
+      ?.addEventListener("click", () => {
+        deleteForm?.reset();
+        if (deleteDialog?.querySelector("[data-delete-error]")) {
+          const errorNotice = deleteDialog.querySelector("[data-delete-error]");
+          errorNotice.textContent = "";
+          errorNotice.hidden = true;
+        }
+        deleteDialog?.showModal();
+      });
+    profilePage
+      .querySelector("[data-close-delete-dialog]")
+      ?.addEventListener("click", () => deleteDialog?.close());
+    deleteDialog?.addEventListener("click", (event) => {
+      if (event.target === deleteDialog) deleteDialog.close();
+    });
+
+    const initializeProfilePage = async () => {
+      try {
+        await loadProfileData();
+        await loadMyPublications();
+        if (profileContent) profileContent.hidden = false;
+        if (loadingStatus) loadingStatus.hidden = true;
+      } catch (error) {
+        if (loadingStatus) {
+          loadingStatus.textContent =
+            error instanceof Error ? error.message : "No se pudo cargar tu perfil.";
+        }
+      }
+    };
+    void initializeProfilePage();
+  }
+
   if (institutionalPage) {
     const accessStatus = document.querySelector(
       "[data-institutional-access-status]",
@@ -1131,6 +1513,8 @@ document.addEventListener("DOMContentLoaded", () => {
           pointMap.on("click", (event) => {
             showCoordinates(event.latlng.lat, event.latlng.lng);
           });
+          pointMap.invalidateSize();
+          window.setTimeout(() => pointMap?.invalidateSize(), 200);
         } else if (mapElement) {
           mapElement.textContent = "No se pudo cargar el mapa de selección.";
         }
@@ -1204,6 +1588,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const messagesLink = document.createElement("a");
           const messagesLabel = document.createElement("span");
           const messagesBadge = document.createElement("span");
+          const personalProfileLink = document.createElement("a");
           const institutionalLink = document.createElement("a");
           const logoutButton = document.createElement("button");
           const panelId = `profile-menu-panel-${index + 1}`;
@@ -1243,6 +1628,9 @@ document.addEventListener("DOMContentLoaded", () => {
           messagesBadge.setAttribute("aria-hidden", "true");
           messagesLink.append(messagesLabel, messagesBadge);
           badgeNodes.push(profileBadge, messagesBadge);
+          personalProfileLink.className = "profile-personal-link";
+          personalProfileLink.href = "perfil.html";
+          personalProfileLink.textContent = "Mi perfil";
           if (user.rol === "entidad") {
             institutionalLink.className = "profile-institutional-link";
             institutionalLink.href = "institucional.html";
@@ -1254,7 +1642,7 @@ document.addEventListener("DOMContentLoaded", () => {
           logoutButton.className = "profile-logout";
           logoutButton.dataset.authLogout = "";
           logoutButton.textContent = "Cerrar sesión";
-          panel.append(messagesLink, logoutButton);
+          panel.append(messagesLink, personalProfileLink, logoutButton);
           profileMenu.append(profileButton, panel);
           navigation.classList.add("has-profile-menu");
           navigation.replaceChildren(profileMenu);

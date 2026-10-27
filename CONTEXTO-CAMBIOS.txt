@@ -299,10 +299,30 @@ PANEL INSTITUCIONAL
 - institucional.html verifica /api/me antes de mostrar el panel; sin sesión
   redirige a login.html y las cuentas que no sean entidades vuelven a index.html.
 - El panel presenta los agregados de /api/institucional, gráficos por mes y
-  distrito, gestión de puntos en un mapa Leaflet de Piura, cambio simulado de
+  distrito (los que tengan menos de tres publicaciones se consolidan en
+  “Otros”), gestión de puntos en un mapa Leaflet de Piura, cambio simulado de
   plan y descarga CSV local.
 - GET /api/puntos?propios=1 requiere sesión de entidad y devuelve todos los
   puntos de esa entidad, incluidos los desactivados, para administrarlos. El
   GET público sigue devolviendo solamente puntos activos.
 - puntos-acopio.html combina el catálogo local RAEE con puntos institucionales.
   El menú de perfil agrega Panel institucional únicamente para rol entidad.
+
+BACKEND DEL PERFIL
+------------------
+- schema.sql incorpora publicaciones.estado (activa o entregada, por defecto
+  activa) y una migración para bases ya creadas. El listado público de
+  /api/publicaciones excluye las entregadas; el resumen y el panel institucional
+  mantienen sus conteos globales.
+- GET /api/perfil devuelve datos personales, datos básicos de entidad cuando
+  corresponda e impacto de las publicaciones propias. PUT solo modifica nombre,
+  apellidos y distrito. DELETE exige contraseña correcta y no permite eliminar
+  cuentas de entidad.
+- POST /api/password valida la contraseña actual y guarda el hash de la nueva
+  con el mismo costo que el registro.
+- GET /api/mis-publicaciones devuelve el historial propio con una sola foto;
+  PUT marca como entregada y DELETE elimina solo si pertenece al usuario de la
+  sesión.
+- perfil.html verifica la sesión antes de mostrar los datos; permite actualizar
+  los datos personales, cambiar contraseña, gestionar publicaciones y eliminar
+  cuentas ciudadanas. El menú de perfil incorpora el enlace Mi perfil.
