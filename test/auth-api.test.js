@@ -2,19 +2,19 @@ import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { readFile } from "node:fs/promises";
 import jwt from "jsonwebtoken";
-import register from "../api/registro.js";
-import login from "../api/login.js";
-import logout from "../api/logout.js";
-import currentUser from "../api/me.js";
+import register from "../handlers/registro.js";
+import login from "../handlers/login.js";
+import logout from "../handlers/logout.js";
+import currentUser from "../handlers/me.js";
 import publications from "../api/publicaciones.js";
 import conversations from "../api/conversaciones.js";
 import messages from "../api/mensajes.js";
 import institutional, { isValidPlan } from "../api/institucional.js";
 import points, { validatePoint } from "../api/puntos.js";
-import profile from "../api/perfil.js";
-import changePassword from "../api/password.js";
-import myPublications from "../api/mis-publicaciones.js";
-import ratings from "../api/calificaciones.js";
+import profile from "../handlers/perfil.js";
+import changePassword from "../handlers/password.js";
+import myPublications from "../handlers/mis-publicaciones.js";
+import ratings from "../handlers/calificaciones.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,

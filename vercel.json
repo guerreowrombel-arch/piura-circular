@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/api/registro", "destination": "/api/auth?accion=registro" },
+    { "source": "/api/login", "destination": "/api/auth?accion=login" },
+    { "source": "/api/logout", "destination": "/api/auth?accion=logout" },
+    { "source": "/api/me", "destination": "/api/auth?accion=me" },
+    { "source": "/api/perfil", "destination": "/api/cuenta?accion=perfil" },
+    { "source": "/api/password", "destination": "/api/cuenta?accion=password" },
+    { "source": "/api/mis-publicaciones", "destination": "/api/cuenta?accion=mis-publicaciones" },
+    { "source": "/api/calificaciones", "destination": "/api/cuenta?accion=calificaciones" }
+  ]
+}
