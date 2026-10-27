@@ -469,6 +469,9 @@ test("messaging schema, API routes, and interface use the required contracts", a
   }
   assert.match(mainScript, /setInterval\([\s\S]*?5000\)/);
   assert.match(mainScript, /setInterval\([\s\S]*?15000\)/);
+  assert.match(mainScript, /messageInput\?\.addEventListener\("keydown"/);
+  assert.match(mainScript, /messageForm\?\.requestSubmit/);
+  assert.match(mainScript, /event\.shiftKey/);
   assert.match(mainScript, /document\.visibilityState !== "visible"/);
   assert.match(mainScript, /dataset\.unreadBadge/);
   assert.match(mainScript, /aria-expanded/);
@@ -481,6 +484,8 @@ test("messaging schema, API routes, and interface use the required contracts", a
   assert.match(mainScript, /assets\/data\/raee-points\.json/);
   assert.match(mainScript, /point\.name[\s\S]*?point\.address/);
   assert.doesNotMatch(mainScript, /\.innerHTML\s*=/);
+  assert.match(page, /data-message-submit/);
+  assert.match(page, /aria-keyshortcuts="Enter"/);
   assert.match(exchangePage, /data-example-publication/);
   assert.match(exchangePage, /data-contact=/);
 });

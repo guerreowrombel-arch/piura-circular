@@ -1423,6 +1423,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let meetingPointsPromise;
   let isLoadingMessages = false;
   let isLoadingConversations = false;
+  let isSendingMessage = false;
 
   const updateConversationControls = (enabled) => {
     if (messageInput) messageInput.disabled = !enabled;
@@ -1680,11 +1681,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!button) return;
     selectConversation(button.dataset.conversationId);
   });
+  messageInput?.addEventListener("keydown", (event) => {
+    if (
+      event.key !== "Enter" ||
+      event.shiftKey ||
+      event.isComposing ||
+      !activeConversationId ||
+      isSendingMessage
+    ) {
+      return;
+    }
+    event.preventDefault();
+    messageForm?.requestSubmit();
+  });
   messageForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const text = messageInput?.value.trim() || "";
-    if (!activeConversationId || !text || text.length > 1000) return;
+    if (
+      !activeConversationId ||
+      isSendingMessage ||
+      !text ||
+      text.length > 1000
+    ) {
+      return;
+    }
+    isSendingMessage = true;
     if (messageSubmit) messageSubmit.disabled = true;
+    if (messageInput) messageInput.disabled = true;
     if (messageStatus) messageStatus.textContent = "Enviando mensaje…";
     try {
       const response = await fetch("/api/mensajes", {
@@ -1708,6 +1731,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       console.error("No se pudo enviar el mensaje.", error);
     } finally {
+      isSendingMessage = false;
+      if (messageInput) messageInput.disabled = !activeConversationId;
       if (messageSubmit) {
         messageSubmit.disabled = !activeConversationId;
       }
