@@ -65,16 +65,15 @@ ACTUALIZACION DE PUNTOS DE PIURA
 FLUJO DEL FORMULARIO DE PUBLICACION
 -----------------------------------
 - publicar.html contiene el formulario y una tarjeta de siguiente paso que se
-  muestra despues de guardar correctamente.
-- js/main.js guarda categoria, marca, antiguedad, descripcion, condicion,
-  fecha de creacion y hasta cinco fotos como data URL en localStorage, bajo la
-  clave "publicaciones". Los registros se guardan en una lista JSON.
+  muestra despues de guardar correctamente. Las publicaciones ahora se guardan
+  en Neon mediante POST /api/publicaciones.
+- js/main.js comprime hasta tres fotos a un maximo de 800 px y las exporta
+  como JPEG calidad 0.7 antes de enviarlas. Cada data URL se limita a 1 MB.
 - La condicion operativa ofrece un enlace a intercambio.html; la condicion de
   reparacion recomienda un tecnico o taller local; la condicion no reutilizable
   ofrece un enlace a puntos-acopio.html.
-- localStorage solo guarda datos en ese navegador y dispositivo; no sincroniza
-  publicaciones con otras personas ni con un servidor. El limite de espacio
-  del navegador puede impedir guardar fotos grandes.
+- Publicar requiere una sesion activa; si expiro o falta, se redirige a
+  login.html. El distrito se obtiene del perfil asociado a la sesion.
 
 BUSQUEDA POR UBICACION EN PUNTOS DE ACOPIO
 -----------------------------------------
@@ -107,8 +106,7 @@ CONTADORES DINAMICOS DE IMPACTO
 -------------------------------
 - Los indicadores de index.html y educacion.html ya no usan cifras ficticias:
   js/main.js los calcula al cargar cada pagina.
-- "Equipos publicados" cuenta todos los registros del arreglo JSON guardado en
-  localStorage bajo la clave "publicaciones".
+- "Equipos publicados" cuenta los registros devueltos por la API de Neon.
 - "Equipos en puntos de acopio" y "equipos entregados a acopio" cuentan las
   publicaciones con condition igual a "No reutilizable".
 - "Equipos reutilizados" cuenta las publicaciones con condition igual a
@@ -119,8 +117,8 @@ CONTADORES DINAMICOS DE IMPACTO
 - Si no hay publicaciones, los contadores de publicaciones muestran 0. Si el
   catalogo de puntos no se puede cargar, el total de distritos muestra 0 y se
   informa el error en la consola.
-- Los registros de localStorage son locales a cada navegador y dispositivo;
-  las publicaciones no se comparten entre usuarios ni se envian al servidor.
+- Las publicaciones se comparten desde Neon entre las personas que usan la
+  aplicacion.
 
 AUTENTICACION CON NEON Y VERCEL
 -------------------------------
@@ -155,9 +153,35 @@ AUTENTICACION CON NEON Y VERCEL
   "Cerrar sesion" cuando hay un usuario autenticado.
 - Ejecutar npm test para validar los estados HTTP, la cookie, la duracion del
   JWT y la lectura de la sesion sin requerir una conexion real a Neon.
-- La base guarda nombre, apellidos, distrito, email normalizado y hash de
-  contraseña. Las publicaciones existentes siguen guardandose en localStorage;
-  no se migraron a Neon en esta tarea.
+- La tabla usuarios guarda nombre, apellidos, distrito, email normalizado y
+  hash de contraseña. El formulario de registro no publica la contraseña.
+
+PUBLICACIONES EN NEON
+---------------------
+- schema.sql crea la tabla publicaciones con autor relacionado a usuarios,
+  categoria, marca, antiguedad, descripcion, condicion, fotos JSONB y fecha.
+  La descripcion esta limitada a 1000 caracteres y la tabla acepta hasta tres
+  fotos por registro.
+- api/publicaciones.js expone GET /api/publicaciones para listar publicaciones
+  de mas recientes a mas antiguas, con autor (nombre e inicial del apellido),
+  distrito, campos del equipo y fotos. No incluye el correo del usuario.
+- GET /api/publicaciones?summary=1 devuelve conteos agregados para los
+  indicadores, sin transferir registros individuales, descripciones ni fotos.
+- POST /api/publicaciones requiere cookie de sesion valida, toma el distrito
+  desde el perfil de Neon y valida categoria, descripcion, condicion y hasta
+  tres imagenes JPEG en data URL (cada una hasta 1 MB).
+- publicar.html reduce cada imagen en el navegador a un maximo de 800 px y la
+  codifica como JPEG con calidad 0.7 antes del POST. Si la sesion no existe,
+  redirige a login.html. Las publicaciones dejaron de guardarse en localStorage.
+- intercambio.html carga las publicaciones desde la API y muestra solo las de
+  condicion Operativo o Requiere reparacion. Los filtros y la busqueda se
+  mantienen; las cuatro tarjetas de ejemplo solo se muestran cuando la API
+  confirma que la base no tiene publicaciones.
+- Los contadores de index.html y educacion.html obtienen los estados desde
+  GET /api/publicaciones?summary=1. Los distritos siguen calculandose desde el
+  catalogo RAEE local.
+- Ejecutar schema.sql otra vez en Neon para crear la tabla de publicaciones y
+  su indice antes de usar este flujo.
 
 COMO ESTA ORGANIZADO EL MAPA DE RAEE
 -----------------------------------

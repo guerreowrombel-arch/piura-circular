@@ -1446,6 +1446,17 @@ p {
 .equipment-meta span {
   padding: 0 3px;
 }
+.equipment-description {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
 .seller-row {
   display: flex;
   align-items: center;

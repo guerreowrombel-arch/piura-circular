@@ -448,31 +448,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const counters = [...document.querySelectorAll("[data-count]")];
     if (!counters.length) return;
 
-    const counts = {
-      published: 0,
-      operational: 0,
-      collection: 0,
-      districts: 0,
-    };
+    const counts = { published: 0, operational: 0, collection: 0, districts: 0 };
 
-    try {
-      const storedPublications = localStorage.getItem("publicaciones");
-      const publications = storedPublications
-        ? JSON.parse(storedPublications)
-        : [];
-      if (!Array.isArray(publications)) {
-        throw new Error("El contenido guardado en publicaciones no es válido.");
+    if (
+      counters.some((counter) =>
+        ["published", "operational", "collection"].includes(
+          counter.dataset.countSource,
+        ),
+      )
+    ) {
+      try {
+        const response = await fetch("/api/publicaciones?summary=1", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error(`La solicitud de publicaciones respondió ${response.status}.`);
+        }
+        const result = await response.json();
+        if (!result.counts || typeof result.counts !== "object") {
+          throw new Error("La respuesta de publicaciones no tiene un formato válido.");
+        }
+        ["published", "operational", "collection"].forEach((key) => {
+          const value = Number(result.counts[key]);
+          if (!Number.isInteger(value) || value < 0) {
+            throw new Error(`El contador ${key} no es válido.`);
+          }
+          counts[key] = value;
+        });
+      } catch (error) {
+        console.error("No se pudieron calcular los contadores de publicaciones.", error);
       }
-
-      counts.published = publications.length;
-      counts.operational = publications.filter(
-        (publication) => publication?.condition === "Operativo",
-      ).length;
-      counts.collection = publications.filter(
-        (publication) => publication?.condition === "No reutilizable",
-      ).length;
-    } catch (error) {
-      console.error("No se pudieron calcular los contadores de publicaciones.", error);
     }
 
     if (counters.some((counter) => counter.dataset.countSource === "districts")) {
@@ -682,21 +687,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const publishForm = document.querySelector("[data-publish-form]");
   const publishResult = document.querySelector("[data-publish-result]");
-  const readFileAsDataUrl = (file) =>
+  const readBlobAsDataUrl = (blob) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.addEventListener("load", () => {
         if (typeof reader.result === "string") {
           resolve(reader.result);
         } else {
-          reject(new Error(`No se pudo leer la imagen ${file.name}.`));
+          reject(new Error("No se pudo leer la imagen comprimida."));
         }
       });
       reader.addEventListener("error", () =>
-        reject(new Error(`No se pudo leer la imagen ${file.name}.`)),
+        reject(new Error("No se pudo leer la imagen comprimida.")),
       );
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(blob);
     });
+  const compressPhoto = async (file) => {
+    const bitmap = await createImageBitmap(file);
+    try {
+      const scale = Math.min(1, 800 / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("No se pudo preparar la fotografía.");
+      context.fillStyle = "#fff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+      const jpeg = await new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) =>
+            blob
+              ? resolve(blob)
+              : reject(new Error("No se pudo comprimir una fotografía.")),
+          "image/jpeg",
+          0.7,
+        );
+      });
+      const dataUrl = await readBlobAsDataUrl(jpeg);
+      if (dataUrl.length > 1_000_000) {
+        throw new Error(
+          `La fotografía ${file.name} sigue siendo demasiado pesada después de comprimirla.`,
+        );
+      }
+      return dataUrl;
+    } finally {
+      bitmap.close();
+    }
+  };
 
   const renderPublishResult = (publication) => {
     if (!publishResult) return;
@@ -750,8 +789,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const photoInput = publishForm.querySelector("[data-photo-input]");
     const photos = [...(photoInput?.files || [])];
 
-    if (photos.length > 5) {
-      if (notice) notice.textContent = "Selecciona un máximo de 5 fotografías.";
+    if (photos.length > 3) {
+      if (notice) notice.textContent = "Selecciona un máximo de 3 fotografías.";
       return;
     }
     if (photos.some((photo) => !photo.type.startsWith("image/"))) {
@@ -760,31 +799,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (submitButton) submitButton.disabled = true;
-    if (notice) notice.textContent = "Guardando publicación…";
+    if (notice) notice.textContent = "Preparando y guardando publicación…";
 
     try {
       const formData = new FormData(publishForm);
-      const publication = {
+      const publicationData = {
         category: String(formData.get("category") || ""),
         brand: String(formData.get("brand") || "").trim(),
         age: String(formData.get("age") || ""),
         description: String(formData.get("description") || "").trim(),
         condition: String(formData.get("condition") || ""),
-        photos: await Promise.all(photos.map(readFileAsDataUrl)),
-        createdAt: new Date().toISOString(),
+        photos: await Promise.all(photos.map(compressPhoto)),
       };
-      const storedPublications = localStorage.getItem("publicaciones");
-      const publications = storedPublications
-        ? JSON.parse(storedPublications)
-        : [];
-      if (!Array.isArray(publications)) {
-        throw new Error("El contenido guardado en publicaciones no es válido.");
+      const response = await fetch("/api/publicaciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(publicationData),
+      });
+      if (response.status === 401) {
+        window.location.assign("login.html");
+        return;
       }
-
-      publications.push(publication);
-      localStorage.setItem("publicaciones", JSON.stringify(publications));
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error || "No se pudo guardar la publicación.");
+      }
+      if (!result.publication) {
+        throw new Error("La respuesta no incluyó la publicación guardada.");
+      }
+      const publication = result.publication;
       renderPublishResult(publication);
-      if (notice) notice.textContent = "Publicación guardada en este navegador.";
+      if (notice) notice.textContent = "Publicación guardada.";
       publishResult?.scrollIntoView({
         behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
           ? "auto"
@@ -795,7 +841,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("No se pudo guardar la publicación.", error);
       if (notice) {
         notice.textContent =
-          "No se pudo guardar. Revisa el almacenamiento del navegador e inténtalo de nuevo.";
+          error instanceof Error
+            ? error.message
+            : "No se pudo guardar. Inténtalo de nuevo.";
       }
     } finally {
       if (submitButton) submitButton.disabled = false;
@@ -810,12 +858,12 @@ document.addEventListener("DOMContentLoaded", () => {
     photoObjectUrls.length = 0;
     photoPreview?.replaceChildren();
     const notice = publishForm?.querySelector(".form-notice");
-    if (photoInput.files.length > 5) {
-      if (notice) notice.textContent = "Selecciona un máximo de 5 fotografías.";
+    if (photoInput.files.length > 3) {
+      if (notice) notice.textContent = "Selecciona un máximo de 3 fotografías.";
       return;
     }
     if (notice) notice.textContent = "";
-    [...photoInput.files].slice(0, 5).forEach((file) => {
+    [...photoInput.files].slice(0, 3).forEach((file) => {
       if (!file.type.startsWith("image/")) return;
       const image = document.createElement("img");
       image.alt = `Vista previa: ${file.name}`;
@@ -849,10 +897,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterList = document.querySelector("[data-filter-list]");
   const resultCount = document.querySelector("[data-result-count]");
   const emptyState = document.querySelector("[data-empty-state]");
+  let showExamplePublications = false;
   const applyFilters = () => {
     if (!filterList) return;
     const cards = [...filterList.children].filter((item) =>
-      item.matches("[data-category], [data-district]"),
+      item.matches("[data-category], [data-district]") &&
+      (!item.hasAttribute("data-example-publication") ||
+        showExamplePublications),
     );
     let visible = 0;
     cards.forEach((card) => {
@@ -890,6 +941,186 @@ document.addEventListener("DOMContentLoaded", () => {
       applyFilters();
     });
 
+  const exchangeCategoryFilter = document.querySelector(
+    '[data-filter="category"]',
+  );
+  const exchangeDistrictFilter = document.querySelector('[data-filter="zone"]');
+  const appendFilterOptions = (select, values) => {
+    if (!select) return;
+    const existing = new Set(
+      [...select.options].map((option) => normalizeText(option.value)),
+    );
+    values
+      .filter(Boolean)
+      .sort((first, second) => first.localeCompare(second, "es"))
+      .forEach((value) => {
+        const normalized = normalizeText(value);
+        if (existing.has(normalized)) return;
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.append(option);
+        existing.add(normalized);
+      });
+  };
+  const createExchangeCard = (publication) => {
+    const card = document.createElement("article");
+    const imageContainer = document.createElement("div");
+    const content = document.createElement("div");
+    const tags = document.createElement("div");
+    const conditionTag = document.createElement("span");
+    const categoryTag = document.createElement("span");
+    const heading = document.createElement("h3");
+    const description = document.createElement("p");
+    const meta = document.createElement("p");
+    const seller = document.createElement("div");
+    const avatar = document.createElement("div");
+    const authorName = document.createElement("span");
+    const contactButton = document.createElement("button");
+    const category = String(publication.category || "Otros");
+    const condition = String(publication.condition || "");
+    const district = String(publication.district || "Distrito no indicado");
+    const author = String(publication.authorName || "Usuario");
+    const authorInitial = String(publication.authorInitial || "").slice(0, 1);
+    const details = [publication.brand, publication.age]
+      .filter((value) => typeof value === "string" && value.trim())
+      .join(" · ");
+
+    card.className = "equipment-card is-visible";
+    card.dataset.category = category;
+    card.dataset.zone = district;
+    card.dataset.district = district;
+    card.dataset.condition = condition;
+    card.dataset.search = normalizeText(
+      [
+        category,
+        publication.brand,
+        publication.age,
+        publication.description,
+        condition,
+        district,
+        author,
+        authorInitial,
+      ]
+        .filter(Boolean)
+        .join(" "),
+    );
+
+    imageContainer.className = "equipment-image";
+    const photo = Array.isArray(publication.photos)
+      ? publication.photos.find(
+          (value) =>
+            typeof value === "string" &&
+            value.startsWith("data:image/jpeg;base64,"),
+        )
+      : null;
+    if (photo) {
+      const image = document.createElement("img");
+      image.src = photo;
+      image.alt = `Fotografía del equipo ${category}`;
+      imageContainer.append(image);
+    } else {
+      const placeholder = document.createElement("span");
+      placeholder.textContent = "Sin fotografía";
+      imageContainer.append(placeholder);
+    }
+
+    content.className = "equipment-content";
+    tags.className = "equipment-tags";
+    conditionTag.className =
+      condition === "Operativo" ? "tag tag-operational" : "tag tag-repair";
+    conditionTag.textContent = condition;
+    categoryTag.className = "equipment-category";
+    categoryTag.textContent = category;
+    tags.append(conditionTag, categoryTag);
+
+    heading.textContent = details ? `${category} · ${details}` : category;
+    description.textContent = String(publication.description || "");
+    description.className = "equipment-description";
+    meta.className = "equipment-meta";
+    meta.textContent = `⌖ ${district} · ${formatPublicationDate(publication.createdAt)}`;
+
+    seller.className = "seller-row";
+    avatar.className = "seller-avatar";
+    avatar.textContent = authorInitial || author.slice(0, 1).toLocaleUpperCase();
+    authorName.textContent = authorInitial
+      ? `${author} ${authorInitial}.`
+      : author;
+    contactButton.type = "button";
+    contactButton.className =
+      "button button-outline button-full contact-trigger";
+    contactButton.dataset.contact = authorName.textContent;
+    contactButton.textContent = "Contactar";
+    seller.append(avatar, authorName);
+    content.append(tags, heading, description, meta, seller, contactButton);
+    card.append(imageContainer, content);
+    return card;
+  };
+  const formatPublicationDate = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+    return `Publicado el ${date.toLocaleDateString("es-PE")}`;
+  };
+  const initializeExchangePublications = async () => {
+    if (!filterList) return;
+    try {
+      const response = await fetch("/api/publicaciones", {
+        cache: "no-store",
+      });
+      if (!response.ok) {
+        throw new Error(`La solicitud respondió ${response.status}.`);
+      }
+      const result = await response.json();
+      if (!Array.isArray(result.publications)) {
+        throw new Error("La respuesta de publicaciones no tiene un formato válido.");
+      }
+
+      const examples = filterList.querySelectorAll("[data-example-publication]");
+      if (result.publications.length === 0) {
+        showExamplePublications = true;
+        examples.forEach((card) => {
+          card.hidden = false;
+        });
+      } else {
+        showExamplePublications = false;
+        examples.forEach((card) => card.remove());
+        const availablePublications = result.publications.filter((publication) =>
+          ["Operativo", "Requiere reparación"].includes(publication.condition),
+        );
+        appendFilterOptions(
+          exchangeCategoryFilter,
+          availablePublications.map((publication) => publication.category),
+        );
+        appendFilterOptions(
+          exchangeDistrictFilter,
+          availablePublications.map((publication) => publication.district),
+        );
+        availablePublications.forEach((publication) =>
+          filterList.append(createExchangeCard(publication)),
+        );
+      }
+      if (emptyState) {
+        emptyState.textContent =
+          result.publications.length > 0
+            ? "Todavía no hay equipos disponibles en condición operativa o que requieran reparación."
+            : emptyState.textContent;
+      }
+      applyFilters();
+    } catch (error) {
+      console.error("No se pudieron cargar las publicaciones para intercambio.", error);
+      filterList
+        .querySelectorAll("[data-example-publication]")
+        .forEach((card) => card.remove());
+      if (resultCount) resultCount.textContent = "No se pudieron cargar las publicaciones";
+      if (emptyState) {
+        emptyState.textContent =
+          "No se pudieron cargar las publicaciones. Inténtalo de nuevo más tarde.";
+        emptyState.hidden = false;
+      }
+    }
+  };
+  initializeExchangePublications();
+
   const reportModal = document.querySelector("[data-report-modal]");
   document.querySelectorAll("[data-report-trigger]").forEach((button) => {
     button.addEventListener("click", () => reportModal?.showModal());
@@ -899,11 +1130,12 @@ document.addEventListener("DOMContentLoaded", () => {
     reportModal.close();
     showToast("Reporte registrado en esta demostración visual.");
   });
-  document.querySelectorAll("[data-contact]").forEach((button) => {
-    button.addEventListener("click", () =>
-      showToast(
-        `La mensajería con ${button.dataset.contact} es una demostración visual.`,
-      ),
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("[data-contact]");
+    if (!button) return;
+    showToast(
+      `La mensajería con ${button.dataset.contact} es una demostración visual.`,
     );
   });
   document

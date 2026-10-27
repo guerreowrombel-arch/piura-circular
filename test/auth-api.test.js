@@ -6,6 +6,7 @@ import register from "../api/registro.js";
 import login from "../api/login.js";
 import logout from "../api/logout.js";
 import currentUser from "../api/me.js";
+import publications from "../api/publicaciones.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,
@@ -75,6 +76,90 @@ test("authentication routes reject unsupported methods", async () => {
   assert.equal(response.statusCode, 405);
   assert.equal(response.headers.allow, "POST");
   assert.equal(response.headers["cache-control"], "no-store");
+});
+
+test("publications require a valid session for POST", async () => {
+  const response = await call(publications, {
+    method: "POST",
+    body: {},
+  });
+
+  assert.equal(response.statusCode, 401);
+  assert.match(response.json().error, /Inicia sesión/);
+});
+
+test("publications reject non-object JSON bodies", async () => {
+  const token = createSessionToken("42");
+  const response = await call(publications, {
+    method: "POST",
+    headers: {
+      cookie: `${SESSION_COOKIE}=${token}`,
+      "content-type": "application/json",
+    },
+    body: "null",
+  });
+
+  assert.equal(response.statusCode, 400);
+  assert.match(response.json().error, /objeto JSON/);
+});
+
+test("publications reject invalid category before accessing the database", async () => {
+  const token = createSessionToken("42");
+  const response = await call(publications, {
+    method: "POST",
+    headers: { cookie: `${SESSION_COOKIE}=${token}` },
+    body: {
+      category: "Categoría desconocida",
+      description: "Equipo de prueba",
+      condition: "Operativo",
+      photos: [],
+    },
+  });
+
+  assert.equal(response.statusCode, 400);
+  assert.match(response.json().error, /categoría válida/i);
+});
+
+test("publications validate description length, condition, and photo count", async () => {
+  const token = createSessionToken("42");
+  const cookie = `${SESSION_COOKIE}=${token}`;
+  const validBase = {
+    category: "Computadoras",
+    description: "Equipo de prueba",
+    condition: "Operativo",
+    photos: [],
+  };
+  const tooLongDescription = await call(publications, {
+    method: "POST",
+    headers: { cookie },
+    body: { ...validBase, description: "x".repeat(1001) },
+  });
+  assert.equal(tooLongDescription.statusCode, 400);
+  assert.match(tooLongDescription.json().error, /1000 caracteres/);
+
+  const invalidCondition = await call(publications, {
+    method: "POST",
+    headers: { cookie },
+    body: { ...validBase, condition: "Dudoso" },
+  });
+  assert.equal(invalidCondition.statusCode, 400);
+  assert.match(invalidCondition.json().error, /condición válida/);
+
+  const invalidPhotoCount = await call(publications, {
+    method: "POST",
+    headers: { cookie },
+    body: {
+      ...validBase,
+      photos: [
+        "data:image/jpeg;base64,YQ==",
+        "data:image/jpeg;base64,Yg==",
+        "data:image/jpeg;base64,Yw==",
+        "data:image/jpeg;base64,ZA==",
+      ],
+    },
+  });
+  assert.equal(invalidPhotoCount.statusCode, 400);
+  assert.match(invalidPhotoCount.json().error, /máximo 3 fotos/);
 });
 
 test("URL-encoded fallback form bodies are parsed without using the URL", () => {
@@ -228,6 +313,35 @@ test("auth, publishing, location, and counter hooks match main.js selectors", as
       `${page} contains a counter source that main.js does not calculate`,
     );
   }
+});
+
+test("publications are sent to the API and rendered without local publication storage", async () => {
+  const mainScript = await readFile(
+    new URL("js/main.js", rootDirectory),
+    "utf8",
+  );
+  const endpoint = await readFile(
+    new URL("api/publicaciones.js", rootDirectory),
+    "utf8",
+  );
+  const schema = await readFile(
+    new URL("schema.sql", rootDirectory),
+    "utf8",
+  );
+
+  assert.match(mainScript, /fetch\("\/api\/publicaciones\?summary=1"/);
+  assert.match(mainScript, /fetch\("\/api\/publicaciones"/);
+  assert.match(mainScript, /createImageBitmap\(file\)/);
+  assert.match(mainScript, /800 \/ Math\.max\(bitmap\.width, bitmap\.height\)/);
+  assert.match(mainScript, /"image\/jpeg",\s*0\.7/);
+  assert.match(mainScript, /response\.status === 401/);
+  assert.doesNotMatch(mainScript, /localStorage\.(?:getItem|setItem)\(["']publicaciones/);
+  assert.doesNotMatch(mainScript, /\.innerHTML\s*=/);
+  assert.match(endpoint, /LEFT\(BTRIM\(u\.apellidos\), 1\)/);
+  assert.match(endpoint, /u\.distrito\s+AS district/);
+  assert.doesNotMatch(endpoint, /u\.email/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS publicaciones/);
+  assert.match(schema, /REFERENCES usuarios\(id\)/);
 });
 
 test("login and registration forms no longer use the demonstration handler", async () => {
