@@ -1238,8 +1238,9 @@ p {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 175px;
-  padding: 14px;
+  gap: 5px;
+  min-height: 0;
+  padding: 12px 34px 12px 12px;
   border: 1px solid #d5d9d3;
   background: #fffefa;
   cursor: pointer;
@@ -1253,31 +1254,39 @@ p {
 }
 .condition-option input {
   position: absolute;
-  top: 13px;
+  top: 12px;
   right: 12px;
   width: 17px;
   height: 17px;
   accent-color: var(--petrol);
 }
+.condition-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink);
+}
 .condition-symbol {
-  margin: 7px 0;
+  flex: 0 0 auto;
   color: var(--coral);
-  font-size: 1.3rem;
+  font-size: 1rem;
+  line-height: 1;
 }
 .condition-option b {
-  font-size: 0.76rem;
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1.25;
 }
 .condition-option small {
-  margin-top: 4px;
   color: var(--muted);
-  font-size: 0.67rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
 }
 .condition-route {
-  margin-top: auto;
-  padding-top: 13px;
   color: var(--petrol);
-  font-size: 0.64rem;
+  font-size: 0.78rem;
   font-weight: 700;
+  line-height: 1.35;
 }
 .upload-zone {
   position: relative;
@@ -2059,7 +2068,8 @@ p {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(0deg, rgba(10, 58, 62, 0.36), transparent 60%);
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(10, 58, 62, 0.58), transparent 60%);
 }
 .article-art > span,
 .article-art > i {
@@ -2720,12 +2730,6 @@ p {
   }
   .condition-grid {
     grid-template-columns: 1fr;
-  }
-  .condition-option {
-    min-height: 130px;
-  }
-  .condition-option .condition-route {
-    padding-top: 7px;
   }
   .publish-aside {
     padding: 0;
