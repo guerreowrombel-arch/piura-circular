@@ -18,6 +18,36 @@
       crossorigin=""
     />
     <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      .institutional-page .institutional-stat-card,
+      .institutional-page .institutional-card,
+      .institutional-page .institutional-plan-card {
+        border-radius: var(--radius-card);
+      }
+
+      .institutional-page .institutional-plan-current,
+      .institutional-page .institutional-plan-option,
+      .institutional-page .institutional-point-form input:not([type="checkbox"]),
+      .institutional-page .institutional-cancel-button,
+      .institutional-page .institutional-table-action {
+        border-radius: var(--radius-control);
+      }
+
+      .institutional-page .institutional-chart-track,
+      .institutional-page .institutional-chart-bar,
+      .institutional-page .institutional-category-option {
+        border-radius: var(--radius-small);
+      }
+
+      .institutional-page .institutional-point-map {
+        overflow: hidden;
+        border-radius: var(--radius-card);
+      }
+
+      .institutional-page .institutional-status {
+        border-radius: var(--radius-control);
+      }
+    </style>
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
