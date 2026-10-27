@@ -162,6 +162,114 @@ p {
 .nav-login {
   font-size: 0.78rem;
 }
+.profile-menu {
+  position: relative;
+  z-index: 20;
+}
+.profile-trigger {
+  position: relative;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0;
+  color: var(--warm-white);
+  background: var(--petrol);
+  border: 2px solid rgba(15, 82, 87, 0.16);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+.profile-trigger:hover {
+  background: var(--petrol-dark);
+  transform: translateY(-1px);
+}
+.profile-trigger:focus-visible,
+.profile-logout:focus-visible,
+.profile-messages-link:focus-visible {
+  outline: 3px solid rgba(226, 105, 78, 0.45);
+  outline-offset: 3px;
+}
+.profile-initial {
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+.unread-badge {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  color: #fff;
+  background: #c9413b;
+  border: 2px solid var(--warm-white);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+.unread-badge[hidden],
+.profile-panel[hidden] {
+  display: none;
+}
+.profile-unread-badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+}
+.profile-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  display: grid;
+  width: min(290px, calc(100vw - 32px));
+  gap: 0;
+  padding: 18px;
+  color: var(--ink);
+  background: var(--warm-white);
+  border: 1px solid rgba(15, 82, 87, 0.15);
+  box-shadow: 0 16px 38px rgba(10, 58, 62, 0.16);
+}
+.profile-panel-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.profile-panel-email {
+  overflow: hidden;
+  margin: 4px 0 14px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+}
+.profile-messages-link,
+.profile-logout {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  color: var(--petrol-dark);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid rgba(15, 82, 87, 0.12);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.profile-messages-link .unread-badge {
+  border-color: var(--warm-white);
+}
+.profile-logout {
+  color: #a53a35;
+}
 .button {
   display: inline-flex;
   align-items: center;
@@ -2227,6 +2335,18 @@ p {
     justify-content: flex-start;
     padding-top: 15px;
   }
+  .nav-actions.has-profile-menu {
+    position: relative;
+    z-index: 20;
+    justify-content: flex-end;
+  }
+  .nav-actions.has-profile-menu .profile-menu {
+    position: static;
+  }
+  .nav-actions.has-profile-menu .profile-panel {
+    top: calc(100% + 10px);
+    right: 0;
+  }
   .nav-actions .nav-login {
     font-size: 0.84rem;
   }
@@ -2848,12 +2968,29 @@ p {
   justify-content: space-between;
   gap: 10px;
 }
+.conversation-item-title-wrap {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
 .conversation-item-title,
 .conversation-item-person {
   overflow: hidden;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.conversation-item-title {
+  min-width: 0;
+}
+.conversation-unread-badge {
+  min-width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  padding-inline: 4px;
+  border: 0;
+  font-size: 0.61rem;
 }
 .conversation-item-person,
 .conversation-item-preview,

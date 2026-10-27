@@ -53,7 +53,14 @@ export default async function conversations(request, response) {
           LEFT(BTRIM(other_user.apellidos), 1) AS "otherInitial",
           latest.texto AS "lastMessage",
           latest.created_at AS "lastMessageAt",
-          c.created_at AS "createdAt"
+          c.created_at AS "createdAt",
+          (
+            SELECT COUNT(*)
+            FROM mensajes unread
+            WHERE unread.conversacion_id = c.id
+              AND unread.autor_id <> ${userId}
+              AND unread.leido = FALSE
+          ) AS "unreadCount"
         FROM conversaciones c
         INNER JOIN publicaciones p ON p.id = c.publicacion_id
         INNER JOIN usuarios other_user
@@ -113,7 +120,7 @@ export default async function conversations(request, response) {
   try {
     const sql = getDatabase();
     const [publication] = await sql`
-      SELECT usuario_id AS "ownerId"
+      SELECT usuario_id AS "ownerId", categoria AS category, marca AS brand
       FROM publicaciones
       WHERE id = ${publicationId}
       LIMIT 1
@@ -129,13 +136,40 @@ export default async function conversations(request, response) {
       return;
     }
 
-    const [conversation] = await sql`
-      INSERT INTO conversaciones (publicacion_id, interesado_id, dueno_id)
-      VALUES (${publicationId}, ${userId}, ${publication.ownerId})
-      ON CONFLICT (publicacion_id, interesado_id)
-      DO UPDATE SET publicacion_id = EXCLUDED.publicacion_id
-      RETURNING id
+    const brand = String(publication.brand || "").trim();
+    const greeting = `Hola, me interesa tu ${publication.category}${
+      brand ? ` ${brand}` : ""
+    }`;
+    let [conversation] = await sql`
+      WITH created AS (
+        INSERT INTO conversaciones (publicacion_id, interesado_id, dueno_id)
+        VALUES (${publicationId}, ${userId}, ${publication.ownerId})
+        ON CONFLICT (publicacion_id, interesado_id)
+        DO NOTHING
+        RETURNING id
+      ),
+      first_message AS (
+        INSERT INTO mensajes (conversacion_id, autor_id, texto)
+        SELECT created.id, ${userId}, ${greeting}
+        FROM created
+        RETURNING id
+      )
+      SELECT created.id
+      FROM created
+      LEFT JOIN first_message ON TRUE
     `;
+    if (!conversation) {
+      [conversation] = await sql`
+        SELECT id
+        FROM conversaciones
+        WHERE publicacion_id = ${publicationId}
+          AND interesado_id = ${userId}
+        LIMIT 1
+      `;
+    }
+    if (!conversation) {
+      throw new Error("No se pudo recuperar la conversación creada.");
+    }
     sendJson(response, 200, { id: String(conversation.id) });
   } catch (error) {
     console.error("No se pudo abrir la conversación.", error);

@@ -43,8 +43,12 @@ CREATE TABLE IF NOT EXISTS mensajes (
   conversacion_id BIGINT NOT NULL REFERENCES conversaciones(id) ON DELETE CASCADE,
   autor_id BIGINT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   texto TEXT NOT NULL CHECK (char_length(texto) BETWEEN 1 AND 1000),
+  leido BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE mensajes
+  ADD COLUMN IF NOT EXISTS leido BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE INDEX IF NOT EXISTS mensajes_conversacion_created_at_idx
   ON mensajes (conversacion_id, created_at, id);

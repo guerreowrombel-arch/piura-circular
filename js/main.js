@@ -633,6 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
+  let refreshUnreadNotifications = () => {};
   if (authenticatedNavigation.length) {
     fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
       .then(async (response) => {
@@ -642,23 +643,194 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (!result.user) return;
 
-        authenticatedNavigation.forEach((navigation) => {
+        const user = result.user;
+        const displayName =
+          [user.nombre, user.apellidos]
+            .map((part) => String(part || "").trim())
+            .filter(Boolean)
+            .join(" ") || "Usuario";
+        const badgeNodes = [];
+        const profileButtons = [];
+        authenticatedNavigation.forEach((navigation, index) => {
+          const profileMenu = document.createElement("div");
+          const profileButton = document.createElement("button");
+          const initial = document.createElement("span");
+          const profileBadge = document.createElement("span");
+          const panel = document.createElement("div");
+          const profileName = document.createElement("p");
+          const profileEmail = document.createElement("p");
           const messagesLink = document.createElement("a");
-          messagesLink.className = "nav-login";
-          messagesLink.href = "mensajes.html";
-          messagesLink.textContent = "Mensajes";
+          const messagesLabel = document.createElement("span");
+          const messagesBadge = document.createElement("span");
           const logoutButton = document.createElement("button");
+          const panelId = `profile-menu-panel-${index + 1}`;
+
+          profileMenu.className = "profile-menu";
+          profileButton.type = "button";
+          profileButton.className = "profile-trigger";
+          profileButton.dataset.profileToggle = "";
+          profileButton.setAttribute("aria-expanded", "false");
+          profileButton.setAttribute("aria-controls", panelId);
+          profileButton.setAttribute("aria-label", `Perfil de ${displayName}`);
+          initial.className = "profile-initial";
+          initial.textContent = displayName.charAt(0).toLocaleUpperCase();
+          profileBadge.className = "unread-badge profile-unread-badge";
+          profileBadge.dataset.unreadBadge = "";
+          profileBadge.hidden = true;
+          profileBadge.setAttribute("aria-hidden", "true");
+          profileButton.append(initial, profileBadge);
+          profileButtons.push({ button: profileButton, displayName });
+
+          panel.className = "profile-panel";
+          panel.id = panelId;
+          panel.setAttribute("aria-label", "Menú de perfil");
+          panel.hidden = true;
+          profileName.className = "profile-panel-name";
+          profileName.textContent = displayName;
+          profileEmail.className = "profile-panel-email";
+          profileEmail.textContent = String(user.email || "");
+          panel.append(profileName, profileEmail);
+
+          messagesLink.className = "profile-messages-link";
+          messagesLink.href = "mensajes.html";
+          messagesLabel.textContent = "Mensajería";
+          messagesBadge.className = "unread-badge";
+          messagesBadge.dataset.unreadBadge = "";
+          messagesBadge.hidden = true;
+          messagesBadge.setAttribute("aria-hidden", "true");
+          messagesLink.append(messagesLabel, messagesBadge);
+          badgeNodes.push(profileBadge, messagesBadge);
+
           logoutButton.type = "button";
-          logoutButton.className = "button button-small";
+          logoutButton.className = "profile-logout";
           logoutButton.dataset.authLogout = "";
           logoutButton.textContent = "Cerrar sesión";
-          navigation.replaceChildren(messagesLink, logoutButton);
+          panel.append(messagesLink, logoutButton);
+          profileMenu.append(profileButton, panel);
+          navigation.classList.add("has-profile-menu");
+          navigation.replaceChildren(profileMenu);
         });
+
+        let unreadRequestPending = false;
+        let unreadRefreshQueued = false;
+        const updateUnreadBadges = (value) => {
+          const unreadCount = Math.max(0, Math.floor(Number(value) || 0));
+          const badgeText = unreadCount > 9 ? "9+" : String(unreadCount);
+          badgeNodes.forEach((badge) => {
+            badge.textContent = badgeText;
+            badge.hidden = unreadCount === 0;
+            badge.setAttribute("aria-hidden", String(unreadCount === 0));
+            if (unreadCount > 0) {
+              badge.setAttribute(
+                "aria-label",
+                `${unreadCount} mensajes sin leer`,
+              );
+            } else {
+              badge.removeAttribute("aria-label");
+            }
+          });
+          profileButtons.forEach(({ button, displayName: name }) => {
+            button.setAttribute(
+              "aria-label",
+              unreadCount
+                ? `Perfil de ${name}, ${unreadCount} mensajes sin leer`
+                : `Perfil de ${name}`,
+            );
+          });
+        };
+        refreshUnreadNotifications = async () => {
+          if (document.visibilityState !== "visible") return;
+          if (unreadRequestPending) {
+            unreadRefreshQueued = true;
+            return;
+          }
+          unreadRequestPending = true;
+          try {
+            const response = await fetch("/api/mensajes?resumen=1", {
+              credentials: "same-origin",
+              cache: "no-store",
+            });
+            const summary = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              throw new Error(
+                summary.error || "No se pudo consultar la mensajería.",
+              );
+            }
+            if (!Number.isFinite(Number(summary.noLeidos))) {
+              throw new Error("El resumen de mensajes no tiene un formato válido.");
+            }
+            updateUnreadBadges(summary.noLeidos);
+          } catch (error) {
+            console.error("No se pudo actualizar la insignia de mensajes.", error);
+          } finally {
+            unreadRequestPending = false;
+            if (unreadRefreshQueued && document.visibilityState === "visible") {
+              unreadRefreshQueued = false;
+              refreshUnreadNotifications();
+            }
+          }
+        };
+        refreshUnreadNotifications();
+        const unreadPollTimer = window.setInterval(() => {
+          if (document.visibilityState === "visible") {
+            refreshUnreadNotifications();
+          }
+        }, 15000);
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") {
+            refreshUnreadNotifications();
+          }
+        });
+        window.addEventListener("pagehide", () =>
+          window.clearInterval(unreadPollTimer),
+        );
       })
       .catch((error) => {
         console.error("No se pudo consultar la sesión actual.", error);
       });
   }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const toggle = target?.closest("[data-profile-toggle]");
+    if (toggle) {
+      const menu = toggle.closest(".profile-menu");
+      const panel = menu?.querySelector(".profile-panel");
+      if (!menu || !panel) return;
+      const opening = panel.hidden;
+      document.querySelectorAll(".profile-panel").forEach((otherPanel) => {
+        otherPanel.hidden = true;
+        otherPanel
+          .closest(".profile-menu")
+          ?.querySelector("[data-profile-toggle]")
+          ?.setAttribute("aria-expanded", "false");
+      });
+      panel.hidden = !opening;
+      toggle.setAttribute("aria-expanded", String(opening));
+      return;
+    }
+
+    document.querySelectorAll(".profile-menu").forEach((menu) => {
+      if (target && menu.contains(target)) return;
+      const panel = menu.querySelector(".profile-panel");
+      const button = menu.querySelector("[data-profile-toggle]");
+      if (panel && !panel.hidden) {
+        panel.hidden = true;
+        button?.setAttribute("aria-expanded", "false");
+      }
+    });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document.querySelectorAll(".profile-panel:not([hidden])").forEach((panel) => {
+      panel.hidden = true;
+      const button = panel
+        .closest(".profile-menu")
+        ?.querySelector("[data-profile-toggle]");
+      button?.setAttribute("aria-expanded", "false");
+      button?.focus();
+    });
+  });
 
   document.addEventListener("click", async (event) => {
     const clickedElement =
@@ -1288,7 +1460,9 @@ document.addEventListener("DOMContentLoaded", () => {
     conversationRecords.forEach((conversation) => {
       const button = document.createElement("button");
       const top = document.createElement("span");
+      const titleWrap = document.createElement("span");
       const title = document.createElement("span");
+      const unreadBadge = document.createElement("span");
       const date = document.createElement("span");
       const person = document.createElement("span");
       const preview = document.createElement("span");
@@ -1303,13 +1477,30 @@ document.addEventListener("DOMContentLoaded", () => {
         button.setAttribute("aria-current", "true");
       }
       top.className = "conversation-item-top";
+      titleWrap.className = "conversation-item-title-wrap";
       title.className = "conversation-item-title";
       title.textContent = titleText || "Equipo publicado";
+      unreadBadge.className = "unread-badge conversation-unread-badge";
+      unreadBadge.hidden = true;
+      unreadBadge.setAttribute("aria-hidden", "true");
+      const unreadCount = Math.max(
+        0,
+        Math.floor(Number(conversation.unreadCount) || 0),
+      );
+      if (unreadCount > 0) {
+        unreadBadge.textContent = unreadCount > 9 ? "9+" : String(unreadCount);
+        unreadBadge.hidden = false;
+        unreadBadge.setAttribute(
+          "aria-label",
+          `${unreadCount} mensajes sin leer`,
+        );
+      }
+      titleWrap.append(title, unreadBadge);
       date.className = "conversation-item-date";
       date.textContent = formatMessageTime(
         conversation.lastMessageAt || conversation.createdAt,
       );
-      top.append(title, date);
+      top.append(titleWrap, date);
       person.className = "conversation-item-person";
       person.textContent = conversation.otherInitial
         ? `${conversation.otherName} ${conversation.otherInitial}.`
@@ -1375,6 +1566,14 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("La respuesta de mensajes no tiene un formato válido.");
       }
       renderMessages(result.messages, forceScroll);
+      const selectedConversation = conversationRecords.find(
+        (conversation) => String(conversation.id) === activeConversationId,
+      );
+      if (selectedConversation) {
+        selectedConversation.unreadCount = 0;
+        renderConversationList();
+      }
+      refreshUnreadNotifications();
       if (messageStatus) messageStatus.textContent = "";
     } catch (error) {
       if (messageStatus && !window.location.href.includes("login.html")) {

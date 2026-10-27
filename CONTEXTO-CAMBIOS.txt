@@ -257,3 +257,22 @@ MENSAJERIA ENTRE USUARIOS
 - Pruebas automatizadas cubren sesión requerida, validaciones de entrada,
   estructura de esquema y selectores del chat. No se confirmó la conexión a una
   base Neon real en este entorno.
+
+NOTIFICACIONES Y MENU DE PERFIL
+-------------------------------
+- mensajes.leido es BOOLEAN NOT NULL DEFAULT FALSE. schema.sql también incluye
+  ALTER TABLE ... ADD COLUMN IF NOT EXISTS para actualizar sin perder datos una
+  tabla mensajes creada previamente.
+- Al crear una conversación nueva, api/conversaciones.js inserta un primer
+  mensaje automático del interesado con la categoría y marca del equipo. Si la
+  conversación ya existía, no vuelve a insertar el saludo.
+- GET /api/mensajes?resumen=1 cuenta los mensajes no leídos escritos por otra
+  persona en conversaciones del usuario. GET /api/conversaciones incluye
+  unreadCount para cada conversación.
+- GET /api/mensajes?conversacion=ID devuelve los mensajes y marca como leídos
+  los enviados por la otra persona. El total se actualiza al recargar la
+  conversación o al consultar el resumen.
+- El menú de perfil se construye en js/main.js desde el perfil de /api/me.
+  Incluye inicial, nombre, correo, enlace a Mensajería e insignias; actualiza el
+  total cada 15 segundos cuando la pestaña está visible y se cierra al hacer
+  clic fuera o pulsar Escape.

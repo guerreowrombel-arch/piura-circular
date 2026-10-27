@@ -53,6 +53,27 @@ export default async function messages(request, response) {
 
   const requestUrl = new URL(request.url, "http://localhost");
   if (request.method === "GET") {
+    if (requestUrl.searchParams.get("resumen") === "1") {
+      try {
+        const sql = getDatabase();
+        const [row] = await sql`
+          SELECT COUNT(*) AS "noLeidos"
+          FROM mensajes m
+          INNER JOIN conversaciones c ON c.id = m.conversacion_id
+          WHERE (c.interesado_id = ${userId} OR c.dueno_id = ${userId})
+            AND m.autor_id <> ${userId}
+            AND m.leido = FALSE
+        `;
+        sendJson(response, 200, { noLeidos: Number(row?.noLeidos || 0) });
+      } catch (error) {
+        console.error("No se pudo cargar el resumen de mensajes.", error);
+        sendJson(response, 500, {
+          error: "No se pudo consultar el total de mensajes sin leer.",
+        });
+      }
+      return;
+    }
+
     const conversationId = getConversationId(
       requestUrl.searchParams.get("conversacion"),
     );
@@ -87,6 +108,13 @@ export default async function messages(request, response) {
         INNER JOIN usuarios u ON u.id = m.autor_id
         WHERE m.conversacion_id = ${conversationId}
         ORDER BY m.created_at ASC, m.id ASC
+      `;
+      await sql`
+        UPDATE mensajes
+        SET leido = TRUE
+        WHERE conversacion_id = ${conversationId}
+          AND autor_id <> ${userId}
+          AND leido = FALSE
       `;
       sendJson(response, 200, {
         messages: rows.map((row) => ({

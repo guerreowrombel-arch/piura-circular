@@ -89,66 +89,78 @@ test("publications require a valid session for POST", async () => {
     body: {},
   });
 
-  test("conversation and message APIs require a session", async () => {
-    const conversationResponse = await call(conversations, { method: "POST", body: {} });
-    const messageResponse = await call(messages, {
-      method: "POST",
-      body: {},
-    });
+  assert.equal(response.statusCode, 401);
+  assert.match(response.json().error, /Inicia sesión/);
+});
 
-    assert.equal(conversationResponse.statusCode, 401);
-    assert.equal(messageResponse.statusCode, 401);
-    assert.match(conversationResponse.json().error, /Inicia sesión/);
-    assert.match(messageResponse.json().error, /Inicia sesión/);
+test("conversation and message APIs require a session", async () => {
+  const conversationResponse = await call(conversations, {
+    method: "POST",
+    body: {},
+  });
+  const messageResponse = await call(messages, {
+    method: "POST",
+    body: {},
   });
 
-  test("conversation API rejects unsupported methods and invalid publication IDs", async () => {
-    const token = createSessionToken("42");
-    const headers = { cookie: `${SESSION_COOKIE}=${token}` };
-    const unsupported = await call(conversations, {
-      method: "DELETE",
-      headers,
-    });
-    const invalidPublication = await call(conversations, {
-      method: "POST",
-      headers,
-      body: { publicacionId: "invalid" },
-    });
+  assert.equal(conversationResponse.statusCode, 401);
+  assert.equal(messageResponse.statusCode, 401);
+  assert.match(conversationResponse.json().error, /Inicia sesión/);
+  assert.match(messageResponse.json().error, /Inicia sesión/);
+});
 
-    assert.equal(unsupported.statusCode, 405);
-    assert.equal(unsupported.headers.allow, "GET, POST");
-    assert.equal(invalidPublication.statusCode, 400);
-    assert.match(invalidPublication.json().error, /publicación válida/i);
+test("conversation API rejects unsupported methods and invalid publication IDs", async () => {
+  const token = createSessionToken("42");
+  const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+  const unsupported = await call(conversations, {
+    method: "DELETE",
+    headers,
+  });
+  const invalidPublication = await call(conversations, {
+    method: "POST",
+    headers,
+    body: { publicacionId: "invalid" },
   });
 
-  test("messages API validates conversation IDs and message length before database access", async () => {
-    const token = createSessionToken("42");
-    const headers = { cookie: `${SESSION_COOKIE}=${token}` };
-    const invalidConversation = await call(messages, {
-      method: "GET",
-      headers,
-      url: "/api/mensajes?conversacion=invalid",
-    });
-    const emptyMessage = await call(messages, {
-      method: "POST",
-      headers,
-      body: { conversacionId: "12", texto: "   " },
-    });
-    const oversizedMessage = await call(messages, {
-      method: "POST",
-      headers,
-      body: { conversacionId: "12", texto: "x".repeat(1001) },
-    });
+  assert.equal(unsupported.statusCode, 405);
+  assert.equal(unsupported.headers.allow, "GET, POST");
+  assert.equal(invalidPublication.statusCode, 400);
+  assert.match(invalidPublication.json().error, /publicación válida/i);
+});
 
-    assert.equal(invalidConversation.statusCode, 400);
-    assert.match(invalidConversation.json().error, /conversación válida/i);
-    assert.equal(emptyMessage.statusCode, 400);
-    assert.equal(oversizedMessage.statusCode, 400);
-    assert.match(emptyMessage.json().error, /1 y 1000 caracteres/);
+test("messages API validates conversation IDs and message length before database access", async () => {
+  const token = createSessionToken("42");
+  const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+  const invalidConversation = await call(messages, {
+    method: "GET",
+    headers,
+    url: "/api/mensajes?conversacion=invalid",
+  });
+  const emptyMessage = await call(messages, {
+    method: "POST",
+    headers,
+    body: { conversacionId: "12", texto: "   " },
+  });
+  const oversizedMessage = await call(messages, {
+    method: "POST",
+    headers,
+    body: { conversacionId: "12", texto: "x".repeat(1001) },
+  });
+
+  assert.equal(invalidConversation.statusCode, 400);
+  assert.match(invalidConversation.json().error, /conversación válida/i);
+  assert.equal(emptyMessage.statusCode, 400);
+  assert.equal(oversizedMessage.statusCode, 400);
+  assert.match(emptyMessage.json().error, /1 y 1000 caracteres/);
+});
+
+test("message summary endpoint also requires a session", async () => {
+  const response = await call(messages, {
+    method: "GET",
+    url: "/api/mensajes?resumen=1",
   });
 
   assert.equal(response.statusCode, 401);
-  assert.match(response.json().error, /Inicia sesión/);
 });
 
 test("publications reject non-object JSON bodies", async () => {
@@ -427,11 +439,19 @@ test("messaging schema, API routes, and interface use the required contracts", a
     schema,
     /CREATE TABLE IF NOT EXISTS mensajes\s*\(\s*id[\s\S]*?conversacion_id[\s\S]*?autor_id[\s\S]*?texto[\s\S]*?created_at/s,
   );
+  assert.match(schema, /leido BOOLEAN NOT NULL DEFAULT FALSE/);
+  assert.match(schema, /ADD COLUMN IF NOT EXISTS leido BOOLEAN NOT NULL DEFAULT FALSE/);
   assert.match(conversationApi, /c\.interesado_id = \$\{userId\} OR c\.dueno_id = \$\{userId\}/);
   assert.match(conversationApi, /ON CONFLICT \(publicacion_id, interesado_id\)/);
+  assert.match(conversationApi, /"unreadCount"/);
+  assert.match(conversationApi, /Hola, me interesa tu \$\{publication\.category\}/);
+  assert.match(conversationApi, /INSERT INTO mensajes \(conversacion_id, autor_id, texto\)/);
   assert.doesNotMatch(conversationApi, /other_user\.email|SELECT[^`]*email/s);
   assert.match(messageApi, /interesado_id = \$\{userId\} OR dueno_id = \$\{userId\}/);
   assert.match(messageApi, /ORDER BY m\.created_at ASC, m\.id ASC/);
+  assert.match(messageApi, /searchParams\.get\("resumen"\) === "1"/);
+  assert.match(messageApi, /m\.leido = FALSE/);
+  assert.match(messageApi, /SET leido = TRUE/);
 
   for (const selector of [
     "data-conversation-list",
@@ -448,7 +468,14 @@ test("messaging schema, API routes, and interface use the required contracts", a
     assert.ok(mainScript.includes(selector), `main.js must use ${selector}`);
   }
   assert.match(mainScript, /setInterval\([\s\S]*?5000\)/);
+  assert.match(mainScript, /setInterval\([\s\S]*?15000\)/);
   assert.match(mainScript, /document\.visibilityState !== "visible"/);
+  assert.match(mainScript, /dataset\.unreadBadge/);
+  assert.match(mainScript, /aria-expanded/);
+  assert.match(mainScript, /event\.key !== "Escape"/);
+  assert.match(mainScript, /9\+/);
+  assert.match(mainScript, /data-profile-toggle/);
+  assert.match(mainScript, /unreadCount/);
   assert.match(mainScript, /data-conversation-start/);
   assert.match(mainScript, /mensajes\.html\?c=/);
   assert.match(mainScript, /assets\/data\/raee-points\.json/);
