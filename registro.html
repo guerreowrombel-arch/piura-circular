@@ -31,7 +31,7 @@
         ><a href="intercambio.html">Intercambio</a
         ><a href="puntos-acopio.html">Puntos de acopio</a
         ><a href="educacion.html">Educación</a>
-        <div class="nav-actions">
+        <div class="nav-actions" data-auth-nav>
           <a class="nav-login" href="login.html">Iniciar sesión</a
           ><a class="button button-small active" href="registro.html"
             >Crear cuenta <span>↗</span></a
@@ -52,7 +52,12 @@
         </div>
       </section>
       <section class="auth-panel">
-        <form class="form-card demo-form">
+        <form
+          class="form-card"
+          action="/api/registro"
+          method="post"
+          data-auth-register
+        >
           <p class="eyebrow">NUEVA CUENTA</p>
           <h2>Únete a la ruta</h2>
           <p class="form-intro">Completa tus datos para comenzar.</p>
@@ -104,6 +109,7 @@
               name="password"
               type="password"
               autocomplete="new-password"
+              minlength="8"
               required
               data-strength-input
             /><button

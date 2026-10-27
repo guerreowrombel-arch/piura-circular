@@ -8,7 +8,8 @@ REPOSITORIO Y ESTADO
 --------------------
 - Rama principal: main
 - Remoto: origin
-- Ultimo commit verificado: 65d5c81 - Actualizar referencia del commit de contexto
+- Ultimo commit verificado antes de este cambio: a450a68 - Actualizar guias y
+  contadores dinamicos
 - Ultimo commit funcional: 18cffaf - Integrar puntos RAEE y filtros interactivos
 - Ese commit ya esta enviado a origin/main.
 - Para obtener los cambios mas recientes: git pull origin main
@@ -120,6 +121,43 @@ CONTADORES DINAMICOS DE IMPACTO
   informa el error en la consola.
 - Los registros de localStorage son locales a cada navegador y dispositivo;
   las publicaciones no se comparten entre usuarios ni se envian al servidor.
+
+AUTENTICACION CON NEON Y VERCEL
+-------------------------------
+- La autenticacion usa funciones serverless same-origin en api/ y Neon Postgres.
+- package.json declara @neondatabase/serverless, bcryptjs y jsonwebtoken.
+  db.js obtiene la conexion desde DATABASE_URL; no hay credenciales en el
+  repositorio.
+- schema.sql crea la tabla usuarios con id autogenerado, nombre, apellidos,
+  distrito, email unico en minusculas y password_hash. Ejecutar su contenido
+  en el SQL Editor de Neon antes de probar el registro.
+- api/registro.js valida los datos, normaliza el correo, genera el hash con
+  bcryptjs (coste 12), crea la cuenta y devuelve una cookie de sesion.
+- api/login.js verifica credenciales sin revelar si el correo o la contraseña
+  fueron incorrectos. api/logout.js invalida la cookie y api/me.js devuelve
+  un perfil sin password_hash o user null cuando no hay sesion valida.
+- La cookie JWT se llama piura_circular_session, dura siete dias y usa
+  HttpOnly, SameSite=Lax y Secure en produccion. JWT_SECRET debe contener al
+  menos 32 bytes. El token no se guarda en localStorage.
+- En Vercel, configurar como variables de entorno DATABASE_URL (connection
+  string de Neon) y JWT_SECRET (secreto aleatorio de al menos 32 bytes), para
+  cada entorno que se vaya a usar. Generar un secreto con:
+  node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+  No copiar ese valor al repositorio ni compartirlo publicamente.
+- Instalar dependencias con npm install. Aplicar schema.sql una sola vez en la
+  base de Neon. En desarrollo local, usar Vercel CLI (vercel dev) con esas
+  variables configuradas; abrir las paginas con un servidor estatico no ejecuta
+  las funciones api/.
+- Rutas: POST /api/registro, POST /api/login, POST /api/logout y GET /api/me.
+  Los formularios de registro e inicio de sesion muestran errores devueltos por
+  el API y redirigen a index.html al autenticarse.
+- Los ocho menus consultan /api/me y cambian los enlaces de inicio/registro por
+  "Cerrar sesion" cuando hay un usuario autenticado.
+- Ejecutar npm test para validar los estados HTTP, la cookie, la duracion del
+  JWT y la lectura de la sesion sin requerir una conexion real a Neon.
+- La base guarda nombre, apellidos, distrito, email normalizado y hash de
+  contraseña. Las publicaciones existentes siguen guardandose en localStorage;
+  no se migraron a Neon en esta tarea.
 
 COMO ESTA ORGANIZADO EL MAPA DE RAEE
 -----------------------------------

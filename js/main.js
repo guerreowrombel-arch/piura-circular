@@ -564,14 +564,120 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.querySelectorAll(".demo-form").forEach((form) => {
-    form.addEventListener("submit", (event) => {
+  document.querySelectorAll("[data-auth-register], [data-auth-login]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const notice = form.querySelector(".form-notice");
-      if (notice)
-        notice.textContent =
-          "Esto es solo una demostración visual. No se enviaron datos.";
+      const submitButton = form.querySelector('button[type="submit"]');
+      const isRegistration = form.matches("[data-auth-register]");
+      const formData = new FormData(form);
+      const password = String(formData.get("password") || "");
+      if (
+        isRegistration &&
+        password !== String(formData.get("confirm-password") || "")
+      ) {
+        if (notice) notice.textContent = "Las contraseñas no coinciden.";
+        return;
+      }
+
+      const payload = {
+        email: String(formData.get("email") || ""),
+        password,
+      };
+      if (isRegistration) {
+        payload.nombre = String(formData.get("nombre") || "");
+        payload.apellidos = String(formData.get("apellidos") || "");
+        payload.distrito = String(formData.get("distrito") || "");
+      }
+
+      if (submitButton) submitButton.disabled = true;
+      if (notice) notice.textContent = "Enviando…";
+      try {
+        const response = await fetch(
+          isRegistration ? "/api/registro" : "/api/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify(payload),
+          },
+        );
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result.error || "No se pudo completar la solicitud.");
+        }
+
+        if (notice) {
+          notice.textContent = isRegistration
+            ? "Cuenta creada. Redirigiendo…"
+            : "Sesión iniciada. Redirigiendo…";
+        }
+        window.location.assign("index.html");
+      } catch (error) {
+        console.error("No se pudo completar la autenticación.", error);
+        if (notice) {
+          notice.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudo conectar. Inténtalo de nuevo.";
+        }
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
     });
+  });
+
+  const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
+  if (authenticatedNavigation.length) {
+    fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
+      .then(async (response) => {
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result.error || "No se pudo comprobar la sesión.");
+        }
+        if (!result.user) return;
+
+        authenticatedNavigation.forEach((navigation) => {
+          const logoutButton = document.createElement("button");
+          logoutButton.type = "button";
+          logoutButton.className = "button button-small";
+          logoutButton.dataset.authLogout = "";
+          logoutButton.textContent = "Cerrar sesión";
+          navigation.replaceChildren(logoutButton);
+        });
+      })
+      .catch((error) => {
+        console.error("No se pudo consultar la sesión actual.", error);
+      });
+  }
+
+  document.addEventListener("click", async (event) => {
+    const clickedElement =
+      event.target instanceof Element ? event.target : null;
+    const logoutButton = clickedElement?.closest("[data-auth-logout]");
+    if (!logoutButton) return;
+
+    logoutButton.disabled = true;
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error || "No se pudo cerrar la sesión.");
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error("No se pudo cerrar la sesión.", error);
+      logoutButton.disabled = false;
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo cerrar la sesión. Inténtalo de nuevo.";
+      if (document.querySelector("[data-toast]")) showToast(message);
+      else window.alert(message);
+    }
   });
 
   const publishForm = document.querySelector("[data-publish-form]");

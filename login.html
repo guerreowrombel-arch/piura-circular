@@ -31,7 +31,7 @@
         ><a href="intercambio.html">Intercambio</a
         ><a href="puntos-acopio.html">Puntos de acopio</a
         ><a href="educacion.html">Educación</a>
-        <div class="nav-actions">
+        <div class="nav-actions" data-auth-nav>
           <a class="nav-login active" href="login.html">Iniciar sesión</a
           ><a class="button button-small" href="registro.html"
             >Crear cuenta <span>↗</span></a
@@ -52,7 +52,12 @@
         </div>
       </section>
       <section class="auth-panel">
-        <form class="form-card demo-form">
+        <form
+          class="form-card"
+          action="/api/login"
+          method="post"
+          data-auth-login
+        >
           <p class="eyebrow">QUÉ BUENO VERTE</p>
           <h2>Iniciar sesión</h2>
           <p class="form-intro">Ingresa tus datos para continuar.</p>
