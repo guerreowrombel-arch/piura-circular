@@ -232,3 +232,28 @@ PARA CONTINUAR
 
 Nota: el push a main normalmente activa el despliegue conectado en Vercel, pero
 el estado de un despliegue concreto debe confirmarse en el panel de Vercel.
+
+MENSAJERIA ENTRE USUARIOS
+-------------------------
+- schema.sql crea las tablas conversaciones y mensajes, con sus columnas
+  principales solicitadas, relaciones con usuarios/publicaciones y restricciones
+  para evitar una conversación duplicada por publicación e interesado.
+- api/conversaciones.js permite abrir o reutilizar una conversación por
+  publicación y obtener la lista propia con título del equipo, otra persona,
+  último mensaje y actividad. No devuelve correos.
+- api/mensajes.js devuelve mensajes ordenados cronológicamente y permite enviar
+  textos de 1 a 1000 caracteres. Ambas operaciones comprueban que el usuario
+  autenticado participa en la conversación.
+- mensajes.html ofrece la lista de conversaciones, el chat, el envío de
+  mensajes y la sugerencia de puntos de acopio del departamento Piura.
+- js/main.js inicia conversaciones desde las publicaciones reales de
+  intercambio.html; las tarjetas de ejemplo conservan su aviso demostrativo.
+  El chat consulta las conversaciones y mensajes cada cinco segundos mientras
+  la pestaña está visible. Los nombres, direcciones y mensajes se agregan con
+  textContent, sin insertar HTML recibido desde la API.
+- Aplicar schema.sql en Neon para crear las nuevas tablas antes de usar el
+  chat. Las rutas requieren la sesión configurada mediante JWT_SECRET y la
+  conexión DATABASE_URL.
+- Pruebas automatizadas cubren sesión requerida, validaciones de entrada,
+  estructura de esquema y selectores del chat. No se confirmó la conexión a una
+  base Neon real en este entorno.

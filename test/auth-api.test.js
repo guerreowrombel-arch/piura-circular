@@ -7,6 +7,8 @@ import login from "../api/login.js";
 import logout from "../api/logout.js";
 import currentUser from "../api/me.js";
 import publications from "../api/publicaciones.js";
+import conversations from "../api/conversaciones.js";
+import messages from "../api/mensajes.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,
@@ -50,9 +52,12 @@ function createResponse() {
   };
 }
 
-async function call(handler, { method = "GET", body, headers = {} } = {}) {
+async function call(
+  handler,
+  { method = "GET", body, headers = {}, url = "/" } = {},
+) {
   const response = createResponse();
-  await handler({ method, body, headers }, response);
+  await handler({ method, body, headers, url }, response);
   return response;
 }
 
@@ -82,6 +87,64 @@ test("publications require a valid session for POST", async () => {
   const response = await call(publications, {
     method: "POST",
     body: {},
+  });
+
+  test("conversation and message APIs require a session", async () => {
+    const conversationResponse = await call(conversations, { method: "POST", body: {} });
+    const messageResponse = await call(messages, {
+      method: "POST",
+      body: {},
+    });
+
+    assert.equal(conversationResponse.statusCode, 401);
+    assert.equal(messageResponse.statusCode, 401);
+    assert.match(conversationResponse.json().error, /Inicia sesión/);
+    assert.match(messageResponse.json().error, /Inicia sesión/);
+  });
+
+  test("conversation API rejects unsupported methods and invalid publication IDs", async () => {
+    const token = createSessionToken("42");
+    const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+    const unsupported = await call(conversations, {
+      method: "DELETE",
+      headers,
+    });
+    const invalidPublication = await call(conversations, {
+      method: "POST",
+      headers,
+      body: { publicacionId: "invalid" },
+    });
+
+    assert.equal(unsupported.statusCode, 405);
+    assert.equal(unsupported.headers.allow, "GET, POST");
+    assert.equal(invalidPublication.statusCode, 400);
+    assert.match(invalidPublication.json().error, /publicación válida/i);
+  });
+
+  test("messages API validates conversation IDs and message length before database access", async () => {
+    const token = createSessionToken("42");
+    const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+    const invalidConversation = await call(messages, {
+      method: "GET",
+      headers,
+      url: "/api/mensajes?conversacion=invalid",
+    });
+    const emptyMessage = await call(messages, {
+      method: "POST",
+      headers,
+      body: { conversacionId: "12", texto: "   " },
+    });
+    const oversizedMessage = await call(messages, {
+      method: "POST",
+      headers,
+      body: { conversacionId: "12", texto: "x".repeat(1001) },
+    });
+
+    assert.equal(invalidConversation.statusCode, 400);
+    assert.match(invalidConversation.json().error, /conversación válida/i);
+    assert.equal(emptyMessage.statusCode, 400);
+    assert.equal(oversizedMessage.statusCode, 400);
+    assert.match(emptyMessage.json().error, /1 y 1000 caracteres/);
   });
 
   assert.equal(response.statusCode, 401);
@@ -248,6 +311,7 @@ test("all site pages expose a shared session navigation", async () => {
     "educacion.html",
     "login.html",
     "registro.html",
+    "mensajes.html",
   ];
 
   for (const page of pages) {
@@ -342,6 +406,56 @@ test("publications are sent to the API and rendered without local publication st
   assert.doesNotMatch(endpoint, /u\.email/);
   assert.match(schema, /CREATE TABLE IF NOT EXISTS publicaciones/);
   assert.match(schema, /REFERENCES usuarios\(id\)/);
+});
+
+test("messaging schema, API routes, and interface use the required contracts", async () => {
+  const [schema, conversationApi, messageApi, page, mainScript, exchangePage] =
+    await Promise.all([
+      "schema.sql",
+      "api/conversaciones.js",
+      "api/mensajes.js",
+      "mensajes.html",
+      "js/main.js",
+      "intercambio.html",
+    ].map((file) => readFile(new URL(file, rootDirectory), "utf8")));
+
+  assert.match(
+    schema,
+    /CREATE TABLE IF NOT EXISTS conversaciones\s*\(\s*id[\s\S]*?publicacion_id[\s\S]*?interesado_id[\s\S]*?dueno_id[\s\S]*?created_at/s,
+  );
+  assert.match(
+    schema,
+    /CREATE TABLE IF NOT EXISTS mensajes\s*\(\s*id[\s\S]*?conversacion_id[\s\S]*?autor_id[\s\S]*?texto[\s\S]*?created_at/s,
+  );
+  assert.match(conversationApi, /c\.interesado_id = \$\{userId\} OR c\.dueno_id = \$\{userId\}/);
+  assert.match(conversationApi, /ON CONFLICT \(publicacion_id, interesado_id\)/);
+  assert.doesNotMatch(conversationApi, /other_user\.email|SELECT[^`]*email/s);
+  assert.match(messageApi, /interesado_id = \$\{userId\} OR dueno_id = \$\{userId\}/);
+  assert.match(messageApi, /ORDER BY m\.created_at ASC, m\.id ASC/);
+
+  for (const selector of [
+    "data-conversation-list",
+    "data-message-list",
+    "data-message-form",
+    "data-message-status",
+    "data-chat-title",
+    "data-chat-counterpart",
+    "data-meeting-toggle",
+    "data-meeting-picker",
+    "data-meeting-point-list",
+  ]) {
+    assert.ok(page.includes(selector), `mensajes.html needs ${selector}`);
+    assert.ok(mainScript.includes(selector), `main.js must use ${selector}`);
+  }
+  assert.match(mainScript, /setInterval\([\s\S]*?5000\)/);
+  assert.match(mainScript, /document\.visibilityState !== "visible"/);
+  assert.match(mainScript, /data-conversation-start/);
+  assert.match(mainScript, /mensajes\.html\?c=/);
+  assert.match(mainScript, /assets\/data\/raee-points\.json/);
+  assert.match(mainScript, /point\.name[\s\S]*?point\.address/);
+  assert.doesNotMatch(mainScript, /\.innerHTML\s*=/);
+  assert.match(exchangePage, /data-example-publication/);
+  assert.match(exchangePage, /data-contact=/);
 });
 
 test("login and registration forms no longer use the demonstration handler", async () => {

@@ -643,12 +643,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!result.user) return;
 
         authenticatedNavigation.forEach((navigation) => {
+          const messagesLink = document.createElement("a");
+          messagesLink.className = "nav-login";
+          messagesLink.href = "mensajes.html";
+          messagesLink.textContent = "Mensajes";
           const logoutButton = document.createElement("button");
           logoutButton.type = "button";
           logoutButton.className = "button button-small";
           logoutButton.dataset.authLogout = "";
           logoutButton.textContent = "Cerrar sesión";
-          navigation.replaceChildren(logoutButton);
+          navigation.replaceChildren(messagesLink, logoutButton);
         });
       })
       .catch((error) => {
@@ -987,6 +991,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .join(" · ");
 
     card.className = "equipment-card is-visible";
+    card.dataset.publicationId = String(publication.id);
     card.dataset.category = category;
     card.dataset.zone = district;
     card.dataset.district = district;
@@ -1049,7 +1054,7 @@ document.addEventListener("DOMContentLoaded", () => {
     contactButton.type = "button";
     contactButton.className =
       "button button-outline button-full contact-trigger";
-    contactButton.dataset.contact = authorName.textContent;
+    contactButton.dataset.conversationStart = String(publication.id);
     contactButton.textContent = "Contactar";
     seller.append(avatar, authorName);
     content.append(tags, heading, description, meta, seller, contactButton);
@@ -1132,11 +1137,48 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
-    const button = event.target.closest("[data-contact]");
+    const button = event.target.closest("[data-contact], [data-conversation-start]");
     if (!button) return;
-    showToast(
-      `La mensajería con ${button.dataset.contact} es una demostración visual.`,
-    );
+    if (button.hasAttribute("data-contact")) {
+      showToast(
+        `La mensajería con ${button.dataset.contact} es una demostración visual.`,
+      );
+      return;
+    }
+
+    const startConversation = async () => {
+      button.disabled = true;
+      try {
+        const response = await fetch("/api/conversaciones", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            publicacionId: button.dataset.conversationStart,
+          }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          window.location.assign("login.html");
+          return;
+        }
+        if (!response.ok || !result.id) {
+          throw new Error(result.error || "No se pudo abrir la conversación.");
+        }
+        window.location.assign(
+          `mensajes.html?c=${encodeURIComponent(String(result.id))}`,
+        );
+      } catch (error) {
+        console.error("No se pudo iniciar la conversación.", error);
+        showToast(
+          error instanceof Error
+            ? error.message
+            : "No se pudo iniciar la conversación.",
+        );
+        button.disabled = false;
+      }
+    };
+    startConversation();
   });
   document
     .querySelector("[data-send-message]")
@@ -1187,6 +1229,419 @@ document.addEventListener("DOMContentLoaded", () => {
       focusMarker();
     }
   });
+
+  const messageList = document.querySelector("[data-message-list]");
+  const conversationList = document.querySelector("[data-conversation-list]");
+  const conversationStatus = document.querySelector("[data-conversations-status]");
+  const messageStatus = document.querySelector("[data-message-status]");
+  const chatTitle = document.querySelector("[data-chat-title]");
+  const chatCounterpart = document.querySelector("[data-chat-counterpart]");
+  const chatPlaceholder = document.querySelector("[data-chat-placeholder]");
+  const messageForm = document.querySelector("[data-message-form]");
+  const messageInput = messageForm?.querySelector("textarea");
+  const messageSubmit = messageForm?.querySelector("[data-message-submit]");
+  const meetingToggle = document.querySelector("[data-meeting-toggle]");
+  const meetingPicker = document.querySelector("[data-meeting-picker]");
+  const meetingPointList = document.querySelector("[data-meeting-point-list]");
+  const meetingStatus = document.querySelector("[data-meeting-status]");
+  let activeConversationId = null;
+  let currentUserId = null;
+  let conversationRecords = [];
+  let messagePollTimer;
+  let meetingPointsPromise;
+  let isLoadingMessages = false;
+  let isLoadingConversations = false;
+
+  const updateConversationControls = (enabled) => {
+    if (messageInput) messageInput.disabled = !enabled;
+    if (messageSubmit) messageSubmit.disabled = !enabled;
+    if (meetingToggle) meetingToggle.disabled = !enabled;
+  };
+  const handleSessionRequired = (response) => {
+    if (response.status !== 401) return false;
+    window.location.assign("login.html");
+    return true;
+  };
+  const readApiResponse = async (response) => {
+    if (handleSessionRequired(response)) {
+      throw new Error("Redirigiendo al inicio de sesión.");
+    }
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.error || "No se pudo completar la solicitud.");
+    }
+    return result;
+  };
+  const formatMessageTime = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("es-PE", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+  const renderConversationList = () => {
+    if (!conversationList) return;
+    conversationList.replaceChildren();
+    conversationRecords.forEach((conversation) => {
+      const button = document.createElement("button");
+      const top = document.createElement("span");
+      const title = document.createElement("span");
+      const date = document.createElement("span");
+      const person = document.createElement("span");
+      const preview = document.createElement("span");
+      const titleText = [conversation.category, conversation.brand]
+        .filter(Boolean)
+        .join(" · ");
+
+      button.type = "button";
+      button.className = "conversation-item";
+      button.dataset.conversationId = String(conversation.id);
+      if (String(conversation.id) === activeConversationId) {
+        button.setAttribute("aria-current", "true");
+      }
+      top.className = "conversation-item-top";
+      title.className = "conversation-item-title";
+      title.textContent = titleText || "Equipo publicado";
+      date.className = "conversation-item-date";
+      date.textContent = formatMessageTime(
+        conversation.lastMessageAt || conversation.createdAt,
+      );
+      top.append(title, date);
+      person.className = "conversation-item-person";
+      person.textContent = conversation.otherInitial
+        ? `${conversation.otherName} ${conversation.otherInitial}.`
+        : String(conversation.otherName || "Usuario");
+      preview.className = "conversation-item-preview";
+      preview.textContent = String(
+        conversation.lastMessage || "Inicia la conversación",
+      );
+      button.append(top, person, preview);
+      conversationList.append(button);
+    });
+  };
+  const renderMessages = (messages, forceScroll = false) => {
+    if (!messageList) return;
+    const shouldScroll =
+      forceScroll ||
+      messageList.scrollHeight - messageList.scrollTop - messageList.clientHeight <
+        60;
+    messageList.replaceChildren();
+    if (!messages.length) {
+      if (chatPlaceholder) {
+        chatPlaceholder.textContent =
+          "Aún no hay mensajes. Saluda o sugiere un punto de encuentro.";
+        messageList.append(chatPlaceholder);
+      }
+      return;
+    }
+    messages.forEach((message) => {
+      const bubble = document.createElement("article");
+      const author = document.createElement("span");
+      const text = document.createElement("p");
+      const time = document.createElement("time");
+      const own = String(message.authorId) === currentUserId;
+
+      bubble.className = "message-bubble";
+      bubble.dataset.own = String(own);
+      author.className = "message-author";
+      author.textContent = own
+        ? "Tú"
+        : message.authorInitial
+          ? `${message.authorName} ${message.authorInitial}.`
+          : String(message.authorName || "Usuario");
+      text.className = "message-text";
+      text.textContent = String(message.text || "");
+      time.className = "message-time";
+      time.dateTime = String(message.createdAt || "");
+      time.textContent = formatMessageTime(message.createdAt);
+      bubble.append(author, text, time);
+      messageList.append(bubble);
+    });
+    if (shouldScroll) messageList.scrollTop = messageList.scrollHeight;
+  };
+  const loadMessages = async (forceScroll = false) => {
+    if (!activeConversationId || isLoadingMessages) return;
+    isLoadingMessages = true;
+    try {
+      const response = await fetch(
+        `/api/mensajes?conversacion=${encodeURIComponent(activeConversationId)}`,
+        { credentials: "same-origin", cache: "no-store" },
+      );
+      const result = await readApiResponse(response);
+      if (!Array.isArray(result.messages)) {
+        throw new Error("La respuesta de mensajes no tiene un formato válido.");
+      }
+      renderMessages(result.messages, forceScroll);
+      if (messageStatus) messageStatus.textContent = "";
+    } catch (error) {
+      if (messageStatus && !window.location.href.includes("login.html")) {
+        messageStatus.textContent =
+          error instanceof Error ? error.message : "No se pudieron cargar los mensajes.";
+      }
+      console.error("No se pudieron cargar los mensajes.", error);
+    } finally {
+      isLoadingMessages = false;
+    }
+  };
+  const selectConversation = async (conversationId) => {
+    const selected = conversationRecords.find(
+      (conversation) => String(conversation.id) === String(conversationId),
+    );
+    if (!selected) return;
+    activeConversationId = String(selected.id);
+    renderConversationList();
+    if (chatCounterpart) {
+      chatCounterpart.textContent = selected.otherInitial
+        ? `CONVERSACIÓN CON ${selected.otherName} ${selected.otherInitial}.`
+        : `CONVERSACIÓN CON ${String(selected.otherName || "USUARIO")}`.toLocaleUpperCase();
+    }
+    if (chatTitle) {
+      chatTitle.textContent =
+        [selected.category, selected.brand].filter(Boolean).join(" · ") ||
+        "Conversación";
+    }
+    if (chatPlaceholder) {
+      chatPlaceholder.textContent = "Cargando mensajes…";
+      messageList?.replaceChildren(chatPlaceholder);
+    }
+    updateConversationControls(true);
+    const url = new URL(window.location.href);
+    url.searchParams.set("c", activeConversationId);
+    window.history.replaceState({}, "", url);
+    await loadMessages(true);
+  };
+  const refreshConversationList = async (selectInitial = false) => {
+    if (!conversationList || isLoadingConversations) return;
+    isLoadingConversations = true;
+    try {
+      const response = await fetch("/api/conversaciones", {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      const result = await readApiResponse(response);
+      if (!Array.isArray(result.conversations)) {
+        throw new Error("La respuesta de conversaciones no tiene un formato válido.");
+      }
+      conversationRecords = result.conversations;
+      renderConversationList();
+      if (conversationStatus) {
+        conversationStatus.textContent = conversationRecords.length
+          ? ""
+          : "Aún no tienes conversaciones. Contacta una publicación para comenzar.";
+      }
+
+      if (!conversationRecords.length) {
+        activeConversationId = null;
+        if (chatTitle) chatTitle.textContent = "Tu espacio para coordinar";
+        if (chatCounterpart) chatCounterpart.textContent = "ELIGE UNA CONVERSACIÓN";
+        if (chatPlaceholder) {
+          chatPlaceholder.textContent =
+            "Cuando contactes una publicación, podrás conversar aquí.";
+          messageList?.replaceChildren(chatPlaceholder);
+        }
+        updateConversationControls(false);
+        return;
+      }
+
+      if (
+        selectInitial ||
+        !conversationRecords.some(
+          (conversation) => String(conversation.id) === activeConversationId,
+        )
+      ) {
+        const requestedConversation =
+          new URLSearchParams(window.location.search).get("c");
+        const initialConversation =
+          conversationRecords.find(
+            (conversation) => String(conversation.id) === requestedConversation,
+          ) || conversationRecords[0];
+        await selectConversation(initialConversation.id);
+      } else {
+        renderConversationList();
+      }
+      if (conversationStatus) conversationStatus.textContent = "";
+    } catch (error) {
+      if (conversationStatus) {
+        conversationStatus.textContent =
+          error instanceof Error
+            ? error.message
+            : "No se pudieron cargar las conversaciones.";
+      }
+      console.error("No se pudieron cargar las conversaciones.", error);
+    } finally {
+      isLoadingConversations = false;
+    }
+  };
+  conversationList?.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("[data-conversation-id]");
+    if (!button) return;
+    selectConversation(button.dataset.conversationId);
+  });
+  messageForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const text = messageInput?.value.trim() || "";
+    if (!activeConversationId || !text || text.length > 1000) return;
+    if (messageSubmit) messageSubmit.disabled = true;
+    if (messageStatus) messageStatus.textContent = "Enviando mensaje…";
+    try {
+      const response = await fetch("/api/mensajes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          conversacionId: activeConversationId,
+          texto: text,
+        }),
+      });
+      await readApiResponse(response);
+      if (messageInput) messageInput.value = "";
+      await loadMessages(true);
+      await refreshConversationList(false);
+      if (messageStatus) messageStatus.textContent = "Mensaje enviado.";
+    } catch (error) {
+      if (messageStatus && !window.location.href.includes("login.html")) {
+        messageStatus.textContent =
+          error instanceof Error ? error.message : "No se pudo enviar el mensaje.";
+      }
+      console.error("No se pudo enviar el mensaje.", error);
+    } finally {
+      if (messageSubmit) {
+        messageSubmit.disabled = !activeConversationId;
+      }
+    }
+  });
+  const loadPiuraMeetingPoints = () => {
+    if (meetingPointsPromise) return meetingPointsPromise;
+    meetingPointsPromise = fetch("assets/data/raee-points.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`El catálogo de puntos respondió ${response.status}.`);
+        }
+        return response.json();
+      })
+      .then((points) => {
+        if (!Array.isArray(points)) {
+          throw new Error("El catálogo de puntos no tiene un formato válido.");
+        }
+        return points.filter(
+          (point) =>
+            normalizeText(String(point.department || "")) === "piura" &&
+            point.name &&
+            point.address,
+        );
+      });
+    return meetingPointsPromise;
+  };
+  const sendMeetingSuggestion = async (point) => {
+    const text = `Punto de encuentro sugerido: ${point.name} — ${point.address}`;
+    if (meetingStatus) meetingStatus.textContent = "Enviando sugerencia…";
+    try {
+      const response = await fetch("/api/mensajes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          conversacionId: activeConversationId,
+          texto: text,
+        }),
+      });
+      await readApiResponse(response);
+      if (meetingPicker) meetingPicker.hidden = true;
+      await loadMessages(true);
+      await refreshConversationList(false);
+      if (meetingStatus) meetingStatus.textContent = "";
+    } catch (error) {
+      if (meetingStatus) {
+        meetingStatus.textContent =
+          error instanceof Error
+            ? error.message
+            : "No se pudo enviar el punto de encuentro.";
+      }
+      console.error("No se pudo enviar el punto de encuentro.", error);
+    }
+  };
+  meetingToggle?.addEventListener("click", async () => {
+    if (!meetingPicker) return;
+    meetingPicker.hidden = !meetingPicker.hidden;
+    if (meetingPicker.hidden || !meetingPointList) return;
+    meetingPointList.replaceChildren();
+    if (meetingStatus) meetingStatus.textContent = "Cargando puntos de acopio…";
+    try {
+      const points = await loadPiuraMeetingPoints();
+      if (!points.length) {
+        if (meetingStatus) {
+          meetingStatus.textContent =
+            "No encontramos puntos de acopio disponibles para Piura.";
+        }
+        return;
+      }
+      if (meetingStatus) meetingStatus.textContent = "";
+      points.forEach((point) => {
+        const button = document.createElement("button");
+        const name = document.createElement("strong");
+        const address = document.createElement("span");
+        button.type = "button";
+        button.className = "meeting-point-option";
+        name.textContent = String(point.name);
+        address.textContent = String(point.address);
+        button.append(name, address);
+        button.addEventListener("click", () => sendMeetingSuggestion(point));
+        meetingPointList.append(button);
+      });
+    } catch (error) {
+      if (meetingStatus) {
+        meetingStatus.textContent =
+          error instanceof Error ? error.message : "No se pudieron cargar los puntos.";
+      }
+      console.error("No se pudieron cargar los puntos de encuentro.", error);
+    }
+  });
+  document
+    .querySelector("[data-meeting-close]")
+    ?.addEventListener("click", () => {
+      if (meetingPicker) meetingPicker.hidden = true;
+    });
+
+  if (messageList && conversationList) {
+    const initializeMessages = async () => {
+      try {
+        const response = await fetch("/api/me", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const result = await readApiResponse(response);
+        if (!result.user) {
+          window.location.assign("login.html");
+          return;
+        }
+        currentUserId = String(result.user.id);
+        await refreshConversationList(true);
+        messagePollTimer = window.setInterval(() => {
+          if (document.visibilityState !== "visible") return;
+          refreshConversationList(false);
+          loadMessages(false);
+        }, 5000);
+      } catch (error) {
+        if (!window.location.href.includes("login.html")) {
+          if (conversationStatus) {
+            conversationStatus.textContent =
+              error instanceof Error
+                ? error.message
+                : "No se pudo iniciar el chat.";
+          }
+          console.error("No se pudo iniciar el chat.", error);
+        }
+      }
+    };
+    initializeMessages();
+    window.addEventListener("pagehide", () => {
+      if (messagePollTimer) window.clearInterval(messagePollTimer);
+    });
+  }
 
   document.querySelectorAll("[data-accordion] details").forEach((detail) => {
     detail.addEventListener("toggle", () => {

@@ -2777,3 +2777,301 @@ p {
     font-size: clamp(3.2rem, 5.4vw, 5.3rem);
   }
 }
+
+.messages-page {
+  padding-bottom: 90px;
+}
+.messages-page > .page-hero {
+  max-width: none;
+  padding-inline: 0;
+}
+.messages-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.36fr) minmax(0, 0.64fr);
+  min-height: 610px;
+  overflow: hidden;
+  background: var(--warm-white);
+  border: 1px solid rgba(15, 82, 87, 0.14);
+}
+.conversation-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #f2ecdf;
+  border-right: 1px solid rgba(15, 82, 87, 0.12);
+}
+.messages-panel-heading,
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px;
+}
+.messages-panel-heading {
+  border-bottom: 1px solid rgba(15, 82, 87, 0.12);
+}
+.messages-panel-heading .eyebrow,
+.chat-header .eyebrow {
+  margin-bottom: 6px;
+}
+.messages-panel-heading h2,
+.chat-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.conversation-list {
+  display: grid;
+  align-content: start;
+}
+.conversation-item {
+  display: grid;
+  width: 100%;
+  padding: 17px 20px;
+  color: var(--ink);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 82, 87, 0.1);
+  cursor: pointer;
+}
+.conversation-item:hover,
+.conversation-item[aria-current="true"] {
+  background: var(--warm-white);
+}
+.conversation-item[aria-current="true"] {
+  box-shadow: inset 3px 0 var(--petrol);
+}
+.conversation-item-top,
+.conversation-item-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.conversation-item-title,
+.conversation-item-person {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.conversation-item-person,
+.conversation-item-preview,
+.conversation-item-date {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.73rem;
+}
+.conversation-item-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.conversation-item-date {
+  flex: 0 0 auto;
+  font-size: 0.65rem;
+}
+.messages-status {
+  margin: 0;
+  padding: 12px 20px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.chat-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  background: var(--warm-white);
+}
+.chat-header {
+  border-bottom: 1px solid rgba(15, 82, 87, 0.12);
+}
+.meeting-toggle {
+  flex: 0 0 auto;
+}
+.meeting-picker {
+  padding: 16px 20px;
+  background: #f2ecdf;
+  border-bottom: 1px solid rgba(15, 82, 87, 0.12);
+}
+.meeting-picker-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.meeting-picker-heading h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.meeting-picker-close {
+  width: 32px;
+  height: 32px;
+  color: var(--petrol-dark);
+  font-size: 1.4rem;
+  background: transparent;
+  border: 1px solid rgba(15, 82, 87, 0.2);
+  cursor: pointer;
+}
+.meeting-picker > p {
+  margin: 9px 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.meeting-point-list {
+  display: grid;
+  max-height: 190px;
+  gap: 7px;
+  overflow-y: auto;
+}
+.meeting-point-option {
+  padding: 10px 12px;
+  color: var(--ink);
+  text-align: left;
+  background: var(--warm-white);
+  border: 1px solid rgba(15, 82, 87, 0.12);
+  cursor: pointer;
+}
+.meeting-point-option:hover {
+  border-color: var(--petrol);
+}
+.meeting-point-option strong,
+.meeting-point-option span {
+  display: block;
+}
+.meeting-point-option strong {
+  font-size: 0.78rem;
+}
+.meeting-point-option span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+.message-list {
+  display: flex;
+  min-height: 280px;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  overflow-y: auto;
+  background:
+    radial-gradient(rgba(15, 82, 87, 0.035) 0.7px, transparent 0.7px) 0 0 / 14px 14px,
+    #fbf8f1;
+}
+.chat-placeholder {
+  margin: auto;
+  max-width: 300px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  text-align: center;
+}
+.message-bubble {
+  align-self: flex-start;
+  max-width: min(78%, 470px);
+  padding: 11px 14px 8px;
+  color: var(--ink);
+  background: #f0eadc;
+  border: 1px solid rgba(15, 82, 87, 0.1);
+}
+.message-bubble[data-own="true"] {
+  align-self: flex-end;
+  color: white;
+  background: var(--petrol);
+  border-color: var(--petrol);
+}
+.message-author {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+.message-text {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.message-time {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.61rem;
+  opacity: 0.72;
+  text-align: right;
+}
+.message-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid rgba(15, 82, 87, 0.12);
+}
+.message-composer textarea {
+  min-width: 0;
+  min-height: 46px;
+  max-height: 120px;
+  flex: 1;
+  resize: vertical;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: #fbf8f1;
+  border: 1px solid rgba(15, 82, 87, 0.18);
+  font: inherit;
+  font-size: 0.82rem;
+}
+.message-composer textarea:focus {
+  outline: 2px solid rgba(15, 82, 87, 0.35);
+}
+.message-composer button:disabled,
+.meeting-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.chat-status {
+  min-height: 38px;
+  padding-top: 6px;
+}
+@media (max-width: 800px) {
+  .messages-layout {
+    grid-template-columns: 1fr;
+  }
+  .conversation-panel {
+    max-height: 290px;
+    overflow-y: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(15, 82, 87, 0.12);
+  }
+  .chat-panel {
+    min-height: 500px;
+  }
+}
+@media (max-width: 520px) {
+  .messages-page {
+    padding-bottom: 60px;
+  }
+  .messages-layout {
+    min-height: 0;
+  }
+  .chat-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 17px;
+  }
+  .meeting-toggle {
+    width: 100%;
+  }
+  .message-list {
+    min-height: 280px;
+    padding: 15px;
+  }
+  .message-composer {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 12px;
+  }
+  .message-composer button {
+    align-self: flex-end;
+  }
+}

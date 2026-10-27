@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <title>Mensajes | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">↻</span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="proyecto.html">Proyecto</a
+        ><a href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a
+        ><a href="educacion.html">Educación</a>
+        <div class="nav-actions" data-auth-nav>
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main class="messages-page wrap">
+      <section class="page-hero page-hero-compact">
+        <p class="eyebrow">
+          <span class="eyebrow-dot"></span> COMUNIDAD / MENSAJES
+        </p>
+        <h1>Coordina una<br /><em>segunda vida.</em></h1>
+        <p>Conversa con la otra persona y acuerden los detalles de entrega.</p>
+      </section>
+      <section class="messages-layout" aria-label="Mensajes de la comunidad">
+        <aside class="conversation-panel">
+          <div class="messages-panel-heading">
+            <div>
+              <p class="eyebrow">TUS CONVERSACIONES</p>
+              <h2>Mensajes</h2>
+            </div>
+          </div>
+          <p
+            class="messages-status"
+            data-conversations-status
+            role="status"
+            aria-live="polite"
+          ></p>
+          <div class="conversation-list" data-conversation-list></div>
+        </aside>
+        <section class="chat-panel" aria-label="Conversación seleccionada">
+          <header class="chat-header">
+            <div>
+              <p class="eyebrow" data-chat-counterpart>ELIGE UNA CONVERSACIÓN</p>
+              <h2 data-chat-title>Tu espacio para coordinar</h2>
+            </div>
+            <button
+              class="button button-outline meeting-toggle"
+              type="button"
+              data-meeting-toggle
+              disabled
+            >
+              Sugerir punto de encuentro
+            </button>
+          </header>
+          <section
+            class="meeting-picker"
+            data-meeting-picker
+            aria-label="Puntos de acopio en Piura"
+            hidden
+          >
+            <div class="meeting-picker-heading">
+              <h3>Elige un punto de acopio en Piura</h3>
+              <button
+                class="meeting-picker-close"
+                type="button"
+                data-meeting-close
+                aria-label="Cerrar lista de puntos"
+              >
+                ×
+              </button>
+            </div>
+            <p data-meeting-status role="status" aria-live="polite">
+              Cargando puntos de acopio…
+            </p>
+            <div class="meeting-point-list" data-meeting-point-list></div>
+          </section>
+          <div
+            class="message-list"
+            data-message-list
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions text"
+          >
+            <p class="chat-placeholder" data-chat-placeholder>
+              Selecciona una conversación para leer y enviar mensajes.
+            </p>
+          </div>
+          <form class="message-composer" data-message-form>
+            <label class="sr-only" for="message-text">Escribe un mensaje</label>
+            <textarea
+              id="message-text"
+              name="texto"
+              rows="2"
+              maxlength="1000"
+              placeholder="Escribe un mensaje…"
+              required
+              disabled
+            ></textarea>
+            <button class="button" type="submit" disabled data-message-submit>
+              Enviar <span>↗</span>
+            </button>
+          </form>
+          <p
+            class="messages-status chat-status"
+            data-message-status
+            role="status"
+            aria-live="polite"
+          ></p>
+        </section>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark">↻</span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>
