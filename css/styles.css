@@ -2068,7 +2068,8 @@ p {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(0deg, rgba(10, 58, 62, 0.36), transparent 60%);
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(10, 58, 62, 0.58), transparent 60%);
 }
 .article-art > span,
 .article-art > i {
