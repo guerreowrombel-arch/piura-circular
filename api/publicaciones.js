@@ -97,9 +97,18 @@ export default async function publications(request, response) {
           p.created_at AS "createdAt",
           u.nombre AS "authorName",
           LEFT(BTRIM(u.apellidos), 1) AS "authorInitial",
-          u.distrito AS district
+          u.distrito AS district,
+          COALESCE(rating.promedio, 0)::float AS "authorRatingAverage",
+          COALESCE(rating.total, 0)::int AS "authorRatingTotal"
         FROM publicaciones p
         INNER JOIN usuarios u ON u.id = p.usuario_id
+        LEFT JOIN LATERAL (
+          SELECT
+            ROUND(AVG(c.estrellas)::numeric, 1)::float AS promedio,
+            COUNT(*)::int AS total
+          FROM calificaciones c
+          WHERE c.destinatario_id = p.usuario_id
+        ) rating ON TRUE
         WHERE p.estado = 'activa'
         ORDER BY p.created_at DESC, p.id DESC
       `;
@@ -107,11 +116,22 @@ export default async function publications(request, response) {
         response,
         200,
         {
-          publications: rows.map((row) => ({
-            ...row,
-            id: String(row.id),
-            photos: Array.isArray(row.photos) ? row.photos : [],
-          })),
+          publications: rows.map((row) => {
+            const {
+              authorRatingAverage,
+              authorRatingTotal,
+              ...publication
+            } = row;
+            return {
+              ...publication,
+              id: String(publication.id),
+              photos: Array.isArray(publication.photos) ? publication.photos : [],
+              authorRating: {
+                promedio: Number(authorRatingAverage || 0),
+                total: Number(authorRatingTotal || 0),
+              },
+            };
+          }),
         },
       );
     } catch (error) {

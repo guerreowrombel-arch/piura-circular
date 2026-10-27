@@ -14,6 +14,7 @@ import points, { validatePoint } from "../api/puntos.js";
 import profile from "../api/perfil.js";
 import changePassword from "../api/password.js";
 import myPublications from "../api/mis-publicaciones.js";
+import ratings from "../api/calificaciones.js";
 import {
   SESSION_COOKIE,
   SESSION_DURATION_SECONDS,
@@ -102,10 +103,12 @@ test("profile and password endpoints require a session", async () => {
   const profileResponse = await call(profile);
   const passwordResponse = await call(changePassword, { method: "POST", body: {} });
   const myPublicationsResponse = await call(myPublications);
+  const ratingsResponse = await call(ratings);
 
   assert.equal(profileResponse.statusCode, 401);
   assert.equal(passwordResponse.statusCode, 401);
   assert.equal(myPublicationsResponse.statusCode, 401);
+  assert.equal(ratingsResponse.statusCode, 401);
 });
 
 test("profile, password, and personal-publication routes validate methods and input", async () => {
@@ -135,6 +138,24 @@ test("profile, password, and personal-publication routes validate methods and in
     headers,
     url: "/api/mis-publicaciones?id=invalid",
   });
+  const invalidDeliveryRecipient = await call(myPublications, {
+    method: "PUT",
+    headers,
+    body: { id: "1", estado: "entregada", entregadaA: "invalid" },
+  });
+  const invalidInterestedId = await call(myPublications, {
+    headers,
+    url: "/api/mis-publicaciones?interesados=invalid",
+  });
+  const invalidPendingRatings = await call(ratings, {
+    headers,
+    url: "/api/calificaciones?pendientes=0",
+  });
+  const invalidRating = await call(ratings, {
+    method: "POST",
+    headers,
+    body: { publicacionId: "1", estrellas: 6, comentario: "" },
+  });
 
   assert.equal(unsupportedProfile.statusCode, 405);
   assert.equal(unsupportedProfile.headers.allow, "GET, PUT, DELETE");
@@ -143,6 +164,10 @@ test("profile, password, and personal-publication routes validate methods and in
   assert.match(invalidPassword.json().error, /8 y 72 bytes/);
   assert.equal(invalidPersonalPublication.statusCode, 400);
   assert.equal(invalidDeleteId.statusCode, 400);
+  assert.equal(invalidDeliveryRecipient.statusCode, 400);
+  assert.equal(invalidInterestedId.statusCode, 400);
+  assert.equal(invalidPendingRatings.statusCode, 400);
+  assert.equal(invalidRating.statusCode, 400);
 });
 
 test("conversation and message APIs require a session", async () => {
@@ -582,11 +607,50 @@ test("profile and password backend contracts are scoped to the signed-in user", 
   assert.match(passwordApi, /BCRYPT_COST = 12/);
   assert.match(passwordApi, /SET password_hash = \$\{passwordHash\}/);
 
-  assert.match(myPublicationsApi, /WHERE usuario_id = \$\{userId\}/);
+  assert.match(myPublicationsApi, /WHERE (?:p\.)?usuario_id = \$\{userId\}/);
   assert.match(myPublicationsApi, /WHERE id = \$\{publicationId\}\s+AND usuario_id = \$\{userId\}/);
   assert.match(myPublicationsApi, /fotos ->> 0/);
-  assert.match(myPublicationsApi, /SET estado = 'entregada'/);
+  assert.match(myPublicationsApi, /estado = 'entregada'/);
+  assert.match(myPublicationsApi, /entregada_a = \$\{data\.entregadaA \?\? null\}/);
+  assert.match(myPublicationsApi, /c\.interesado_id = \$\{data\.entregadaA\}/);
+  assert.match(myPublicationsApi, /u\.nombre AS "entregadaA"/);
   assert.match(myPublicationsApi, /DELETE FROM publicaciones/);
+});
+
+test("rating API and reputation data enforce delivery and privacy contracts", async () => {
+  const [ratingsApi, profileApi, publicationApi, schema] = await Promise.all(
+    [
+      "api/calificaciones.js",
+      "api/perfil.js",
+      "api/publicaciones.js",
+      "schema.sql",
+    ].map((file) => readFile(new URL(file, rootDirectory), "utf8")),
+  );
+
+  assert.match(schema, /entregada_a BIGINT REFERENCES usuarios\(id\) ON DELETE SET NULL/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS calificaciones/);
+  assert.match(schema, /UNIQUE \(publicacion_id, autor_id\)/);
+  assert.match(schema, /estrellas SMALLINT NOT NULL CHECK \(estrellas BETWEEN 1 AND 5\)/);
+  assert.match(schema, /char_length\(comentario\) <= 300/);
+
+  assert.match(ratingsApi, /p\.estado = 'entregada'/);
+  assert.match(ratingsApi, /p\.entregada_a IS NOT NULL/);
+  assert.match(ratingsApi, /NOT EXISTS \([\s\S]*c\.autor_id = \$\{userId\}/);
+  assert.match(ratingsApi, /ON CONFLICT \(publicacion_id, autor_id\) DO NOTHING/);
+  assert.match(ratingsApi, /Solo quienes participaron en la entrega pueden calificar/);
+  assert.match(ratingsApi, /data\.estrellas > 5/);
+  assert.match(ratingsApi, /comment\.length > 300/);
+  assert.doesNotMatch(ratingsApi, /email/);
+
+  assert.match(profileApi, /reputacion: \{/);
+  assert.match(profileApi, /ROUND\(AVG\(estrellas\)::numeric, 1\)/);
+  assert.match(profileApi, /u\.nombre AS "nombreAutor"/);
+  assert.match(profileApi, /LIMIT 5/);
+
+  assert.match(publicationApi, /authorRating:/);
+  assert.match(publicationApi, /AS "authorRatingAverage"/);
+  assert.match(publicationApi, /AS "authorRatingTotal"/);
+  assert.doesNotMatch(publicationApi, /u\.email/);
 });
 
 test("messaging schema, API routes, and interface use the required contracts", async () => {
@@ -724,8 +788,8 @@ test("institutional dashboard is gated and wired to aggregate and point APIs", a
 });
 
 test("profile page and account menu use the profile APIs without unsafe HTML", async () => {
-  const [page, main] = await Promise.all(
-    ["perfil.html", "js/main.js"].map((file) =>
+  const [page, main, styles, exchangeMarkup] = await Promise.all(
+    ["perfil.html", "js/main.js", "css/styles.css", "intercambio.html"].map((file) =>
       readFile(new URL(file, rootDirectory), "utf8"),
     ),
   );
@@ -737,15 +801,35 @@ test("profile page and account menu use the profile APIs without unsafe HTML", a
   assert.match(page, /data-delete-account-dialog/);
   assert.match(page, /Se borrarán tu cuenta, tus publicaciones y tus mensajes/);
   assert.match(page, /data-my-publications/);
+  assert.match(page, /¿A quién se lo entregaste\?/);
+  assert.match(page, /data-delivery-dialog/);
+  assert.match(page, /data-pending-ratings/);
+  assert.match(page, /data-reputation-comments/);
+  assert.match(page, /data-delivery-status/);
+  assert.match(main, /fetch\("\/api\/calificaciones\?pendientes=1"/);
+  assert.match(main, /fetch\("\/api\/calificaciones"/);
+  assert.match(main, /interesados=\$\{encodeURIComponent/);
+  assert.match(main, /ArrowRight/);
+  assert.match(main, /ArrowLeft/);
+  assert.match(main, /data-rating-value/);
+  assert.match(main, /authorRating\?\.promedio/);
+  assert.match(main, /Sin calificaciones aún/);
+  assert.match(main, /profile-rating-notice/);
+  assert.match(main, /aria-keyshortcuts/);
   assert.match(
     page,
     /<option>Piura<\/option>[\s\S]*<option>Tambogrande<\/option>/,
   );
+  assert.equal((exchangeMarkup.match(/data-example-publication/g) || []).length, 4);
+  assert.doesNotMatch(exchangeMarkup, /class="rating"/);
+  assert.match(styles, /\.profile-star-button:focus-visible/);
+  assert.match(styles, /\.profile-feedback-grid[\s\S]*?grid-template-columns/);
+  assert.match(styles, /@media \(max-width: 900px\)[\s\S]*?\.profile-feedback-grid/);
   assert.match(main, /fetch\("\/api\/perfil"/);
   assert.match(main, /fetch\("\/api\/password"/);
   assert.match(main, /fetch\("\/api\/mis-publicaciones"/);
   assert.match(main, /result\.impacto/);
-  assert.match(main, /personalProfileLink\.textContent = "Mi perfil"/);
+  assert.match(main, /personalProfileLabel\.textContent = "Mi perfil"/);
   assert.match(page, /href="institucional\.html"/);
   assert.doesNotMatch(main, /innerHTML/);
 });

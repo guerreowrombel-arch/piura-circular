@@ -95,6 +95,72 @@
           </div>
         </section>
 
+        <div class="profile-feedback-grid">
+          <section
+            class="profile-section profile-card profile-pending-section"
+            aria-labelledby="pending-ratings-title"
+          >
+            <div class="profile-section-heading">
+              <div>
+                <p class="eyebrow">ENTREGAS POR CERRAR</p>
+                <h2 id="pending-ratings-title">Calificaciones pendientes</h2>
+              </div>
+            </div>
+            <p
+              class="profile-ratings-status"
+              data-pending-ratings-status
+              role="status"
+              aria-live="polite"
+            >
+              Cargando calificaciones…
+            </p>
+            <div
+              class="profile-pending-list"
+              data-pending-ratings
+              aria-live="polite"
+            ></div>
+            <div
+              class="profile-empty-state profile-ratings-empty"
+              data-pending-ratings-empty
+              hidden
+            >
+              <span class="profile-empty-mark" aria-hidden="true">✓</span>
+              <h3>Todo al día</h3>
+              <p>Cuando completes una entrega, podrás dejar una calificación aquí.</p>
+            </div>
+          </section>
+
+          <section
+            class="profile-section profile-card profile-reputation-section"
+            aria-labelledby="profile-reputation-title"
+          >
+            <div class="profile-section-heading">
+              <div>
+                <p class="eyebrow">LA CONFIANZA QUE GENERAS</p>
+                <h2 id="profile-reputation-title">Mi reputación</h2>
+              </div>
+            </div>
+            <div class="profile-reputation-summary">
+              <strong data-reputation-average>0.0</strong>
+              <div>
+                <span
+                  class="profile-reputation-stars"
+                  data-reputation-stars
+                  aria-label="Aún sin calificaciones"
+                >☆☆☆☆☆</span>
+                <span class="profile-reputation-total" data-reputation-total>
+                  0 calificaciones
+                </span>
+              </div>
+            </div>
+            <h3 class="profile-reviews-title">Comentarios recientes</h3>
+            <ul class="profile-review-list" data-reputation-comments></ul>
+            <p class="profile-no-reviews" data-no-reputation-comments>
+              Todavía no tienes comentarios. Tu reputación crecerá con cada intercambio.
+            </p>
+          </section>
+        </div>
+
         <div class="profile-settings-grid">
           <section class="profile-section profile-card" aria-labelledby="profile-data-title">
             <div class="profile-section-heading">
@@ -251,6 +317,52 @@
             </button>
             <button class="profile-danger-button" type="submit">
               Eliminar cuenta
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog
+        class="profile-delivery-dialog"
+        data-delivery-dialog
+        aria-labelledby="delivery-dialog-title"
+      >
+        <form class="profile-dialog-card" data-delivery-form>
+          <p class="eyebrow">REGISTRAR ENTREGA</p>
+          <h2 id="delivery-dialog-title">¿A quién se lo entregaste?</h2>
+          <label for="delivery-recipient">Persona que recibió el equipo</label>
+          <select id="delivery-recipient" name="entregadaA">
+            <option value="">Entrega fuera de la plataforma (sin calificación)</option>
+          </select>
+          <p
+            class="profile-delivery-status"
+            data-delivery-status
+            role="status"
+            aria-live="polite"
+            hidden
+          ></p>
+          <p
+            class="profile-dialog-error"
+            data-delivery-error
+            role="status"
+            aria-live="polite"
+            hidden
+          ></p>
+          <div class="profile-dialog-actions">
+            <button
+              class="profile-cancel-button"
+              type="button"
+              data-close-delivery-dialog
+            >
+              Cancelar
+            </button>
+            <button
+              class="button"
+              type="submit"
+              data-delivery-submit
+              disabled
+            >
+              Confirmar entrega
             </button>
           </div>
         </form>

@@ -45,6 +45,20 @@ function readPublicationId(request) {
   );
 }
 
+function readInterestedPublicationId(request) {
+  const url = new URL(request.url, "http://localhost");
+  if (
+    request.query &&
+    Object.prototype.hasOwnProperty.call(request.query, "interesados")
+  ) {
+    return parsePublicationId(request.query.interesados);
+  }
+  if (url.searchParams.has("interesados")) {
+    return parsePublicationId(url.searchParams.get("interesados"));
+  }
+  return undefined;
+}
+
 export default async function myPublications(request, response) {
   if (!["GET", "PUT", "DELETE"].includes(request.method)) {
     methodNotAllowed(response, ["GET", "PUT", "DELETE"]);
@@ -77,12 +91,26 @@ export default async function myPublications(request, response) {
       });
       return;
     }
-    if (!parsePublicationId(data.id) || data.estado !== "entregada") {
+    if (
+      !parsePublicationId(data.id) ||
+      data.estado !== "entregada" ||
+      (data.entregadaA !== undefined && !parsePublicationId(data.entregadaA))
+    ) {
       sendJson(response, 400, {
-        error: "Indica una publicación válida y el estado entregada.",
+        error:
+          "Indica una publicación válida, el estado entregada y un destinatario válido si corresponde.",
       });
       return;
     }
+  }
+
+  const interestedPublicationId =
+    request.method === "GET" ? readInterestedPublicationId(request) : undefined;
+  if (request.method === "GET" && interestedPublicationId === null) {
+    sendJson(response, 400, {
+      error: "Indica una publicación válida para consultar interesados.",
+    });
+    return;
   }
 
   const publicationId =
@@ -112,22 +140,57 @@ export default async function myPublications(request, response) {
         });
         return;
       }
+      if (interestedPublicationId !== undefined) {
+        const [ownedPublication] = await sql`
+          SELECT id
+          FROM publicaciones
+          WHERE id = ${interestedPublicationId}
+            AND usuario_id = ${userId}
+          LIMIT 1
+        `;
+        if (!ownedPublication) {
+          sendJson(response, 403, {
+            error: "No tienes permiso para consultar los interesados de esta publicación.",
+          });
+          return;
+        }
+        const interestedUsers = await sql`
+          SELECT DISTINCT
+            u.id,
+            CONCAT_WS(' ', u.nombre, NULLIF(BTRIM(u.apellidos), '')) AS nombre
+          FROM conversaciones c
+          INNER JOIN usuarios u ON u.id = c.interesado_id
+          WHERE c.publicacion_id = ${interestedPublicationId}
+            AND c.dueno_id = ${userId}
+          ORDER BY nombre ASC, u.id ASC
+        `;
+        sendJson(response, 200, {
+          interesados: interestedUsers.map((interested) => ({
+            id: String(interested.id),
+            nombre: interested.nombre,
+          })),
+        });
+        return;
+      }
+
       const rows = await sql`
         SELECT
-          id,
-          categoria,
-          marca,
-          condicion,
-          estado,
-          created_at AS fecha,
+          p.id,
+          p.categoria,
+          p.marca,
+          p.condicion,
+          p.estado,
+          p.created_at AS fecha,
+          u.nombre AS "entregadaA",
           CASE
-            WHEN jsonb_typeof(fotos) = 'array' AND jsonb_array_length(fotos) > 0
-              THEN fotos ->> 0
+            WHEN jsonb_typeof(p.fotos) = 'array' AND jsonb_array_length(p.fotos) > 0
+              THEN p.fotos ->> 0
             ELSE NULL
           END AS foto
-        FROM publicaciones
-        WHERE usuario_id = ${userId}
-        ORDER BY created_at DESC, id DESC
+        FROM publicaciones p
+        LEFT JOIN usuarios u ON u.id = p.entregada_a
+        WHERE p.usuario_id = ${userId}
+        ORDER BY p.created_at DESC, p.id DESC
       `;
       sendJson(response, 200, {
         publicaciones: rows.map((row) => ({
@@ -139,11 +202,59 @@ export default async function myPublications(request, response) {
     }
 
     if (request.method === "PUT") {
+      if (data.entregadaA !== undefined) {
+        const [conversation] = await sql`
+          SELECT c.interesado_id
+          FROM conversaciones c
+          INNER JOIN publicaciones p ON p.id = c.publicacion_id
+          WHERE c.publicacion_id = ${publicationId}
+            AND c.interesado_id = ${data.entregadaA}
+            AND p.usuario_id = ${userId}
+          LIMIT 1
+        `;
+        if (!conversation) {
+          const [user] = await sql`
+            SELECT id
+            FROM usuarios
+            WHERE id = ${userId}
+            LIMIT 1
+          `;
+          if (!user) {
+            clearSessionCookie(response);
+            sendJson(response, 401, {
+              error:
+                "La cuenta de esta sesión ya no existe. Inicia sesión nuevamente.",
+            });
+            return;
+          }
+          const [ownedPublication] = await sql`
+            SELECT id
+            FROM publicaciones
+            WHERE id = ${publicationId}
+              AND usuario_id = ${userId}
+            LIMIT 1
+          `;
+          if (!ownedPublication) {
+            sendJson(response, 403, {
+              error: "No tienes permiso para modificar esta publicación.",
+            });
+            return;
+          }
+          sendJson(response, 400, {
+            error:
+              "El destinatario debe haber conversado sobre esta publicación.",
+          });
+          return;
+        }
+      }
       const [updated] = await sql`
         UPDATE publicaciones
-        SET estado = 'entregada'
+        SET
+          estado = 'entregada',
+          entregada_a = ${data.entregadaA ?? null}
         WHERE id = ${publicationId}
           AND usuario_id = ${userId}
+          AND estado = 'activa'
         RETURNING id, estado
       `;
       if (!updated) {
@@ -157,6 +268,19 @@ export default async function myPublications(request, response) {
           clearSessionCookie(response);
           sendJson(response, 401, {
             error: "La cuenta de esta sesión ya no existe. Inicia sesión nuevamente.",
+          });
+          return;
+        }
+        const [ownedPublication] = await sql`
+          SELECT estado
+          FROM publicaciones
+          WHERE id = ${publicationId}
+            AND usuario_id = ${userId}
+          LIMIT 1
+        `;
+        if (ownedPublication?.estado === "entregada") {
+          sendJson(response, 409, {
+            error: "Esta publicación ya fue marcada como entregada.",
           });
           return;
         }

@@ -127,6 +127,25 @@ export default async function profile(request, response) {
         FROM publicaciones
         WHERE usuario_id = ${userId}
       `;
+      const [reputation] = await sql`
+        SELECT
+          COALESCE(ROUND(AVG(estrellas)::numeric, 1), 0)::float AS promedio,
+          COUNT(*)::int AS total
+        FROM calificaciones
+        WHERE destinatario_id = ${userId}
+      `;
+      const recentRatings = await sql`
+        SELECT
+          c.estrellas,
+          c.comentario,
+          c.created_at AS fecha,
+          u.nombre AS "nombreAutor"
+        FROM calificaciones c
+        INNER JOIN usuarios u ON u.id = c.autor_id
+        WHERE c.destinatario_id = ${userId}
+        ORDER BY c.created_at DESC, c.id DESC
+        LIMIT 5
+      `;
       let entidad = null;
       if (user.rol === "entidad") {
         const [entity] = await sql`
@@ -150,6 +169,16 @@ export default async function profile(request, response) {
           publicadas: Number(impact?.publicadas || 0),
           reutilizadas: Number(impact?.reutilizadas || 0),
           derivadasAcopio: Number(impact?.derivadasAcopio || 0),
+        },
+        reputacion: {
+          promedio: Number(reputation?.promedio || 0),
+          total: Number(reputation?.total || 0),
+          comentarios: recentRatings.map((rating) => ({
+            estrellas: rating.estrellas,
+            comentario: rating.comentario,
+            fecha: rating.fecha,
+            autor: rating.nombreAutor,
+          })),
         },
       });
       return;

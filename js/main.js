@@ -686,6 +686,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  let refreshPendingRatingBadges = () => {};
   const institutionalPage = document.querySelector("[data-institutional-page]");
   const profilePage = document.querySelector("[data-profile-page]");
   if (profilePage) {
@@ -696,11 +697,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordForm = profilePage.querySelector("[data-password-form]");
     const deleteForm = profilePage.querySelector("[data-delete-account-form]");
     const deleteDialog = profilePage.querySelector("[data-delete-account-dialog]");
+    const deliveryDialog = profilePage.querySelector("[data-delivery-dialog]");
+    const deliveryForm = profilePage.querySelector("[data-delivery-form]");
+    const deliverySelect = deliveryForm?.elements.namedItem("entregadaA");
+    const deliverySubmit = deliveryForm?.querySelector("[data-delivery-submit]");
+    const deliveryError = deliveryDialog?.querySelector("[data-delivery-error]");
+    const deliveryStatus = deliveryDialog?.querySelector("[data-delivery-status]");
     const publicationList = profilePage.querySelector("[data-my-publications]");
     const emptyPublications = profilePage.querySelector(
       "[data-my-publications-empty]",
     );
+    const pendingRatingsList = profilePage.querySelector("[data-pending-ratings]");
+    const pendingRatingsStatus = profilePage.querySelector(
+      "[data-pending-ratings-status]",
+    );
+    const emptyPendingRatings = profilePage.querySelector(
+      "[data-pending-ratings-empty]",
+    );
+    const reputationComments = profilePage.querySelector(
+      "[data-reputation-comments]",
+    );
+    const noReputationComments = profilePage.querySelector(
+      "[data-no-reputation-comments]",
+    );
     const profileState = { profile: null, impact: null, publications: [] };
+    let deliveryPublication;
+    let deliveryRequest = 0;
     const setProfileNotice = (message, isError = false) => {
       if (!profileNotice) return;
       profileNotice.textContent = message;
@@ -770,11 +792,67 @@ document.addEventListener("DOMContentLoaded", () => {
         cache: "no-store",
       });
       const result = await readProfileResponse(response);
-      if (!result.perfil || !result.impacto) {
+      if (!result.perfil || !result.impacto || !result.reputacion) {
         throw new Error("La respuesta del perfil no tiene un formato válido.");
       }
       updateProfileDisplay(result.perfil);
       updateImpact(result.impacto);
+      updateReputation(result.reputacion);
+    };
+    const updateReputation = (reputation) => {
+      const average = Math.min(5, Math.max(0, Number(reputation.promedio) || 0));
+      const total = Math.max(0, Math.floor(Number(reputation.total) || 0));
+      const averageNode = profilePage.querySelector("[data-reputation-average]");
+      const starsNode = profilePage.querySelector("[data-reputation-stars]");
+      const totalNode = profilePage.querySelector("[data-reputation-total]");
+      if (averageNode) averageNode.textContent = average.toFixed(1);
+      if (starsNode) {
+        const filledStars = Math.round(average);
+        starsNode.textContent =
+          "★".repeat(filledStars) + "☆".repeat(5 - filledStars);
+        starsNode.setAttribute(
+          "aria-label",
+          total
+            ? `Promedio de ${average.toFixed(1)} de 5 estrellas`
+            : "Aún sin calificaciones",
+        );
+      }
+      if (totalNode) {
+        totalNode.textContent = `${total} ${
+          total === 1 ? "calificación" : "calificaciones"
+        }`;
+      }
+
+      const comments = Array.isArray(reputation.comentarios)
+        ? reputation.comentarios
+        : [];
+      if (!reputationComments) return;
+      const entries = document.createDocumentFragment();
+      comments.forEach((comment) => {
+        const item = document.createElement("li");
+        const header = document.createElement("div");
+        const author = document.createElement("strong");
+        const stars = document.createElement("span");
+        const text = document.createElement("p");
+        const date = document.createElement("time");
+        item.className = "profile-review";
+        header.className = "profile-review-heading";
+        author.textContent = String(comment.autor || "Usuario");
+        stars.className = "profile-review-stars";
+        stars.textContent = `${Math.max(1, Math.min(5, Number(comment.estrellas) || 0))} ★`;
+        stars.setAttribute("aria-label", `${comment.estrellas} de 5 estrellas`);
+        header.append(author, stars);
+        text.textContent = String(comment.comentario || "Sin comentario.");
+        if (comment.fecha) {
+          date.dateTime = String(comment.fecha);
+          date.textContent = formatPublicationDate(comment.fecha);
+        }
+        item.append(header, text);
+        if (date.textContent) item.append(date);
+        entries.append(item);
+      });
+      reputationComments.replaceChildren(entries);
+      if (noReputationComments) noReputationComments.hidden = comments.length > 0;
     };
     const formatPublicationDate = (value) => {
       const date = new Date(value);
@@ -839,38 +917,9 @@ document.addEventListener("DOMContentLoaded", () => {
           deliveredButton.type = "button";
           deliveredButton.className = "profile-publication-action";
           deliveredButton.textContent = "Marcar como entregada";
-          deliveredButton.addEventListener("click", async () => {
-            if (
-              !window.confirm(
-                "¿Marcar esta publicación como entregada? Esta acción actualizará tu impacto.",
-              )
-            ) {
-              return;
-            }
-            deliveredButton.disabled = true;
-            setProfileNotice("");
-            try {
-              const response = await fetch("/api/mis-publicaciones", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                  id: publication.id,
-                  estado: "entregada",
-                }),
-              });
-              await readProfileResponse(response);
-              await refreshProfileAndPublications();
-              setProfileNotice("Publicación marcada como entregada.");
-            } catch (error) {
-              setProfileNotice(
-                error instanceof Error ? error.message : "No se pudo actualizar la publicación.",
-                true,
-              );
-            } finally {
-              deliveredButton.disabled = false;
-            }
-          });
+          deliveredButton.addEventListener("click", () =>
+            openDeliveryDialog(publication),
+          );
           actions.append(deliveredButton);
         }
         const deleteButton = document.createElement("button");
@@ -916,6 +965,308 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       publicationList.hidden = publications.length === 0;
     };
+    const renderPendingRatings = (pending) => {
+      if (!pendingRatingsList) return;
+      const cards = document.createDocumentFragment();
+      pending.forEach((rating) => {
+        const card = document.createElement("article");
+        const title = document.createElement("h3");
+        const recipient = document.createElement("p");
+        const form = document.createElement("form");
+        const ratingLabel = document.createElement("span");
+        const ratingGroup = document.createElement("div");
+        const commentLabel = document.createElement("label");
+        const comment = document.createElement("textarea");
+        const error = document.createElement("p");
+        const submit = document.createElement("button");
+        const commentId = `rating-comment-${String(rating.publicacionId)}`;
+        card.className = "profile-pending-card";
+        title.textContent = String(rating.titulo || "Equipo entregado");
+        recipient.className = "profile-pending-recipient";
+        recipient.textContent = `Califica a ${String(
+          rating.otraPersona || "la otra persona",
+        )}`;
+        form.className = "profile-rating-form";
+        ratingLabel.className = "profile-rating-label";
+        ratingLabel.textContent = "Tu calificación";
+        ratingGroup.className = "profile-star-selector";
+        ratingGroup.setAttribute("role", "radiogroup");
+        ratingGroup.setAttribute(
+          "aria-label",
+          `Calificación para ${String(rating.otraPersona || "la otra persona")}`,
+        );
+        ratingGroup.setAttribute(
+          "aria-keyshortcuts",
+          "ArrowLeft ArrowRight ArrowUp ArrowDown Home End",
+        );
+        for (let value = 1; value <= 5; value += 1) {
+          const star = document.createElement("button");
+          star.type = "button";
+          star.className = "profile-star-button";
+          star.setAttribute("role", "radio");
+          star.setAttribute("aria-label", `${value} ${
+            value === 1 ? "estrella" : "estrellas"
+          }`);
+          star.setAttribute("aria-checked", "false");
+          star.tabIndex = value === 1 ? 0 : -1;
+          star.dataset.ratingValue = String(value);
+          star.textContent = "★";
+          ratingGroup.append(star);
+        }
+        const setSelectedRating = (value) => {
+          const stars = [...ratingGroup.querySelectorAll("[data-rating-value]")];
+          ratingGroup.dataset.selected = String(value);
+          stars.forEach((star) => {
+            const starValue = Number(star.dataset.ratingValue);
+            star.setAttribute("aria-checked", String(starValue === value));
+            star.dataset.active = String(starValue <= value);
+            star.tabIndex = starValue === value ? 0 : -1;
+          });
+        };
+        ratingGroup.addEventListener("click", (event) => {
+          const target =
+            event.target instanceof Element
+              ? event.target.closest("[data-rating-value]")
+              : null;
+          if (target && ratingGroup.contains(target)) {
+            setSelectedRating(Number(target.dataset.ratingValue));
+          }
+        });
+        ratingGroup.addEventListener("keydown", (event) => {
+          const currentValue = Number(ratingGroup.dataset.selected) || 1;
+          let nextValue = currentValue;
+          if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+            nextValue = Math.min(5, currentValue + 1);
+          } else if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+            nextValue = Math.max(1, currentValue - 1);
+          } else if (event.key === "Home") {
+            nextValue = 1;
+          } else if (event.key === "End") {
+            nextValue = 5;
+          } else {
+            return;
+          }
+          event.preventDefault();
+          setSelectedRating(nextValue);
+          ratingGroup
+            .querySelector(`[data-rating-value="${nextValue}"]`)
+            ?.focus();
+        });
+
+        commentLabel.htmlFor = commentId;
+        commentLabel.textContent = "Comentario (opcional)";
+        comment.id = commentId;
+        comment.name = "comentario";
+        comment.maxLength = 300;
+        comment.rows = 3;
+        comment.placeholder = "¿Cómo fue el intercambio?";
+        error.className = "profile-rating-error";
+        error.setAttribute("role", "alert");
+        error.hidden = true;
+        submit.type = "submit";
+        submit.className = "button button-small";
+        submit.textContent = "Enviar calificación";
+        form.append(ratingLabel, ratingGroup, commentLabel, comment, error, submit);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const stars = Number(ratingGroup.dataset.selected) || 0;
+          if (!stars) {
+            error.textContent = "Selecciona de 1 a 5 estrellas.";
+            error.hidden = false;
+            ratingGroup.querySelector("button")?.focus();
+            return;
+          }
+          submit.disabled = true;
+          error.textContent = "";
+          error.hidden = true;
+          try {
+            const response = await fetch("/api/calificaciones", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "same-origin",
+              body: JSON.stringify({
+                publicacionId: rating.publicacionId,
+                estrellas: stars,
+                comentario: comment.value,
+              }),
+            });
+            await readProfileResponse(response);
+            setProfileNotice("Tu calificación se envió correctamente.");
+            await loadPendingRatings();
+            refreshPendingRatingBadges();
+          } catch (requestError) {
+            error.textContent =
+              requestError instanceof Error
+                ? requestError.message
+                : "No se pudo enviar la calificación.";
+            error.hidden = false;
+            submit.disabled = false;
+          }
+        });
+        card.append(title, recipient, form);
+        cards.append(card);
+      });
+      pendingRatingsList.replaceChildren(cards);
+      if (emptyPendingRatings) emptyPendingRatings.hidden = pending.length > 0;
+    };
+    const loadPendingRatings = async () => {
+      if (pendingRatingsStatus) {
+        pendingRatingsStatus.textContent = "Cargando calificaciones…";
+        pendingRatingsStatus.dataset.state = "";
+        pendingRatingsStatus.hidden = false;
+      }
+      try {
+        const response = await fetch("/api/calificaciones?pendientes=1", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const result = await readProfileResponse(response);
+        if (!Array.isArray(result.pendientes)) {
+          throw new Error("La lista de calificaciones no tiene un formato válido.");
+        }
+        renderPendingRatings(result.pendientes);
+        if (pendingRatingsStatus) pendingRatingsStatus.hidden = true;
+      } catch (error) {
+        pendingRatingsList?.replaceChildren();
+        if (pendingRatingsStatus) {
+          pendingRatingsStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudieron cargar las calificaciones pendientes.";
+          pendingRatingsStatus.dataset.state = "error";
+          pendingRatingsStatus.hidden = false;
+        }
+        if (emptyPendingRatings) emptyPendingRatings.hidden = true;
+      }
+    };
+    const openDeliveryDialog = async (publication) => {
+      deliveryPublication = publication;
+      const requestId = ++deliveryRequest;
+      if (deliverySelect) {
+        const outsideOption = document.createElement("option");
+        outsideOption.value = "";
+        outsideOption.textContent =
+          "Entrega fuera de la plataforma (sin calificación)";
+        deliverySelect.replaceChildren(outsideOption);
+        deliverySelect.disabled = true;
+      }
+      if (deliveryError) {
+        deliveryError.textContent = "";
+        deliveryError.hidden = true;
+      }
+      if (deliveryStatus) {
+        deliveryStatus.textContent = "Cargando las personas interesadas…";
+        deliveryStatus.hidden = false;
+      }
+      if (deliverySubmit) deliverySubmit.disabled = true;
+      deliveryDialog?.showModal();
+      try {
+        const response = await fetch(
+          `/api/mis-publicaciones?interesados=${encodeURIComponent(
+            publication.id,
+          )}`,
+          { credentials: "same-origin", cache: "no-store" },
+        );
+        const result = await readProfileResponse(response);
+        if (!Array.isArray(result.interesados)) {
+          throw new Error("La lista de interesados no tiene un formato válido.");
+        }
+        if (requestId !== deliveryRequest || !deliverySelect) return;
+        result.interesados.forEach((person) => {
+          const option = document.createElement("option");
+          option.value = String(person.id);
+          option.textContent = String(person.nombre || "Usuario");
+          deliverySelect.append(option);
+        });
+        if (deliveryStatus) {
+          deliveryStatus.textContent = result.interesados.length
+            ? ""
+            : "No hay conversaciones con interesados para esta publicación.";
+          deliveryStatus.hidden = result.interesados.length > 0;
+        }
+        deliverySelect.disabled = false;
+        if (deliverySubmit) deliverySubmit.disabled = false;
+      } catch (error) {
+        if (requestId !== deliveryRequest) return;
+        if (deliveryError) {
+          deliveryError.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudieron cargar las personas interesadas.";
+          deliveryError.hidden = false;
+        }
+        if (deliveryStatus) deliveryStatus.hidden = true;
+        if (deliverySelect) deliverySelect.disabled = false;
+        if (deliverySubmit) deliverySubmit.disabled = false;
+      }
+    };
+    deliveryForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!deliveryPublication) return;
+      if (deliverySubmit) deliverySubmit.disabled = true;
+      if (deliveryError) {
+        deliveryError.textContent = "";
+        deliveryError.hidden = true;
+      }
+      const entregadaA = deliverySelect?.value;
+      try {
+        const response = await fetch("/api/mis-publicaciones", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            id: deliveryPublication.id,
+            estado: "entregada",
+            ...(entregadaA ? { entregadaA } : {}),
+          }),
+        });
+        await readProfileResponse(response);
+      } catch (error) {
+        if (deliveryError) {
+          deliveryError.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudo registrar la entrega.";
+          deliveryError.hidden = false;
+        }
+        if (deliverySubmit) deliverySubmit.disabled = false;
+        return;
+      }
+
+      deliveryRequest += 1;
+      deliveryDialog?.close();
+      setProfileNotice(
+        entregadaA
+          ? "Entrega registrada. Ya puedes calificar a la otra persona."
+          : "Entrega registrada sin calificación.",
+      );
+      refreshPendingRatingBadges();
+      try {
+        await refreshProfileAndPublications();
+        await loadPendingRatings();
+      } catch (error) {
+        setProfileNotice(
+          error instanceof Error
+            ? `La entrega se guardó, pero no se pudo actualizar el perfil: ${error.message}`
+            : "La entrega se guardó, pero no se pudo actualizar el perfil.",
+          true,
+        );
+      } finally {
+        if (deliverySubmit) deliverySubmit.disabled = false;
+      }
+    });
+    profilePage
+      .querySelector("[data-close-delivery-dialog]")
+      ?.addEventListener("click", () => {
+        deliveryRequest += 1;
+        deliveryDialog?.close();
+      });
+    deliveryDialog?.addEventListener("click", (event) => {
+      if (event.target === deliveryDialog) {
+        deliveryRequest += 1;
+        deliveryDialog.close();
+      }
+    });
     const loadMyPublications = async () => {
       const response = await fetch("/api/mis-publicaciones", {
         credentials: "same-origin",
@@ -1059,6 +1410,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await loadMyPublications();
         if (profileContent) profileContent.hidden = false;
         if (loadingStatus) loadingStatus.hidden = true;
+        await loadPendingRatings();
       } catch (error) {
         if (loadingStatus) {
           loadingStatus.textContent =
@@ -1577,6 +1929,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .join(" ") || "Usuario";
         const badgeNodes = [];
         const profileButtons = [];
+        const ratingBadgeNodes = [];
         authenticatedNavigation.forEach((navigation, index) => {
           const profileMenu = document.createElement("div");
           const profileButton = document.createElement("button");
@@ -1589,6 +1942,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const messagesLabel = document.createElement("span");
           const messagesBadge = document.createElement("span");
           const personalProfileLink = document.createElement("a");
+          const personalProfileBadge = document.createElement("span");
           const institutionalLink = document.createElement("a");
           const logoutButton = document.createElement("button");
           const panelId = `profile-menu-panel-${index + 1}`;
@@ -1630,7 +1984,16 @@ document.addEventListener("DOMContentLoaded", () => {
           badgeNodes.push(profileBadge, messagesBadge);
           personalProfileLink.className = "profile-personal-link";
           personalProfileLink.href = "perfil.html";
-          personalProfileLink.textContent = "Mi perfil";
+          const personalProfileLabel = document.createElement("span");
+          personalProfileLabel.textContent = "Mi perfil";
+          personalProfileBadge.className = "profile-rating-notice";
+          personalProfileBadge.hidden = true;
+          personalProfileBadge.setAttribute("aria-hidden", "true");
+          personalProfileLink.append(personalProfileLabel, personalProfileBadge);
+          ratingBadgeNodes.push({
+            badge: personalProfileBadge,
+            link: personalProfileLink,
+          });
           if (user.rol === "entidad") {
             institutionalLink.className = "profile-institutional-link";
             institutionalLink.href = "institucional.html";
@@ -1707,15 +2070,71 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
         };
+        let pendingRatingRequest = false;
+        let pendingRatingRefreshQueued = false;
+        refreshPendingRatingBadges = async () => {
+          if (document.visibilityState !== "visible") {
+            return;
+          }
+          if (pendingRatingRequest) {
+            pendingRatingRefreshQueued = true;
+            return;
+          }
+          pendingRatingRequest = true;
+          try {
+            const response = await fetch("/api/calificaciones?pendientes=1", {
+              credentials: "same-origin",
+              cache: "no-store",
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              throw new Error(
+                result.error || "No se pudieron consultar las calificaciones.",
+              );
+            }
+            if (!Array.isArray(result.pendientes)) {
+              throw new Error(
+                "La respuesta de calificaciones no tiene un formato válido.",
+              );
+            }
+            const hasPendingRatings = result.pendientes.length > 0;
+            ratingBadgeNodes.forEach(({ badge, link }) => {
+              badge.hidden = !hasPendingRatings;
+              link.setAttribute(
+                "aria-label",
+                hasPendingRatings
+                  ? "Mi perfil, tienes calificaciones pendientes"
+                  : "Mi perfil",
+              );
+            });
+          } catch (error) {
+            console.error(
+              "No se pudo actualizar el aviso de calificaciones pendientes.",
+              error,
+            );
+          } finally {
+            pendingRatingRequest = false;
+            if (
+              pendingRatingRefreshQueued &&
+              document.visibilityState === "visible"
+            ) {
+              pendingRatingRefreshQueued = false;
+              refreshPendingRatingBadges();
+            }
+          }
+        };
         refreshUnreadNotifications();
+        refreshPendingRatingBadges();
         const unreadPollTimer = window.setInterval(() => {
           if (document.visibilityState === "visible") {
             refreshUnreadNotifications();
+            refreshPendingRatingBadges();
           }
         }, 15000);
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "visible") {
             refreshUnreadNotifications();
+            refreshPendingRatingBadges();
           }
         });
         window.addEventListener("pagehide", () =>
@@ -2089,6 +2508,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const seller = document.createElement("div");
     const avatar = document.createElement("div");
     const authorName = document.createElement("span");
+    const authorRating = document.createElement("span");
     const contactButton = document.createElement("button");
     const category = String(publication.category || "Otros");
     const condition = String(publication.condition || "");
@@ -2160,12 +2580,26 @@ document.addEventListener("DOMContentLoaded", () => {
     authorName.textContent = authorInitial
       ? `${author} ${authorInitial}.`
       : author;
+    authorRating.className = "rating";
+    const ratingTotal = Math.max(
+      0,
+      Math.floor(Number(publication.authorRating?.total) || 0),
+    );
+    const ratingAverage = Math.min(
+      5,
+      Math.max(0, Number(publication.authorRating?.promedio) || 0),
+    );
+    authorRating.textContent = ratingTotal
+      ? `★ ${ratingAverage.toFixed(1)} · ${ratingTotal} ${
+          ratingTotal === 1 ? "calificación" : "calificaciones"
+        }`
+      : "Sin calificaciones aún";
     contactButton.type = "button";
     contactButton.className =
       "button button-outline button-full contact-trigger";
     contactButton.dataset.conversationStart = String(publication.id);
     contactButton.textContent = "Contactar";
-    seller.append(avatar, authorName);
+    seller.append(avatar, authorName, authorRating);
     content.append(tags, heading, description, meta, seller, contactButton);
     card.append(imageContainer, content);
     return card;

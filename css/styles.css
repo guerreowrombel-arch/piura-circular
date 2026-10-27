@@ -4275,3 +4275,306 @@ p {
     position: static;
   }
 }
+
+.profile-personal-link {
+  justify-content: space-between;
+}
+.profile-rating-notice {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  background: var(--coral);
+  border: 2px solid var(--warm-white);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(226, 105, 78, 0.18);
+}
+.profile-rating-notice[hidden] {
+  display: none;
+}
+.profile-feedback-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  align-items: start;
+  gap: 18px;
+  margin-top: 38px;
+}
+.profile-feedback-grid > .profile-section {
+  min-width: 0;
+  margin-top: 0;
+}
+.profile-pending-list {
+  display: grid;
+  gap: 12px;
+}
+.profile-pending-card {
+  padding: 17px;
+  background: #fffefa;
+  border: 1px solid rgba(15, 82, 87, 0.14);
+  border-left: 3px solid var(--coral);
+}
+.profile-pending-card h3 {
+  color: var(--petrol-dark);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.profile-pending-recipient {
+  margin: 5px 0 14px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.profile-rating-form {
+  display: grid;
+  justify-items: start;
+}
+.profile-rating-label,
+.profile-rating-form label {
+  margin: 0 0 7px;
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.profile-star-selector {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 13px;
+}
+.profile-star-button {
+  width: 43px;
+  height: 43px;
+  padding: 0;
+  color: #b6c0b9;
+  background: transparent;
+  border: 1px solid rgba(15, 82, 87, 0.14);
+  border-radius: 3px;
+  font-size: 1.55rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.16s ease,
+    background 0.16s ease;
+}
+.profile-star-button[data-active="true"],
+.profile-star-button:hover {
+  color: #a97922;
+  background: #fbf3dc;
+}
+.profile-star-button:focus-visible {
+  outline: 3px solid rgba(226, 105, 78, 0.55);
+  outline-offset: 2px;
+}
+.profile-rating-form textarea,
+.profile-delivery-dialog select {
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: #fffefa;
+  border: 1px solid #d5d9d3;
+  border-radius: 3px;
+  font: inherit;
+  font-size: 0.82rem;
+}
+.profile-rating-form textarea {
+  min-height: 74px;
+  resize: vertical;
+}
+.profile-rating-form .button {
+  min-height: 40px;
+}
+.profile-rating-error {
+  margin: -4px 0 10px;
+  color: #9c302a;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.profile-rating-error[hidden],
+.profile-ratings-status[hidden],
+.profile-delivery-status[hidden] {
+  display: none;
+}
+.profile-ratings-status {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.profile-ratings-status[data-state="error"] {
+  color: #9c302a;
+  font-weight: 700;
+}
+.profile-ratings-empty {
+  padding: 20px 14px;
+}
+.profile-ratings-empty .profile-empty-mark {
+  width: 42px;
+  height: 42px;
+  font-size: 1.35rem;
+}
+.profile-ratings-empty h3 {
+  font-size: 1rem;
+}
+.profile-ratings-empty p {
+  margin-bottom: 0;
+}
+.profile-reputation-section {
+  color: var(--warm-white);
+  background: var(--petrol);
+  border-color: var(--petrol);
+}
+.profile-reputation-section .eyebrow {
+  color: rgba(255, 252, 246, 0.68);
+}
+.profile-reputation-section .profile-section-heading h2 {
+  color: var(--warm-white);
+}
+.profile-reputation-summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 4px 0 21px;
+  border-bottom: 1px solid rgba(255, 252, 246, 0.2);
+}
+.profile-reputation-summary > strong {
+  color: var(--lime);
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+}
+.profile-reputation-summary > div {
+  display: grid;
+  gap: 4px;
+}
+.profile-reputation-stars {
+  color: #f0c66c;
+  font-size: 1.15rem;
+  letter-spacing: 0.09em;
+}
+.profile-reputation-total {
+  color: rgba(255, 252, 246, 0.76);
+  font-size: 0.72rem;
+}
+.profile-reviews-title {
+  margin: 19px 0 10px;
+  color: var(--warm-white);
+  font-size: 0.9rem;
+}
+.profile-review-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.profile-review {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 252, 246, 0.17);
+}
+.profile-review-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.profile-review-heading strong {
+  font-size: 0.77rem;
+}
+.profile-review-stars {
+  color: #f0c66c;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.profile-review > p {
+  margin: 6px 0 3px;
+  color: rgba(255, 252, 246, 0.83);
+  font-size: 0.77rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.profile-review time {
+  color: rgba(255, 252, 246, 0.58);
+  font-size: 0.67rem;
+}
+.profile-no-reviews {
+  margin: 0;
+  color: rgba(255, 252, 246, 0.74);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.profile-review-list:not(:empty) + .profile-no-reviews {
+  display: none;
+}
+.profile-delivery-dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-width: none;
+  padding: 0;
+  color: var(--ink);
+  background: var(--warm-white);
+  border: 1px solid rgba(15, 82, 87, 0.2);
+  box-shadow: 0 22px 70px rgba(10, 58, 62, 0.25);
+}
+.profile-delivery-dialog::backdrop {
+  background: rgba(10, 36, 38, 0.58);
+  backdrop-filter: blur(3px);
+}
+.profile-delivery-dialog .profile-dialog-card .eyebrow {
+  color: var(--coral);
+}
+.profile-delivery-dialog .profile-dialog-card h2 {
+  margin-bottom: 20px;
+  font-size: 1.7rem;
+}
+.profile-delivery-dialog .profile-dialog-card label {
+  display: block;
+}
+.profile-delivery-dialog select {
+  margin-top: 6px;
+}
+.profile-delivery-status {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.profile-delivery-dialog .profile-dialog-actions .button {
+  min-height: 42px;
+  padding-inline: 13px;
+  font-size: 0.76rem;
+}
+.seller-row .rating {
+  max-width: 100%;
+  font-size: 0.62rem;
+  text-align: right;
+}
+.seller-row {
+  flex-wrap: wrap;
+}
+@media (max-width: 900px) {
+  .profile-feedback-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .profile-feedback-grid {
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .profile-feedback-grid .profile-card {
+    margin-top: 0;
+  }
+  .profile-card.profile-pending-section,
+  .profile-card.profile-reputation-section {
+    padding: 18px;
+  }
+  .profile-pending-card {
+    padding: 14px;
+  }
+  .profile-star-button {
+    width: 42px;
+    height: 42px;
+  }
+  .profile-dialog-actions {
+    flex-wrap: wrap;
+  }
+  .profile-delivery-dialog .profile-dialog-actions > button {
+    flex: 1 1 100%;
+  }
+}
