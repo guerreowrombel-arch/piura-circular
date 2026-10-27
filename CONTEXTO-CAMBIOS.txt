@@ -8,7 +8,7 @@ REPOSITORIO Y ESTADO
 --------------------
 - Rama principal: main
 - Remoto: origin
-- Ultimo commit verificado: 2d60b5f - Documentar contexto y cambios del proyecto
+- Ultimo commit verificado: 65d5c81 - Actualizar referencia del commit de contexto
 - Ultimo commit funcional: 18cffaf - Integrar puntos RAEE y filtros interactivos
 - Ese commit ya esta enviado a origin/main.
 - Para obtener los cambios mas recientes: git pull origin main
@@ -45,9 +45,81 @@ CAMBIOS RECIENTES
    - Los marcadores cercanos se agrupan con Leaflet.markercluster.
    - Se muestran popups y tarjetas con ubicacion, horario, categorias y sistema
      de gestion cuando esos datos estan disponibles.
-   - Se agrego un aviso para un registro de Piura cuya coordenada cae en Lima.
    - Archivos principales: puntos-acopio.html, js/main.js, css/styles.css y
      assets/data/raee-points.json.
+
+ACTUALIZACION DE PUNTOS DE PIURA
+--------------------------------
+- El archivo de datos ahora contiene 238 puntos. Se agrego la campaña
+  "Reciclamos para dejar huella 2025" junto al Parque Kurt Beer, con coordenada
+  aproximada del parque (-5.2078313, -80.6672069). Como no se indico que tipos
+  recibe, categories queda como una lista vacia y hours aclara que el horario
+  no esta especificado.
+- La ficha de Tienda Entel en Piura usa las coordenadas solicitadas:
+  (-5.1945, -80.6328), y se elimino el aviso anterior de coordenadas erróneas.
+- La pagina inicia con Piura seleccionado y el mapa centrado con zoom 12 en
+  [-5.19, -80.63]. La primera carga respeta ese encuadre; cambiar filtros ajusta
+  el mapa a los puntos coincidentes.
+
+FLUJO DEL FORMULARIO DE PUBLICACION
+-----------------------------------
+- publicar.html contiene el formulario y una tarjeta de siguiente paso que se
+  muestra despues de guardar correctamente.
+- js/main.js guarda categoria, marca, antiguedad, descripcion, condicion,
+  fecha de creacion y hasta cinco fotos como data URL en localStorage, bajo la
+  clave "publicaciones". Los registros se guardan en una lista JSON.
+- La condicion operativa ofrece un enlace a intercambio.html; la condicion de
+  reparacion recomienda un tecnico o taller local; la condicion no reutilizable
+  ofrece un enlace a puntos-acopio.html.
+- localStorage solo guarda datos en ese navegador y dispositivo; no sincroniza
+  publicaciones con otras personas ni con un servidor. El limite de espacio
+  del navegador puede impedir guardar fotos grandes.
+
+BUSQUEDA POR UBICACION EN PUNTOS DE ACOPIO
+-----------------------------------------
+- El boton "Usar mi ubicacion" de puntos-acopio.html solicita la posicion con
+  navigator.geolocation y ordena los resultados filtrados usando la formula
+  haversine. Cada tarjeta muestra su distancia aproximada en kilometros.
+- La posicion y las distancias se mantienen solo en memoria de la pagina; no se
+  guardan en localStorage.
+- Si se deniega el permiso o falla la ubicacion, se informa en pantalla y se
+  conserva el orden actual de la lista.
+- Geolocation requiere un contexto seguro (HTTPS o localhost).
+- Se probo el ordenamiento y las distancias desde el punto de la campana de
+  Parque Kurt Beer, la denegacion del permiso sin alterar las tarjetas y la
+  distribucion movil sin desbordamiento horizontal.
+
+GUIAS EDUCATIVAS Y PRESENTACION DEL EQUIPO
+-----------------------------------------
+- educacion.html incluye secciones resumidas con los IDs safe-disposal,
+  battery-care y regulation, enlazadas desde las tarjetas de lectura.
+- La guia de regulacion enlaza a la ficha oficial del D. S. 009-2019-MINAM en
+  gob.pe: https://www.gob.pe/institucion/minam/normas-legales/354138-009-2019-minam
+- Las tres imagenes inexistentes de las tarjetas educativas se quitaron; el
+  diseno conserva los fondos e iconos decorativos definidos en CSS.
+- proyecto.html presenta seis responsabilidades de Ingenieria de Sistemas.
+  Los nombres reales no constan en los archivos disponibles; las tarjetas se
+  identifican temporalmente como Integrante 1 a Integrante 6 para no inventar
+  identidades. Reemplazar esas etiquetas cuando se proporcionen los nombres.
+
+CONTADORES DINAMICOS DE IMPACTO
+-------------------------------
+- Los indicadores de index.html y educacion.html ya no usan cifras ficticias:
+  js/main.js los calcula al cargar cada pagina.
+- "Equipos publicados" cuenta todos los registros del arreglo JSON guardado en
+  localStorage bajo la clave "publicaciones".
+- "Equipos en puntos de acopio" y "equipos entregados a acopio" cuentan las
+  publicaciones con condition igual a "No reutilizable".
+- "Equipos reutilizados" cuenta las publicaciones con condition igual a
+  "Operativo".
+- "Distritos conectados" cuenta los valores distintos de district en
+  assets/data/raee-points.json, ignorando diferencias de mayusculas, tildes y
+  espacios exteriores.
+- Si no hay publicaciones, los contadores de publicaciones muestran 0. Si el
+  catalogo de puntos no se puede cargar, el total de distritos muestra 0 y se
+  informa el error en la consola.
+- Los registros de localStorage son locales a cada navegador y dispositivo;
+  las publicaciones no se comparten entre usuarios ni se envian al servidor.
 
 COMO ESTA ORGANIZADO EL MAPA DE RAEE
 -----------------------------------
@@ -73,10 +145,7 @@ IMPORTANTE SOBRE LA FUENTE DE DATOS
 - La copia actual se consulto el 26 de octubre de 2026. La pagina tambien
   indica esta fecha y recomienda confirmar horarios y recepcion antes de ir.
 - El mapa publico incluye poligonos de departamentos; para las tarjetas y pines
-  se usan las 237 ubicaciones puntuales.
-- Hay una inconsistencia conocida en el origen: "Tienda Entel" figura en
-  Piura, pero sus coordenadas apuntan a Lima. Se conserva el dato original y
-  se advierte al visitante; verificar con la entidad antes de cambiarlo.
+  se usan las ubicaciones puntuales del JSON.
 - Las coordenadas y los datos de horarios provienen de la fuente y pueden ser
   inexactos o quedar desactualizados. No presentarlos como verificados.
 - Para que fetch("assets/data/raee-points.json") funcione, abrir el proyecto
@@ -86,12 +155,10 @@ VALIDACIONES REALIZADAS
 -----------------------
 - node --check js/main.js
 - git diff --check
-- Se verifico el JSON: 237 puntos, tres registros cuyo departamento indicado
+- Se verifico el JSON: 238 puntos, cuatro registros cuyo departamento indicado
   es Piura, coordenadas dentro de rangos validos y sin datos de contacto.
 - En navegador se verificaron los filtros, la busqueda, limpiar filtros,
   el estado sin resultados, los popups, los pines agrupados y la vista movil.
-- La ficha de Entel en Piura se cotejo con las coordenadas del KML y se marco
-  como inconsistencia de origen.
 
 PARA CONTINUAR
 --------------

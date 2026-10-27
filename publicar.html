@@ -51,7 +51,8 @@
         </p>
       </section>
       <section class="wrap publish-layout">
-        <form class="publish-form demo-form">
+        <div class="publish-column">
+          <form class="publish-form" data-publish-form>
           <div class="form-section">
             <div class="form-section-title">
               <span>01</span>
@@ -63,7 +64,7 @@
             <div class="form-grid">
               <div>
                 <label for="category">Categoría *</label
-                ><select id="category" required>
+                ><select id="category" name="category" required>
                   <option value="">Selecciona una categoría</option>
                   <option>Computadoras</option>
                   <option>Celulares</option>
@@ -74,11 +75,11 @@
               </div>
               <div>
                 <label for="brand">Marca</label
-                ><input id="brand" placeholder="Ej. Lenovo" />
+                ><input id="brand" name="brand" placeholder="Ej. Lenovo" />
               </div>
               <div>
                 <label for="age">Antigüedad aproximada</label
-                ><select id="age">
+                ><select id="age" name="age">
                   <option value="">Selecciona</option>
                   <option>Menos de 1 año</option>
                   <option>1 a 3 años</option>
@@ -103,6 +104,7 @@
               id="description"
               rows="4"
               placeholder="Describe el estado, accesorios incluidos o algún detalle importante..."
+              name="description"
               required
             ></textarea>
           </div>
@@ -164,13 +166,20 @@
             /></label>
             <div class="photo-preview" data-photo-preview></div>
           </div>
-          <div class="form-end">
-            <p class="form-notice" role="status" aria-live="polite"></p>
-            <button class="button" type="submit">
-              Publicar equipo <span>↗</span>
-            </button>
-          </div>
-        </form>
+            <div class="form-end">
+              <p class="form-notice" role="status" aria-live="polite"></p>
+              <button class="button" type="submit">
+                Publicar equipo <span>↗</span>
+              </button>
+            </div>
+          </form>
+          <section
+            class="publish-result"
+            data-publish-result
+            aria-live="polite"
+            hidden
+          ></section>
+        </div>
         <aside class="publish-aside">
           <div class="aside-sticky">
             <p class="eyebrow">EL CICLO EN TUS MANOS</p>

@@ -2236,9 +2236,8 @@
       3
     ],
     "system": "ENTEL PERÚ S.A.",
-    "warning": "La ficha indica Piura, pero el pin del mapa cae en Lima. Verifica la ubicación con la fuente antes de ir.",
-    "lat": -12.0587805,
-    "lng": -77.029298
+    "lat": -5.1945,
+    "lng": -80.6328
   },
   {
     "name": "Tienda Entel",
@@ -3561,5 +3560,17 @@
     "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
     "lat": -9.927187,
     "lng": -76.2427595
+  },
+  {
+    "name": "Campaña Reciclamos para dejar huella 2025",
+    "address": "Vía de Evitamiento (junto al Parque Kurt Beer)",
+    "district": "Veintiséis de Octubre",
+    "province": "Piura",
+    "department": "Piura",
+    "hours": "Campaña de 2025; horario no especificado",
+    "categories": [],
+    "system": "CONSULTORÍA & LOGÍSTICA INVERSA (RECOLECC)",
+    "lat": -5.2078313,
+    "lng": -80.6672069
   }
 ]

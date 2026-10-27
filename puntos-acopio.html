@@ -114,9 +114,18 @@
               data-collection-search
             />
           </div>
-          <button class="collection-reset" type="button" data-collection-reset>
-            Limpiar filtros
-          </button>
+          <div class="collection-location-actions">
+            <button
+              class="collection-location-button"
+              type="button"
+              data-use-location
+            >
+              Usar mi ubicación
+            </button>
+            <button class="collection-reset" type="button" data-collection-reset>
+              Limpiar filtros
+            </button>
+          </div>
           <p class="collection-result-count" data-collection-count role="status">
             Cargando puntos…
           </p>
@@ -128,6 +137,13 @@
             >Fuente: mapa compartido ↗</a
           >
         </div>
+        <p
+          class="collection-location-status"
+          data-location-status
+          role="status"
+          aria-live="polite"
+          hidden
+        ></p>
         <div class="collection-layout">
           <div class="map-panel">
             <div
