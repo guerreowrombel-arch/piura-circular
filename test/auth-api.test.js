@@ -488,6 +488,14 @@ test("all site pages expose a shared session navigation", async () => {
     const markup = await readFile(new URL(page, rootDirectory), "utf8");
     assert.match(markup, /data-auth-nav/, `${page} must show session navigation`);
   }
+
+  const [styles, main] = await Promise.all([
+    readFile(new URL("css/styles.css", rootDirectory), "utf8"),
+    readFile(new URL("js/main.js", rootDirectory), "utf8"),
+  ]);
+  assert.match(styles, /\.nav-actions\[data-auth-nav\]\s*\{\s*visibility:\s*hidden;/);
+  assert.match(styles, /\.nav-actions\[data-auth-nav\]\.auth-ready\s*\{\s*visibility:\s*visible;/);
+  assert.equal((main.match(/markAuthenticatedNavigationReady\(\);/g) || []).length, 2);
 });
 
 test("auth, publishing, location, and counter hooks match main.js selectors", async () => {
@@ -586,7 +594,7 @@ test("publications are sent to the API and rendered without local publication st
 
 test("profile and password backend contracts are scoped to the signed-in user", async () => {
   const [profileApi, passwordApi, myPublicationsApi] = await Promise.all(
-    ["api/perfil.js", "api/password.js", "api/mis-publicaciones.js"].map(
+    ["handlers/perfil.js", "handlers/password.js", "handlers/mis-publicaciones.js"].map(
       (file) => readFile(new URL(file, rootDirectory), "utf8"),
     ),
   );
@@ -620,8 +628,8 @@ test("profile and password backend contracts are scoped to the signed-in user", 
 test("rating API and reputation data enforce delivery and privacy contracts", async () => {
   const [ratingsApi, profileApi, publicationApi, schema] = await Promise.all(
     [
-      "api/calificaciones.js",
-      "api/perfil.js",
+      "handlers/calificaciones.js",
+      "handlers/perfil.js",
       "api/publicaciones.js",
       "schema.sql",
     ].map((file) => readFile(new URL(file, rootDirectory), "utf8")),
@@ -725,7 +733,7 @@ test("messaging schema, API routes, and interface use the required contracts", a
 
 test("institutional backend schema, roles, aggregates, and ownership checks are wired", async () => {
   const [schema, meApi, institutionalApi, pointsApi] = await Promise.all(
-    ["schema.sql", "api/me.js", "api/institucional.js", "api/puntos.js"].map(
+    ["schema.sql", "handlers/me.js", "api/institucional.js", "api/puntos.js"].map(
       (file) => readFile(new URL(file, rootDirectory), "utf8"),
     ),
   );

@@ -1913,13 +1913,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
   let refreshUnreadNotifications = () => {};
   if (authenticatedNavigation.length) {
+    const markAuthenticatedNavigationReady = () => {
+      authenticatedNavigation.forEach((navigation) =>
+        navigation.classList.add("auth-ready"),
+      );
+    };
     fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
       .then(async (response) => {
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
           throw new Error(result.error || "No se pudo comprobar la sesión.");
         }
-        if (!result.user) return;
+        if (!result.user) {
+          markAuthenticatedNavigationReady();
+          return;
+        }
 
         const user = result.user;
         const displayName =
@@ -2010,6 +2018,7 @@ document.addEventListener("DOMContentLoaded", () => {
           navigation.classList.add("has-profile-menu");
           navigation.replaceChildren(profileMenu);
         });
+        markAuthenticatedNavigationReady();
 
         let unreadRequestPending = false;
         let unreadRefreshQueued = false;

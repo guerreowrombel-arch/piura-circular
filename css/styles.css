@@ -162,6 +162,12 @@ p {
   margin-left: 4px;
   white-space: nowrap;
 }
+.nav-actions[data-auth-nav] {
+  visibility: hidden;
+}
+.nav-actions[data-auth-nav].auth-ready {
+  visibility: visible;
+}
 .nav-login {
   font-size: 0.78rem;
 }
