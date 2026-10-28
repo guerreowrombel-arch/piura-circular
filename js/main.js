@@ -888,7 +888,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const image = document.createElement("img");
           image.src = publication.foto;
           image.alt = `Foto de ${publication.categoria || "la publicación"}`;
+          image.width = 800;
+          image.height = 800;
           image.loading = "lazy";
+          image.decoding = "async";
           imageFrame.append(image);
         } else {
           const fallback = document.createElement("span");
@@ -1911,13 +1914,197 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
+  const sessionUserCacheKey = "piura-circular-session-user";
   let refreshUnreadNotifications = () => {};
+  let authNavigationReadyTimer = null;
+  const clearCachedSessionUser = () => {
+    try {
+      window.sessionStorage.removeItem(sessionUserCacheKey);
+    } catch (error) {
+      console.warn(
+        "No se pudo borrar la sesión guardada para la navegación.",
+        error,
+      );
+    }
+  };
   if (authenticatedNavigation.length) {
     const markAuthenticatedNavigationReady = () => {
+      if (authNavigationReadyTimer !== null) {
+        window.clearTimeout(authNavigationReadyTimer);
+        authNavigationReadyTimer = null;
+      }
       authenticatedNavigation.forEach((navigation) =>
         navigation.classList.add("auth-ready"),
       );
     };
+    const anonymousNavigationChildren = Array.from(
+      authenticatedNavigation,
+      (navigation) =>
+        Array.from(navigation.childNodes, (child) => child.cloneNode(true)),
+    );
+    const restoreAnonymousNavigation = () => {
+      authenticatedNavigation.forEach((navigation, index) => {
+        navigation.classList.remove("has-profile-menu");
+        navigation.replaceChildren(
+          ...anonymousNavigationChildren[index].map((child) =>
+            child.cloneNode(true),
+          ),
+        );
+      });
+    };
+    const readCachedSessionUser = () => {
+      try {
+        const cached = JSON.parse(
+          window.sessionStorage.getItem(sessionUserCacheKey) || "null",
+        );
+        if (
+          !cached ||
+          typeof cached.firstName !== "string" ||
+          !cached.firstName ||
+          typeof cached.initial !== "string" ||
+          !["ciudadano", "entidad"].includes(cached.role)
+        ) {
+          return null;
+        }
+        return {
+          firstName: cached.firstName,
+          initial: cached.initial,
+          role: cached.role,
+        };
+      } catch (error) {
+        console.warn(
+          "No se pudo leer la sesión guardada para la navegación.",
+          error,
+        );
+        return null;
+      }
+    };
+    const cacheSessionUser = (user) => {
+      const firstName =
+        String(user.nombre || "").trim().split(/\s+/)[0] || "Usuario";
+      try {
+        window.sessionStorage.setItem(
+          sessionUserCacheKey,
+          JSON.stringify({
+            firstName,
+            initial: firstName.charAt(0).toLocaleUpperCase(),
+            role: user.rol === "entidad" ? "entidad" : "ciudadano",
+          }),
+        );
+      } catch (error) {
+        console.warn(
+          "No se pudo guardar la sesión para la navegación.",
+          error,
+        );
+      }
+    };
+    const renderAuthenticatedNavigation = (user, cached = false) => {
+      const displayName = cached
+        ? user.firstName
+        : [user.nombre, user.apellidos]
+            .map((part) => String(part || "").trim())
+            .filter(Boolean)
+            .join(" ") || "Usuario";
+      const initialText = cached
+        ? user.initial
+        : displayName.charAt(0).toLocaleUpperCase();
+      const badgeNodes = [];
+      const profileButtons = [];
+      const ratingBadgeNodes = [];
+
+      authenticatedNavigation.forEach((navigation, index) => {
+        const profileMenu = document.createElement("div");
+        const profileButton = document.createElement("button");
+        const initial = document.createElement("span");
+        const profileBadge = document.createElement("span");
+        const panel = document.createElement("div");
+        const profileName = document.createElement("p");
+        const profileEmail = document.createElement("p");
+        const messagesLink = document.createElement("a");
+        const messagesLabel = document.createElement("span");
+        const messagesBadge = document.createElement("span");
+        const personalProfileLink = document.createElement("a");
+        const personalProfileBadge = document.createElement("span");
+        const institutionalLink = document.createElement("a");
+        const logoutButton = document.createElement("button");
+        const panelId = `profile-menu-panel-${index + 1}`;
+
+        profileMenu.className = "profile-menu";
+        profileButton.type = "button";
+        profileButton.className = "profile-trigger";
+        profileButton.dataset.profileToggle = "";
+        profileButton.setAttribute("aria-expanded", "false");
+        profileButton.setAttribute("aria-controls", panelId);
+        profileButton.setAttribute("aria-label", `Perfil de ${displayName}`);
+        initial.className = "profile-initial";
+        initial.textContent = initialText;
+        profileBadge.className = "unread-badge profile-unread-badge";
+        profileBadge.dataset.unreadBadge = "";
+        profileBadge.hidden = true;
+        profileBadge.setAttribute("aria-hidden", "true");
+        profileButton.append(initial, profileBadge);
+        profileButtons.push({ button: profileButton, displayName });
+
+        panel.className = "profile-panel";
+        panel.id = panelId;
+        panel.setAttribute("aria-label", "Menú de perfil");
+        panel.hidden = true;
+        profileName.className = "profile-panel-name";
+        profileName.textContent = displayName;
+        profileEmail.className = "profile-panel-email";
+        profileEmail.textContent = cached ? "" : String(user.email || "");
+        panel.append(profileName, profileEmail);
+
+        messagesLink.className = "profile-messages-link";
+        messagesLink.href = "mensajes.html";
+        messagesLabel.textContent = "Mensajería";
+        messagesBadge.className = "unread-badge";
+        messagesBadge.dataset.unreadBadge = "";
+        messagesBadge.hidden = true;
+        messagesBadge.setAttribute("aria-hidden", "true");
+        messagesLink.append(messagesLabel, messagesBadge);
+        badgeNodes.push(profileBadge, messagesBadge);
+        personalProfileLink.className = "profile-personal-link";
+        personalProfileLink.href = "perfil.html";
+        const personalProfileLabel = document.createElement("span");
+        personalProfileLabel.textContent = "Mi perfil";
+        personalProfileBadge.className = "profile-rating-notice";
+        personalProfileBadge.hidden = true;
+        personalProfileBadge.setAttribute("aria-hidden", "true");
+        personalProfileLink.append(personalProfileLabel, personalProfileBadge);
+        ratingBadgeNodes.push({
+          badge: personalProfileBadge,
+          link: personalProfileLink,
+        });
+        if ((cached ? user.role : user.rol) === "entidad") {
+          institutionalLink.className = "profile-institutional-link";
+          institutionalLink.href = "institucional.html";
+          institutionalLink.textContent = "Panel institucional";
+          panel.append(institutionalLink);
+        }
+
+        logoutButton.type = "button";
+        logoutButton.className = "profile-logout";
+        logoutButton.dataset.authLogout = "";
+        logoutButton.textContent = "Cerrar sesión";
+        panel.append(messagesLink, personalProfileLink, logoutButton);
+        profileMenu.append(profileButton, panel);
+        navigation.classList.add("has-profile-menu");
+        navigation.replaceChildren(profileMenu);
+      });
+      return { badgeNodes, profileButtons, ratingBadgeNodes };
+    };
+    const cachedUser = readCachedSessionUser();
+    if (cachedUser) {
+      renderAuthenticatedNavigation(cachedUser, true);
+      markAuthenticatedNavigationReady();
+    } else {
+      authNavigationReadyTimer = window.setTimeout(() => {
+        restoreAnonymousNavigation();
+        markAuthenticatedNavigationReady();
+      }, 300);
+    }
+
     fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
       .then(async (response) => {
         const result = await response.json().catch(() => ({}));
@@ -1925,99 +2112,16 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(result.error || "No se pudo comprobar la sesión.");
         }
         if (!result.user) {
+          clearCachedSessionUser();
+          restoreAnonymousNavigation();
           markAuthenticatedNavigationReady();
           return;
         }
 
         const user = result.user;
-        const displayName =
-          [user.nombre, user.apellidos]
-            .map((part) => String(part || "").trim())
-            .filter(Boolean)
-            .join(" ") || "Usuario";
-        const badgeNodes = [];
-        const profileButtons = [];
-        const ratingBadgeNodes = [];
-        authenticatedNavigation.forEach((navigation, index) => {
-          const profileMenu = document.createElement("div");
-          const profileButton = document.createElement("button");
-          const initial = document.createElement("span");
-          const profileBadge = document.createElement("span");
-          const panel = document.createElement("div");
-          const profileName = document.createElement("p");
-          const profileEmail = document.createElement("p");
-          const messagesLink = document.createElement("a");
-          const messagesLabel = document.createElement("span");
-          const messagesBadge = document.createElement("span");
-          const personalProfileLink = document.createElement("a");
-          const personalProfileBadge = document.createElement("span");
-          const institutionalLink = document.createElement("a");
-          const logoutButton = document.createElement("button");
-          const panelId = `profile-menu-panel-${index + 1}`;
-
-          profileMenu.className = "profile-menu";
-          profileButton.type = "button";
-          profileButton.className = "profile-trigger";
-          profileButton.dataset.profileToggle = "";
-          profileButton.setAttribute("aria-expanded", "false");
-          profileButton.setAttribute("aria-controls", panelId);
-          profileButton.setAttribute("aria-label", `Perfil de ${displayName}`);
-          initial.className = "profile-initial";
-          initial.textContent = displayName.charAt(0).toLocaleUpperCase();
-          profileBadge.className = "unread-badge profile-unread-badge";
-          profileBadge.dataset.unreadBadge = "";
-          profileBadge.hidden = true;
-          profileBadge.setAttribute("aria-hidden", "true");
-          profileButton.append(initial, profileBadge);
-          profileButtons.push({ button: profileButton, displayName });
-
-          panel.className = "profile-panel";
-          panel.id = panelId;
-          panel.setAttribute("aria-label", "Menú de perfil");
-          panel.hidden = true;
-          profileName.className = "profile-panel-name";
-          profileName.textContent = displayName;
-          profileEmail.className = "profile-panel-email";
-          profileEmail.textContent = String(user.email || "");
-          panel.append(profileName, profileEmail);
-
-          messagesLink.className = "profile-messages-link";
-          messagesLink.href = "mensajes.html";
-          messagesLabel.textContent = "Mensajería";
-          messagesBadge.className = "unread-badge";
-          messagesBadge.dataset.unreadBadge = "";
-          messagesBadge.hidden = true;
-          messagesBadge.setAttribute("aria-hidden", "true");
-          messagesLink.append(messagesLabel, messagesBadge);
-          badgeNodes.push(profileBadge, messagesBadge);
-          personalProfileLink.className = "profile-personal-link";
-          personalProfileLink.href = "perfil.html";
-          const personalProfileLabel = document.createElement("span");
-          personalProfileLabel.textContent = "Mi perfil";
-          personalProfileBadge.className = "profile-rating-notice";
-          personalProfileBadge.hidden = true;
-          personalProfileBadge.setAttribute("aria-hidden", "true");
-          personalProfileLink.append(personalProfileLabel, personalProfileBadge);
-          ratingBadgeNodes.push({
-            badge: personalProfileBadge,
-            link: personalProfileLink,
-          });
-          if (user.rol === "entidad") {
-            institutionalLink.className = "profile-institutional-link";
-            institutionalLink.href = "institucional.html";
-            institutionalLink.textContent = "Panel institucional";
-            panel.append(institutionalLink);
-          }
-
-          logoutButton.type = "button";
-          logoutButton.className = "profile-logout";
-          logoutButton.dataset.authLogout = "";
-          logoutButton.textContent = "Cerrar sesión";
-          panel.append(messagesLink, personalProfileLink, logoutButton);
-          profileMenu.append(profileButton, panel);
-          navigation.classList.add("has-profile-menu");
-          navigation.replaceChildren(profileMenu);
-        });
+        cacheSessionUser(user);
+        const { badgeNodes, profileButtons, ratingBadgeNodes } =
+          renderAuthenticatedNavigation(user);
         markAuthenticatedNavigationReady();
 
         let unreadRequestPending = false;
@@ -2213,6 +2317,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         throw new Error(result.error || "No se pudo cerrar la sesión.");
       }
+      clearCachedSessionUser();
       window.location.reload();
     } catch (error) {
       console.error("No se pudo cerrar la sesión.", error);
@@ -2300,6 +2405,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const image = document.createElement("img");
       image.src = photo;
       image.alt = `Foto ${index + 1} de ${publication.category}`;
+      image.width = 800;
+      image.height = 800;
+      image.loading = "lazy";
+      image.decoding = "async";
       publishResult.append(image);
     });
 
@@ -2409,6 +2518,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const image = document.createElement("img");
       image.alt = `Vista previa: ${file.name}`;
       image.src = URL.createObjectURL(file);
+      image.width = 800;
+      image.height = 800;
+      image.loading = "lazy";
+      image.decoding = "async";
       photoObjectUrls.push(image.src);
       photoPreview?.append(image);
     });
@@ -2561,6 +2674,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const image = document.createElement("img");
       image.src = photo;
       image.alt = `Fotografía del equipo ${category}`;
+      image.width = 800;
+      image.height = 800;
+      image.loading = "lazy";
+      image.decoding = "async";
       imageContainer.append(image);
     } else {
       const placeholder = document.createElement("span");

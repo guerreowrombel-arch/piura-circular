@@ -1,4 +1,23 @@
 /* Piura Circular: sistema visual y componentes compartidos */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: 180ms ease both page-fade-out;
+}
+::view-transition-new(root) {
+  animation: 180ms ease both page-fade-in;
+}
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
 :root {
   --petrol: #0f5257;
   --petrol-dark: #0a3a3e;
@@ -2918,6 +2937,10 @@ p {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
   *,
   *::before,
   *::after {

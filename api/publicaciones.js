@@ -93,7 +93,10 @@ export default async function publications(request, response) {
           p.antiguedad AS age,
           p.descripcion AS description,
           p.condicion AS condition,
-          p.fotos AS photos,
+          CASE
+            WHEN p.fotos -> 0 IS NULL THEN '[]'::jsonb
+            ELSE jsonb_build_array(p.fotos -> 0)
+          END AS photos,
           p.created_at AS "createdAt",
           u.nombre AS "authorName",
           LEFT(BTRIM(u.apellidos), 1) AS "authorInitial",
@@ -125,7 +128,9 @@ export default async function publications(request, response) {
             return {
               ...publication,
               id: String(publication.id),
-              photos: Array.isArray(publication.photos) ? publication.photos : [],
+              photos: Array.isArray(publication.photos)
+                ? publication.photos.slice(0, 1)
+                : [],
               authorRating: {
                 promedio: Number(authorRatingAverage || 0),
                 total: Number(authorRatingTotal || 0),

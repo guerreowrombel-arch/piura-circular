@@ -495,7 +495,89 @@ test("all site pages expose a shared session navigation", async () => {
   ]);
   assert.match(styles, /\.nav-actions\[data-auth-nav\]\s*\{\s*visibility:\s*hidden;/);
   assert.match(styles, /\.nav-actions\[data-auth-nav\]\.auth-ready\s*\{\s*visibility:\s*visible;/);
-  assert.equal((main.match(/markAuthenticatedNavigationReady\(\);/g) || []).length, 2);
+  assert.equal((main.match(/markAuthenticatedNavigationReady\(\);/g) || []).length, 4);
+  assert.match(
+    main,
+    /authNavigationReadyTimer\s*=\s*window\.setTimeout\(\(\)\s*=>\s*\{\s*restoreAnonymousNavigation\(\);\s*markAuthenticatedNavigationReady\(\);\s*\},\s*300\)/,
+  );
+  assert.match(
+    main,
+    /if\s*\(authNavigationReadyTimer !== null\)\s*\{\s*window\.clearTimeout\(authNavigationReadyTimer\)/,
+  );
+});
+
+test("multipage navigation prefetches documents and reserves image layout", async () => {
+  const pages = [
+    "index.html",
+    "proyecto.html",
+    "publicar.html",
+    "intercambio.html",
+    "puntos-acopio.html",
+    "educacion.html",
+    "institucional.html",
+    "login.html",
+    "registro.html",
+    "mensajes.html",
+    "perfil.html",
+  ];
+
+  for (const page of pages) {
+    const markup = await readFile(new URL(page, rootDirectory), "utf8");
+    const speculationRules = markup.match(
+      /<script type="speculationrules">([\s\S]*?)<\/script>/,
+    );
+    assert.ok(speculationRules, `${page} must define speculation rules`);
+    const rules = JSON.parse(speculationRules[1]);
+    assert.equal(rules.prefetch[0].eagerness, "moderate");
+    assert.equal(rules.prefetch[0].source, "document");
+    assert.match(JSON.stringify(rules), /\/api\/\*/);
+    assert.doesNotMatch(JSON.stringify(rules), /prerender/i);
+
+    const images = markup.match(/<img\b[^>]*>/gs) || [];
+    for (const image of images) {
+      assert.match(image, /\bwidth="\d+"/, `${page} images need width`);
+      assert.match(image, /\bheight="\d+"/, `${page} images need height`);
+      assert.match(image, /\bdecoding="async"/, `${page} images need async decoding`);
+      if (page === "index.html" && /dia-raee-economia-circular/.test(image)) {
+        assert.doesNotMatch(image, /\bloading="lazy"/);
+      } else {
+        assert.match(image, /\bloading="lazy"/, `${page} below-fold images should be lazy`);
+      }
+    }
+  }
+
+  const [styles, main, publicationsApi, vercelConfig] = await Promise.all([
+    readFile(new URL("css/styles.css", rootDirectory), "utf8"),
+    readFile(new URL("js/main.js", rootDirectory), "utf8"),
+    readFile(new URL("api/publicaciones.js", rootDirectory), "utf8"),
+    readFile(new URL("vercel.json", rootDirectory), "utf8"),
+  ]);
+  assert.match(styles, /@view-transition\s*\{\s*navigation:\s*auto;/);
+  assert.match(styles, /page-fade-out[\s\S]*?page-fade-in/);
+  assert.match(
+    styles,
+    /prefers-reduced-motion:\s*reduce[\s\S]*?::view-transition-new\(root\)[\s\S]*?animation:\s*none/,
+  );
+  assert.match(
+    main,
+    /sessionStorage\.setItem\(\s*sessionUserCacheKey,\s*JSON\.stringify\(\{\s*firstName,[\s\S]*?initial:[\s\S]*?role:/,
+  );
+  assert.match(main, /sessionStorage\.removeItem\(sessionUserCacheKey\)/);
+  assert.match(
+    publicationsApi,
+    /CASE\s+WHEN p\.fotos -> 0 IS NULL THEN '\[\]'::jsonb\s+ELSE jsonb_build_array\(p\.fotos -> 0\)\s+END AS photos/,
+  );
+  assert.match(
+    publicationsApi,
+    /photos:\s*Array\.isArray\(publication\.photos\)\s*\?\s*publication\.photos\.slice\(0,\s*1\)/s,
+  );
+
+  const config = JSON.parse(vercelConfig);
+  assert.deepEqual(config.headers[0], {
+    source: "/assets/img/(.*)",
+    headers: [{ key: "Cache-Control", value: "public, max-age=604800" }],
+  });
+  assert.equal(config.rewrites.length, 8);
 });
 
 test("auth, publishing, location, and counter hooks match main.js selectors", async () => {

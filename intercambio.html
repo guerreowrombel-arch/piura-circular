@@ -12,6 +12,9 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
+    <script type="speculationrules">
+      {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/api/*"}}]},"eagerness":"moderate"}]}
+    </script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -104,6 +107,10 @@
               <!-- REEMPLAZAR IMAGEN: laptop Lenovo ThinkPad para intercambio --><img
                 src="assets/img/thinkpad_e14_g7_intel_case_11.jpg"
                 alt="Laptop Lenovo ThinkPad negra"
+                width="4032"
+                height="3024"
+                loading="lazy"
+                decoding="async"
                 onerror="this.style.display = 'none'"
               /><span>Imagen aquí</span
               ><button
@@ -150,6 +157,10 @@
               <!-- REEMPLAZAR IMAGEN: celular Samsung Galaxy para intercambio --><img
                 src="assets/img/images.jpg"
                 alt="Teléfono celular Samsung Galaxy"
+                width="225"
+                height="225"
+                loading="lazy"
+                decoding="async"
                 onerror="this.style.display = 'none'"
               /><span>Imagen aquí</span
               ><button
@@ -196,6 +207,10 @@
               <!-- REEMPLAZAR IMAGEN: ventilador Electrolux con reparación pendiente --><img
                 src="assets/img/ventilador.jpg"
                 alt="Ventilador doméstico en buen estado exterior"
+                width="480"
+                height="640"
+                loading="lazy"
+                decoding="async"
                 onerror="this.style.display = 'none'"
               /><span>Imagen aquí</span
               ><button
@@ -242,6 +257,10 @@
               <!-- REEMPLAZAR IMAGEN: monitor Dell disponible para reutilización --><img
                 src="assets/img/monitor.jpg"
                 alt="Monitor Dell de escritorio"
+                width="554"
+                height="554"
+                loading="lazy"
+                decoding="async"
                 onerror="this.style.display = 'none'"
               /><span>Imagen aquí</span
               ><button

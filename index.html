@@ -12,6 +12,9 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
+    <script type="speculationrules">
+      {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/api/*"}}]},"eagerness":"moderate"}]}
+    </script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -71,6 +74,9 @@
           <!-- REEMPLAZAR IMAGEN: equipo electrónico recuperado en un taller local --><img
             src="assets/img/dia-raee-economia-circular.jpg"
             alt="Laptop en proceso de recuperación sobre una mesa de trabajo"
+            width="1100"
+            height="750"
+            decoding="async"
             onerror="this.style.display = 'none'"
           />
           <div class="image-fallback">
