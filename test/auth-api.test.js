@@ -523,6 +523,21 @@ test("multipage navigation prefetches documents and reserves image layout", asyn
 
   for (const page of pages) {
     const markup = await readFile(new URL(page, rootDirectory), "utf8");
+    assert.match(
+      markup,
+      /<link rel="icon" type="image\/png" sizes="32x32" href="assets\/img\/favicon-32x32\.png"\s*\/>/,
+      `${page} must link the 32x32 favicon`,
+    );
+    assert.equal(
+      (markup.match(/class="brand-mark"/g) || []).length,
+      2,
+      `${page} must render header and footer brand marks`,
+    );
+    assert.equal(
+      (markup.match(/assets\/img\/logo\.svg/g) || []).length,
+      2,
+      `${page} must use the shared logo in header and footer`,
+    );
     const speculationRules = markup.match(
       /<script type="speculationrules">([\s\S]*?)<\/script>/,
     );
