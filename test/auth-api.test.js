@@ -569,6 +569,9 @@ test("multipage navigation prefetches documents and reserves image layout", asyn
   ]);
   assert.match(styles, /@view-transition\s*\{\s*navigation:\s*auto;/);
   assert.match(styles, /page-fade-out[\s\S]*?page-fade-in/);
+  assert.match(styles, /\.brand-mark\s*\{[^}]*overflow:\s*hidden;[^}]*border-radius:\s*50%/s);
+  assert.match(styles, /\.brand-mark img\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;/s);
+  assert.doesNotMatch(styles.match(/\.brand-mark img\s*\{([^}]*)\}/s)?.[1] || "", /border-radius/);
   assert.match(
     styles,
     /prefers-reduced-motion:\s*reduce[\s\S]*?::view-transition-new\(root\)[\s\S]*?animation:\s*none/,

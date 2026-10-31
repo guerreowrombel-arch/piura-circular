@@ -143,6 +143,7 @@ p {
   place-items: center;
   width: 36px;
   height: 36px;
+  overflow: hidden;
   border-radius: 50%;
   background: var(--petrol);
   color: var(--sand);
