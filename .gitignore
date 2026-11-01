@@ -1,4 +1,4 @@
-node_modules/
+vecomo node_modules/
 .vercel/
 .env
 .env.*

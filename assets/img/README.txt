@@ -1,1 +1,0 @@
-Coloca aquí las imágenes para reemplazar los marcadores del sitio.
