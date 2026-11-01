@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5257" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
+    <title>Mis compras y ventas | Piura Circular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script type="speculationrules">
+      {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/api/*"}}]},"eagerness":"moderate"}]}
+    </script>
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark" aria-hidden="true"><img src="assets/img/logo.svg" alt="" width="25" height="25" loading="lazy" decoding="async" /></span><span>Piura <b>Circular</b></span></a
+      ><button
+        class="menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a
+        ><a href="publicar.html">Publicar</a
+        ><a href="intercambio.html">Intercambio</a
+        ><a href="puntos-acopio.html">Puntos de acopio</a>
+        <div class="nav-actions" data-auth-nav>
+          <a class="nav-login" href="login.html">Iniciar sesión</a
+          ><a class="button button-small" href="registro.html"
+            >Crear cuenta <span>↗</span></a
+          >
+        </div>
+      </nav>
+    </header>
+    <main class="transactions-page wrap" data-transactions-page>
+      <section class="page-hero page-hero-compact transactions-hero">
+        <p class="eyebrow">
+          <span class="eyebrow-dot"></span> SEGUIMIENTO DE EQUIPOS
+        </p>
+        <h1>Mis compras<br />y <em>ventas.</em></h1>
+        <p>
+          Sigue cada acuerdo desde la reserva hasta la entrega. Los pagos de esta
+          plataforma son simulados.
+        </p>
+      </section>
+      <section class="transactions-content" aria-labelledby="transactions-heading">
+        <div class="transactions-heading">
+          <div>
+            <p class="eyebrow">TU ACTIVIDAD</p>
+            <h2 id="transactions-heading">Acuerdos en curso y anteriores</h2>
+          </div>
+          <a class="text-link" href="intercambio.html">Ver equipos <b>↗</b></a>
+        </div>
+        <div class="transaction-tabs" role="tablist" aria-label="Tipo de transacción">
+          <button
+            class="transaction-tab is-active"
+            type="button"
+            role="tab"
+            id="purchases-tab"
+            aria-selected="true"
+            aria-controls="transaction-list"
+            data-transaction-tab="comprador"
+          >
+            Compras
+          </button>
+          <button
+            class="transaction-tab"
+            type="button"
+            role="tab"
+            id="sales-tab"
+            aria-selected="false"
+            aria-controls="transaction-list"
+            tabindex="-1"
+            data-transaction-tab="vendedor"
+          >
+            Ventas
+          </button>
+        </div>
+        <p class="transaction-status" role="status" aria-live="polite" data-transactions-status>
+          Cargando tus transacciones…
+        </p>
+        <div
+          class="transaction-list"
+          id="transaction-list"
+          role="tabpanel"
+          aria-labelledby="purchases-tab"
+          data-transaction-list
+        ></div>
+        <div class="transaction-empty" data-transactions-empty hidden>
+          <span class="transaction-empty-mark" aria-hidden="true">↻</span>
+          <h3 data-transactions-empty-title>Aún no tienes compras</h3>
+          <p data-transactions-empty-copy>
+            Cuando reserves un equipo para comprar, podrás seguir aquí cada paso.
+          </p>
+          <a class="button button-outline" href="intercambio.html">
+            Explorar equipos <span>↗</span>
+          </a>
+        </div>
+      </section>
+    </main>
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <footer class="site-footer">
+      <div class="wrap footer-main">
+        <a class="brand brand-footer" href="index.html"
+          ><span class="brand-mark" aria-hidden="true"><img src="assets/img/logo.svg" alt="" width="25" height="25" loading="lazy" decoding="async" /></span
+          ><span>Piura <b>Circular</b></span></a
+        >
+        <p>
+          Una plataforma para mover los RAEE<br />hacia una nueva oportunidad.
+        </p>
+        <div class="footer-links">
+          <a href="proyecto.html">El proyecto</a
+          ><a href="educacion.html">Aprende más</a
+          ><a href="puntos-acopio.html">Puntos de acopio</a>
+        </div>
+      </div>
+      <div class="wrap footer-bottom">
+        <span>Proyecto académico - Piura, 2026</span
+        ><span>Reutilizar también es avanzar. <b>↗</b></span>
+      </div>
+    </footer>
+  </body>
+</html>

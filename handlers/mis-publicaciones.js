@@ -202,6 +202,19 @@ export default async function myPublications(request, response) {
     }
 
     if (request.method === "PUT") {
+      const [ownedPublication] = await sql`
+        SELECT tipo
+        FROM publicaciones
+        WHERE id = ${publicationId}
+          AND usuario_id = ${userId}
+        LIMIT 1
+      `;
+      if (ownedPublication?.tipo === "venta") {
+        sendJson(response, 400, {
+          error: "Las ventas se completan desde las transacciones.",
+        });
+        return;
+      }
       if (data.entregadaA !== undefined) {
         const [conversation] = await sql`
           SELECT c.interesado_id

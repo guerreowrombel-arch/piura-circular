@@ -20,8 +20,18 @@ const CONDITIONS = new Set([
   "Requiere reparación",
   "No reutilizable",
 ]);
+const PUBLICATION_TYPES = new Set(["donacion", "intercambio", "venta"]);
 const MAX_PHOTO_LENGTH = 1_000_000;
 const JPEG_DATA_URL = /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/;
+
+export function parseSalePrice(value) {
+  if (typeof value !== "string" && typeof value !== "number") return null;
+  const rawPrice = String(value).trim();
+  if (!/^\d+(?:\.\d{1,2})?$/.test(rawPrice)) return null;
+  const price = Number(rawPrice);
+  if (!Number.isFinite(price) || price < 1 || price > 99999.99) return null;
+  return price.toFixed(2);
+}
 
 function isValidPhotos(photos) {
   return (
@@ -93,6 +103,8 @@ export default async function publications(request, response) {
           p.antiguedad AS age,
           p.descripcion AS description,
           p.condicion AS condition,
+          p.tipo,
+          p.precio,
           CASE
             WHEN p.fotos -> 0 IS NULL THEN '[]'::jsonb
             ELSE jsonb_build_array(p.fotos -> 0)
@@ -113,6 +125,12 @@ export default async function publications(request, response) {
           WHERE c.destinatario_id = p.usuario_id
         ) rating ON TRUE
         WHERE p.estado = 'activa'
+          AND NOT EXISTS (
+            SELECT 1
+            FROM transacciones t
+            WHERE t.publicacion_id = p.id
+              AND t.estado IN ('reservada', 'pagada', 'entregada')
+          )
         ORDER BY p.created_at DESC, p.id DESC
       `;
       sendJson(
@@ -182,6 +200,8 @@ export default async function publications(request, response) {
     typeof data.description === "string" ? data.description.trim() : "";
   const condition =
     typeof data.condition === "string" ? data.condition.trim() : "";
+  const type = data.tipo === undefined ? "intercambio" : data.tipo;
+  const price = type === "venta" ? parseSalePrice(data.precio) : null;
   const photos = data.photos === undefined ? [] : data.photos;
 
   if (!CATEGORIES.has(category)) {
@@ -197,6 +217,24 @@ export default async function publications(request, response) {
   if (!CONDITIONS.has(condition)) {
     sendJson(response, 400, { error: "Selecciona una condición válida." });
     return;
+  }
+  if (!PUBLICATION_TYPES.has(type)) {
+    sendJson(response, 400, { error: "Selecciona un tipo de publicación válido." });
+    return;
+  }
+  if (type === "venta") {
+    if (price === null) {
+      sendJson(response, 400, {
+        error: "El precio de venta debe estar entre 1 y 99999.99, con máximo 2 decimales.",
+      });
+      return;
+    }
+    if (condition === "No reutilizable") {
+      sendJson(response, 400, {
+        error: "Los equipos no reutilizables no se pueden publicar a la venta.",
+      });
+      return;
+    }
   }
   if (brand.length > 100 || age.length > 50) {
     sendJson(response, 400, { error: "Revisa la marca o antigüedad del equipo." });
@@ -219,6 +257,8 @@ export default async function publications(request, response) {
         antiguedad,
         descripcion,
         condicion,
+        tipo,
+        precio,
         fotos
       )
       SELECT
@@ -228,6 +268,8 @@ export default async function publications(request, response) {
         ${age},
         ${description},
         ${condition},
+        ${type},
+        ${price},
         ${JSON.stringify(photos)}::jsonb
       FROM usuarios u
       WHERE u.id = ${userId}
@@ -238,6 +280,8 @@ export default async function publications(request, response) {
         antiguedad AS age,
         descripcion AS description,
         condicion AS condition,
+        tipo,
+        precio,
         fotos AS photos,
         created_at AS "createdAt"
     `;

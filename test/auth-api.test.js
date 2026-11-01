@@ -6,7 +6,8 @@ import register from "../handlers/registro.js";
 import login from "../handlers/login.js";
 import logout from "../handlers/logout.js";
 import currentUser from "../handlers/me.js";
-import publications from "../api/publicaciones.js";
+import publications, { parseSalePrice } from "../api/publicaciones.js";
+import transactions, { COMISION_PCT } from "../api/transacciones.js";
 import conversations from "../api/conversaciones.js";
 import messages from "../api/mensajes.js";
 import institutional, { isValidPlan } from "../api/institucional.js";
@@ -97,6 +98,114 @@ test("publications require a valid session for POST", async () => {
 
   assert.equal(response.statusCode, 401);
   assert.match(response.json().error, /Inicia sesión/);
+});
+
+test("sale price parsing enforces bounds and a maximum of two decimals", () => {
+  assert.equal(parseSalePrice("1"), "1.00");
+  assert.equal(parseSalePrice("99999.99"), "99999.99");
+  assert.equal(parseSalePrice(12.5), "12.50");
+  for (const invalidPrice of ["0.99", "100000", "10.999", "1e2", "", null]) {
+    assert.equal(parseSalePrice(invalidPrice), null);
+  }
+  assert.equal(COMISION_PCT, 5);
+});
+
+test("sales endpoints validate requests and define the transaction contracts", async () => {
+  const unauthenticated = await call(transactions, { method: "GET" });
+  const unsupportedMethod = await call(transactions, { method: "DELETE" });
+  const token = createSessionToken("42");
+  const headers = { cookie: `${SESSION_COOKIE}=${token}` };
+  const invalidPurchaseId = await call(transactions, {
+    method: "POST",
+    headers,
+    body: { publicacionId: "invalid" },
+  });
+  const invalidSalePrice = await call(publications, {
+    method: "POST",
+    headers,
+    body: {
+      category: "Computadoras",
+      description: "Equipo en buen estado",
+      condition: "Operativo",
+      tipo: "venta",
+      precio: "15.999",
+    },
+  });
+  const nonReusableSale = await call(publications, {
+    method: "POST",
+    headers,
+    body: {
+      category: "Computadoras",
+      description: "Equipo para venta",
+      condition: "No reutilizable",
+      tipo: "venta",
+      precio: "15.99",
+    },
+  });
+
+  assert.equal(unauthenticated.statusCode, 401);
+  assert.equal(unsupportedMethod.statusCode, 405);
+  assert.equal(unsupportedMethod.headers.allow, "GET, POST, PUT");
+  assert.equal(invalidPurchaseId.statusCode, 400);
+  assert.equal(invalidSalePrice.statusCode, 400);
+  assert.equal(nonReusableSale.statusCode, 400);
+
+  const [schema, publicationApi, myPublicationsApi, transactionApi] =
+    await Promise.all(
+      [
+        "schema.sql",
+        "api/publicaciones.js",
+        "handlers/mis-publicaciones.js",
+        "api/transacciones.js",
+      ].map((file) => readFile(new URL(file, rootDirectory), "utf8")),
+    );
+  assert.match(schema, /tipo TEXT NOT NULL DEFAULT 'intercambio'/);
+  assert.match(schema, /precio NUMERIC\(10, 2\)/);
+  assert.match(schema, /CREATE TABLE IF NOT EXISTS transacciones/);
+  assert.match(schema, /CREATE UNIQUE INDEX IF NOT EXISTS transacciones_una_abierta_por_publicacion_idx/);
+  assert.match(publicationApi, /NOT EXISTS \([\s\S]*?t\.estado IN \('reservada', 'pagada', 'entregada'\)/);
+  assert.match(transactionApi, /ROUND\(candidate\.precio \* \$\{COMISION_PCT\} \/ 100, 2\)/);
+  assert.match(transactionApi, /ON CONFLICT \(publicacion_id\)[\s\S]*?DO NOTHING/);
+  assert.match(transactionApi, /INSERT INTO mensajes \(conversacion_id, autor_id, texto\)/);
+  assert.match(transactionApi, /Quiero comprar tu /);
+  assert.match(transactionApi, /SET estado = 'completada', updated_at = NOW\(\)/);
+  assert.match(transactionApi, /SET estado = 'entregada', entregada_a = eligible\.comprador_id/);
+  assert.match(transactionApi, /estado IN \('reservada', 'pagada'\)/);
+  assert.match(transactionApi, /c\.id AS "conversacionId"/);
+  assert.match(myPublicationsApi, /Las ventas se completan desde las transacciones/);
+  assert.doesNotMatch(transactionApi, /email|tarjeta|cardNumber/i);
+
+  const [publishPage, exchangePage, transactionPage, main, styles] =
+    await Promise.all(
+      [
+        "publicar.html",
+        "intercambio.html",
+        "transacciones.html",
+        "js/main.js",
+        "css/styles.css",
+      ].map((file) => readFile(new URL(file, rootDirectory), "utf8")),
+    );
+  assert.match(publishPage, /name="tipo" value="donacion"/);
+  assert.match(publishPage, /name="tipo" value="intercambio"/);
+  assert.match(publishPage, /name="tipo" value="venta"/);
+  assert.match(publishPage, /data-sale-price-field hidden/);
+  assert.match(publishPage, /min="1"[\s\S]*max="99999\.99"[\s\S]*step="0\.01"/);
+  assert.match(exchangePage, /data-buy-dialog/);
+  assert.match(exchangePage, /Comisión de la plataforma 5 % \(la paga el vendedor\)/);
+  assert.match(exchangePage, /Pago simulado: no se cobra dinero real/);
+  assert.match(transactionPage, /Mis compras<br \/>y <em>ventas\.<\/em>/);
+  assert.match(transactionPage, /data-transaction-tab="comprador"/);
+  assert.match(transactionPage, /data-transaction-tab="vendedor"/);
+  assert.match(main, /fetch\("\/api\/transacciones"/);
+  assert.match(main, /data-buy-publication/);
+  assert.match(main, /Pagar \(simulado\)/);
+  assert.match(main, /Marqué como entregado/);
+  assert.match(main, /Confirmo que lo recibí/);
+  assert.match(main, /transaction\.conversacionId/);
+  assert.match(main, /profile-transaction-notice/);
+  assert.doesNotMatch(main, /\.innerHTML\s*=/);
+  assert.match(styles, /\.transaction-progress/);
+  assert.match(styles, /@media \(max-width: 760px\)[\s\S]*?\.transaction-list/);
 });
 
 test("profile and password endpoints require a session", async () => {
@@ -482,6 +591,7 @@ test("all site pages expose a shared session navigation", async () => {
     "registro.html",
     "mensajes.html",
     "perfil.html",
+    "transacciones.html",
   ];
 
   for (const page of pages) {
@@ -519,6 +629,7 @@ test("multipage navigation prefetches documents and reserves image layout", asyn
     "registro.html",
     "mensajes.html",
     "perfil.html",
+    "transacciones.html",
   ];
 
   for (const page of pages) {

@@ -1916,6 +1916,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const authenticatedNavigation = document.querySelectorAll("[data-auth-nav]");
   const sessionUserCacheKey = "piura-circular-session-user";
   let refreshUnreadNotifications = () => {};
+  let refreshPendingTransactions = () => {};
   let authNavigationReadyTimer = null;
   const clearCachedSessionUser = () => {
     try {
@@ -2011,6 +2012,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const badgeNodes = [];
       const profileButtons = [];
       const ratingBadgeNodes = [];
+      const transactionBadgeNodes = [];
 
       authenticatedNavigation.forEach((navigation, index) => {
         const profileMenu = document.createElement("div");
@@ -2025,6 +2027,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const messagesBadge = document.createElement("span");
         const personalProfileLink = document.createElement("a");
         const personalProfileBadge = document.createElement("span");
+        const transactionsLink = document.createElement("a");
+        const transactionsLabel = document.createElement("span");
+        const transactionsBadge = document.createElement("span");
         const institutionalLink = document.createElement("a");
         const logoutButton = document.createElement("button");
         const panelId = `profile-menu-panel-${index + 1}`;
@@ -2076,6 +2081,17 @@ document.addEventListener("DOMContentLoaded", () => {
           badge: personalProfileBadge,
           link: personalProfileLink,
         });
+        transactionsLink.className = "profile-transactions-link";
+        transactionsLink.href = "transacciones.html";
+        transactionsLabel.textContent = "Mis compras y ventas";
+        transactionsBadge.className = "profile-transaction-notice";
+        transactionsBadge.hidden = true;
+        transactionsBadge.setAttribute("aria-hidden", "true");
+        transactionsLink.append(transactionsLabel, transactionsBadge);
+        transactionBadgeNodes.push({
+          badge: transactionsBadge,
+          link: transactionsLink,
+        });
         if ((cached ? user.role : user.rol) === "entidad") {
           institutionalLink.className = "profile-institutional-link";
           institutionalLink.href = "institucional.html";
@@ -2087,12 +2103,22 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutButton.className = "profile-logout";
         logoutButton.dataset.authLogout = "";
         logoutButton.textContent = "Cerrar sesión";
-        panel.append(messagesLink, personalProfileLink, logoutButton);
+        panel.append(
+          messagesLink,
+          personalProfileLink,
+          transactionsLink,
+          logoutButton,
+        );
         profileMenu.append(profileButton, panel);
         navigation.classList.add("has-profile-menu");
         navigation.replaceChildren(profileMenu);
       });
-      return { badgeNodes, profileButtons, ratingBadgeNodes };
+      return {
+        badgeNodes,
+        profileButtons,
+        ratingBadgeNodes,
+        transactionBadgeNodes,
+      };
     };
     const cachedUser = readCachedSessionUser();
     if (cachedUser) {
@@ -2120,7 +2146,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const user = result.user;
         cacheSessionUser(user);
-        const { badgeNodes, profileButtons, ratingBadgeNodes } =
+        const {
+          badgeNodes,
+          profileButtons,
+          ratingBadgeNodes,
+          transactionBadgeNodes,
+        } =
           renderAuthenticatedNavigation(user);
         markAuthenticatedNavigationReady();
 
@@ -2236,18 +2267,78 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
         };
+        let pendingTransactionRequest = false;
+        let pendingTransactionRefreshQueued = false;
+        refreshPendingTransactions = async () => {
+          if (document.visibilityState !== "visible") return;
+          if (pendingTransactionRequest) {
+            pendingTransactionRefreshQueued = true;
+            return;
+          }
+          pendingTransactionRequest = true;
+          try {
+            const response = await fetch("/api/transacciones", {
+              credentials: "same-origin",
+              cache: "no-store",
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              throw new Error(
+                result.error || "No se pudieron consultar las transacciones.",
+              );
+            }
+            if (!Array.isArray(result.transacciones)) {
+              throw new Error(
+                "La respuesta de transacciones no tiene un formato válido.",
+              );
+            }
+            const requiresAction = result.transacciones.some(
+              (transaction) =>
+                (transaction.rol === "comprador" &&
+                  ["reservada", "entregada"].includes(transaction.estado)) ||
+                (transaction.rol === "vendedor" &&
+                  transaction.estado === "pagada"),
+            );
+            transactionBadgeNodes.forEach(({ badge, link }) => {
+              badge.hidden = !requiresAction;
+              link.setAttribute(
+                "aria-label",
+                requiresAction
+                  ? "Mis compras y ventas, tienes una transacción que requiere tu acción"
+                  : "Mis compras y ventas",
+              );
+            });
+          } catch (error) {
+            console.error(
+              "No se pudo actualizar el aviso de transacciones pendientes.",
+              error,
+            );
+          } finally {
+            pendingTransactionRequest = false;
+            if (
+              pendingTransactionRefreshQueued &&
+              document.visibilityState === "visible"
+            ) {
+              pendingTransactionRefreshQueued = false;
+              refreshPendingTransactions();
+            }
+          }
+        };
         refreshUnreadNotifications();
         refreshPendingRatingBadges();
+        refreshPendingTransactions();
         const unreadPollTimer = window.setInterval(() => {
           if (document.visibilityState === "visible") {
             refreshUnreadNotifications();
             refreshPendingRatingBadges();
+            refreshPendingTransactions();
           }
         }, 15000);
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "visible") {
             refreshUnreadNotifications();
             refreshPendingRatingBadges();
+            refreshPendingTransactions();
           }
         });
         window.addEventListener("pagehide", () =>
@@ -2333,6 +2424,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const publishForm = document.querySelector("[data-publish-form]");
   const publishResult = document.querySelector("[data-publish-result]");
+  const saleOption = publishForm?.querySelector("[data-sale-option]");
+  const salePriceField = publishForm?.querySelector("[data-sale-price-field]");
+  const salePriceInput = salePriceField?.querySelector('input[name="precio"]');
+  const updateOfferFields = () => {
+    if (!publishForm) return;
+    const condition = publishForm.querySelector(
+      'input[name="condition"]:checked',
+    )?.value;
+    const saleUnavailable = condition === "No reutilizable";
+    if (saleOption) saleOption.hidden = saleUnavailable;
+
+    const typeInput = publishForm.querySelector('input[name="tipo"]:checked');
+    if (saleUnavailable && typeInput?.value === "venta") {
+      const exchangeInput = publishForm.querySelector(
+        'input[name="tipo"][value="intercambio"]',
+      );
+      if (exchangeInput) {
+        exchangeInput.checked = true;
+        exchangeInput.closest(".offer-option")?.classList.add("is-selected");
+      }
+      saleOption?.classList.remove("is-selected");
+    }
+
+    const isSale =
+      !saleUnavailable &&
+      publishForm.querySelector('input[name="tipo"]:checked')?.value === "venta";
+    if (salePriceField) salePriceField.hidden = !isSale;
+    if (salePriceInput) {
+      salePriceInput.disabled = !isSale;
+      salePriceInput.required = isSale;
+      if (!isSale) salePriceInput.value = "";
+    }
+  };
+  publishForm
+    ?.querySelectorAll('input[name="tipo"]')
+    .forEach((input) =>
+      input.addEventListener("change", () => {
+        publishForm
+          .querySelectorAll(".offer-option")
+          .forEach((option) => option.classList.remove("is-selected"));
+        input.closest(".offer-option")?.classList.add("is-selected");
+        updateOfferFields();
+      }),
+    );
+  publishForm
+    ?.querySelectorAll('input[name="condition"]')
+    .forEach((input) =>
+      input.addEventListener("change", updateOfferFields),
+    );
+  updateOfferFields();
   const readBlobAsDataUrl = (blob) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -2459,8 +2600,21 @@ document.addEventListener("DOMContentLoaded", () => {
         age: String(formData.get("age") || ""),
         description: String(formData.get("description") || "").trim(),
         condition: String(formData.get("condition") || ""),
+        tipo: String(formData.get("tipo") || "intercambio"),
+        precio:
+          String(formData.get("tipo") || "intercambio") === "venta"
+            ? String(formData.get("precio") || "").trim()
+            : null,
         photos: await Promise.all(photos.map(compressPhoto)),
       };
+      if (
+        publicationData.tipo === "venta" &&
+        !/^(?:\d{1,5})(?:\.\d{1,2})?$/.test(publicationData.precio)
+      ) {
+        throw new Error(
+          "El precio debe estar entre S/ 1.00 y S/ 99,999.99, con máximo dos decimales.",
+        );
+      }
       const response = await fetch("/api/publicaciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2623,6 +2777,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = document.createElement("div");
     const tags = document.createElement("div");
     const conditionTag = document.createElement("span");
+    const offerTag = document.createElement("span");
     const categoryTag = document.createElement("span");
     const heading = document.createElement("h3");
     const description = document.createElement("p");
@@ -2634,6 +2789,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const contactButton = document.createElement("button");
     const category = String(publication.category || "Otros");
     const condition = String(publication.condition || "");
+    const type = ["donacion", "intercambio", "venta"].includes(publication.tipo)
+      ? publication.tipo
+      : "intercambio";
+    const price = Number(publication.precio);
     const district = String(publication.district || "Distrito no indicado");
     const author = String(publication.authorName || "Usuario");
     const authorInitial = String(publication.authorInitial || "").slice(0, 1);
@@ -2654,6 +2813,8 @@ document.addEventListener("DOMContentLoaded", () => {
         publication.age,
         publication.description,
         condition,
+        type,
+        Number.isFinite(price) ? price : "",
         district,
         author,
         authorInitial,
@@ -2690,9 +2851,16 @@ document.addEventListener("DOMContentLoaded", () => {
     conditionTag.className =
       condition === "Operativo" ? "tag tag-operational" : "tag tag-repair";
     conditionTag.textContent = condition;
+    offerTag.className = "tag tag-neutral";
+    offerTag.textContent =
+      type === "venta"
+        ? formatMoney(price)
+        : type === "donacion"
+          ? "Donación"
+          : "Intercambio";
     categoryTag.className = "equipment-category";
     categoryTag.textContent = category;
-    tags.append(conditionTag, categoryTag);
+    tags.append(conditionTag, offerTag, categoryTag);
 
     heading.textContent = details ? `${category} · ${details}` : category;
     description.textContent = String(publication.description || "");
@@ -2721,10 +2889,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }`
       : "Sin calificaciones aún";
     contactButton.type = "button";
-    contactButton.className =
-      "button button-outline button-full contact-trigger";
-    contactButton.dataset.conversationStart = String(publication.id);
-    contactButton.textContent = "Contactar";
+    contactButton.className = "button button-outline button-full contact-trigger";
+    if (type === "venta") {
+      card.dataset.price = Number.isFinite(price) ? String(price) : "";
+      contactButton.dataset.buyPublication = String(publication.id);
+      contactButton.textContent = "Comprar";
+    } else {
+      contactButton.dataset.conversationStart = String(publication.id);
+      contactButton.textContent = "Contactar";
+    }
     seller.append(avatar, authorName, authorRating);
     content.append(tags, heading, description, meta, seller, contactButton);
     card.append(imageContainer, content);
@@ -2735,6 +2908,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (Number.isNaN(date.getTime())) return "Fecha no disponible";
     return `Publicado el ${date.toLocaleDateString("es-PE")}`;
   };
+  const formatMoney = (value) => `S/ ${Math.max(0, Number(value) || 0).toFixed(2)}`;
   const initializeExchangePublications = async () => {
     if (!filterList) return;
     try {
@@ -2794,6 +2968,401 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
   initializeExchangePublications();
+
+  const buyDialog = document.querySelector("[data-buy-dialog]");
+  const buyForm = buyDialog?.querySelector("[data-buy-form]");
+  let selectedPurchaseId = "";
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const button = target?.closest("[data-buy-publication]");
+    if (!button || !filterList?.contains(button)) return;
+    const card = button.closest("[data-publication-id]");
+    if (!card || !card.dataset.price) return;
+
+    selectedPurchaseId = button.dataset.buyPublication || "";
+    const price = Number(card.dataset.price);
+    const fee = Math.round(price * 5) / 100;
+    buyDialog?.querySelector("[data-buy-title]")?.replaceChildren(
+      document.createTextNode(card.querySelector("h3")?.textContent || "Equipo"),
+    );
+    const priceLabel = buyDialog?.querySelector("[data-buy-price]");
+    const feeLabel = buyDialog?.querySelector("[data-buy-fee]");
+    const netLabel = buyDialog?.querySelector("[data-buy-net]");
+    if (priceLabel) priceLabel.textContent = formatMoney(price);
+    if (feeLabel) feeLabel.textContent = formatMoney(fee);
+    if (netLabel) netLabel.textContent = formatMoney(price - fee);
+    const buyStatus = buyDialog?.querySelector("[data-buy-status]");
+    if (buyStatus) buyStatus.textContent = "";
+    buyDialog?.showModal();
+  });
+  buyDialog?.querySelectorAll("[data-buy-cancel]").forEach((button) =>
+    button.addEventListener("click", () => buyDialog.close()),
+  );
+  buyForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submitButton = buyForm.querySelector("[data-buy-confirm]");
+    const buyStatus = buyDialog?.querySelector("[data-buy-status]");
+    if (!selectedPurchaseId) {
+      if (buyStatus) buyStatus.textContent = "No se seleccionó un equipo válido.";
+      return;
+    }
+    if (submitButton) submitButton.disabled = true;
+    if (buyStatus) buyStatus.textContent = "Reservando la compra simulada…";
+    try {
+      const response = await fetch("/api/transacciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ publicacionId: selectedPurchaseId }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        window.location.assign("login.html");
+        return;
+      }
+      if (!response.ok || !result.transaccion?.id) {
+        throw new Error(result.error || "No se pudo reservar la compra simulada.");
+      }
+      window.location.assign("transacciones.html");
+    } catch (error) {
+      console.error("No se pudo iniciar la compra simulada.", error);
+      if (buyStatus) {
+        buyStatus.textContent =
+          error instanceof Error
+            ? error.message
+            : "No se pudo reservar la compra simulada.";
+      }
+      if (submitButton) submitButton.disabled = false;
+    }
+  });
+
+  const transactionsPage = document.querySelector("[data-transactions-page]");
+  if (transactionsPage) {
+    const transactionsList = transactionsPage.querySelector(
+      "[data-transaction-list]",
+    );
+    const transactionsStatus = transactionsPage.querySelector(
+      "[data-transactions-status]",
+    );
+    const transactionsEmpty = transactionsPage.querySelector(
+      "[data-transactions-empty]",
+    );
+    const emptyTitle = transactionsPage.querySelector(
+      "[data-transactions-empty-title]",
+    );
+    const emptyCopy = transactionsPage.querySelector(
+      "[data-transactions-empty-copy]",
+    );
+    const tabs = [...transactionsPage.querySelectorAll("[data-transaction-tab]")];
+    let activeRole = "comprador";
+    let transactionRecords = [];
+
+    const formatTransactionDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+      return date.toLocaleString("es-PE", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+    };
+    const buildTransactionCard = (transaction) => {
+      const card = document.createElement("article");
+      const header = document.createElement("header");
+      const titleArea = document.createElement("div");
+      const roleTag = document.createElement("span");
+      const heading = document.createElement("h3");
+      const stateTag = document.createElement("span");
+      const otherPerson = document.createElement("p");
+      const breakdown = document.createElement("dl");
+      const progress = document.createElement("ol");
+      const timeline = document.createElement("p");
+      const actions = document.createElement("div");
+      const footer = document.createElement("div");
+      const chatLink = document.createElement("a");
+      const statusLabels = {
+        reservada: "Reservada",
+        pagada: "Pagada · simulada",
+        entregada: "Entregada",
+        completada: "Completada",
+        cancelada: "Cancelada",
+      };
+      const stateSteps = [
+        ["reservada", "Reservada"],
+        ["pagada", "Pagada"],
+        ["entregada", "Entregada"],
+        ["completada", "Completada"],
+      ];
+      const currentStep = stateSteps.findIndex(
+        ([state]) => state === transaction.estado,
+      );
+
+      card.className = "transaction-card";
+      card.dataset.transactionId = String(transaction.id);
+      header.className = "transaction-card-header";
+      titleArea.className = "transaction-title-area";
+      roleTag.className = "transaction-role-tag";
+      roleTag.textContent =
+        transaction.rol === "comprador" ? "Tu compra" : "Tu venta";
+      heading.textContent = String(transaction.titulo || "Equipo");
+      stateTag.className = `transaction-state transaction-state-${transaction.estado}`;
+      stateTag.textContent = statusLabels[transaction.estado] || "En proceso";
+      titleArea.append(roleTag, heading);
+      header.append(titleArea, stateTag);
+
+      otherPerson.className = "transaction-counterpart";
+      otherPerson.textContent = `${
+        transaction.rol === "comprador" ? "Vendedor" : "Comprador"
+      }: ${String(transaction.otraPersona || "Usuario")}`;
+
+      breakdown.className = "transaction-breakdown";
+      [
+        ["Precio", transaction.precio],
+        ["Comisión de la plataforma 5 %", transaction.comision],
+        ["Neto para el vendedor", transaction.netoVendedor],
+      ].forEach(([label, amount]) => {
+        const row = document.createElement("div");
+        const term = document.createElement("dt");
+        const value = document.createElement("dd");
+        term.textContent = label;
+        value.textContent = formatMoney(amount);
+        row.append(term, value);
+        breakdown.append(row);
+      });
+
+      progress.className = "transaction-progress";
+      progress.setAttribute(
+        "aria-label",
+        `Estado: ${statusLabels[transaction.estado] || "En proceso"}`,
+      );
+      stateSteps.forEach(([state, label], index) => {
+        const step = document.createElement("li");
+        const marker = document.createElement("span");
+        const stepLabel = document.createElement("span");
+        step.className = "transaction-progress-step";
+        if (transaction.estado === "cancelada") {
+          if (index === 0) step.classList.add("is-complete");
+        } else if (index < currentStep) {
+          step.classList.add("is-complete");
+        } else if (index === currentStep) {
+          step.classList.add("is-current");
+          step.setAttribute("aria-current", "step");
+        }
+        marker.className = "transaction-step-marker";
+        marker.setAttribute("aria-hidden", "true");
+        stepLabel.textContent = label;
+        step.append(marker, stepLabel);
+        progress.append(step);
+      });
+
+      timeline.className = "transaction-dates";
+      timeline.textContent =
+        `Reservada ${formatTransactionDate(transaction.createdAt)} · ` +
+        `Último movimiento ${formatTransactionDate(transaction.updatedAt)}`;
+
+      actions.className = "transaction-actions";
+      const addAction = (action, label, confirmation, buttonClass = "") => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `button transaction-action ${buttonClass}`.trim();
+        button.dataset.transactionAction = action;
+        button.textContent = label;
+        button.dataset.confirmation = confirmation;
+        actions.append(button);
+      };
+      if (transaction.rol === "comprador" && transaction.estado === "reservada") {
+        addAction(
+          "pagar",
+          "Pagar (simulado)",
+          "Confirmar el pago simulado? No se cobrará dinero real.",
+        );
+      }
+      if (transaction.rol === "vendedor" && transaction.estado === "pagada") {
+        addAction(
+          "entregar",
+          "Marqué como entregado",
+          "Confirmas que ya entregaste el equipo?",
+          "button-outline",
+        );
+      }
+      if (transaction.rol === "comprador" && transaction.estado === "entregada") {
+        addAction(
+          "confirmar",
+          "Confirmo que lo recibí",
+          "Confirmas que recibiste el equipo? La compra quedará completada.",
+        );
+      }
+      if (["reservada", "pagada"].includes(transaction.estado)) {
+        addAction(
+          "cancelar",
+          "Cancelar",
+          "Quieres cancelar este acuerdo?",
+          "button-outline",
+        );
+      }
+      if (transaction.estado === "completada") {
+        const ratingLink = document.createElement("a");
+        ratingLink.className = "text-link transaction-rating-link";
+        ratingLink.href = "perfil.html";
+        ratingLink.textContent = "Ver calificaciones pendientes";
+        actions.append(ratingLink);
+      }
+      if (!actions.childElementCount) {
+        const noAction = document.createElement("span");
+        noAction.className = "transaction-waiting";
+        noAction.textContent =
+          transaction.estado === "cancelada"
+            ? "Este acuerdo fue cancelado."
+            : "No tienes acciones pendientes.";
+        actions.append(noAction);
+      }
+
+      footer.className = "transaction-card-footer";
+      chatLink.className = "text-link transaction-chat-link";
+      chatLink.href = transaction.conversacionId
+        ? `mensajes.html?c=${encodeURIComponent(
+            String(transaction.conversacionId),
+          )}`
+        : "mensajes.html";
+      chatLink.textContent = "Ir al chat";
+      footer.append(chatLink);
+      card.append(header, otherPerson, breakdown, progress, timeline, actions, footer);
+      return card;
+    };
+
+    const renderTransactions = () => {
+      if (!transactionsList) return;
+      const visibleTransactions = transactionRecords.filter(
+        (transaction) => transaction.rol === activeRole,
+      );
+      transactionsList.replaceChildren(
+        ...visibleTransactions.map(buildTransactionCard),
+      );
+      if (transactionsEmpty) transactionsEmpty.hidden = visibleTransactions.length > 0;
+      if (emptyTitle) {
+        emptyTitle.textContent =
+          activeRole === "comprador"
+            ? "Aún no tienes compras"
+            : "Aún no tienes ventas";
+      }
+      if (emptyCopy) {
+        emptyCopy.textContent =
+          activeRole === "comprador"
+            ? "Cuando reserves un equipo para comprar, podrás seguir aquí cada paso."
+            : "Cuando alguien reserve uno de tus equipos en venta, podrás seguir aquí cada paso.";
+      }
+    };
+
+    const selectTransactionTab = (tab) => {
+      activeRole = tab.dataset.transactionTab || "comprador";
+      tabs.forEach((candidate) => {
+        const selected = candidate === tab;
+        candidate.classList.toggle("is-active", selected);
+        candidate.setAttribute("aria-selected", String(selected));
+        candidate.tabIndex = selected ? 0 : -1;
+      });
+      transactionsList?.setAttribute(
+        "aria-labelledby",
+        activeRole === "comprador" ? "purchases-tab" : "sales-tab",
+      );
+      if (transactionsStatus) transactionsStatus.textContent = "";
+      renderTransactions();
+    };
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => selectTransactionTab(tab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const currentIndex = tabs.indexOf(tab);
+        const nextIndex =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? tabs.length - 1
+              : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) %
+                tabs.length;
+        tabs[nextIndex]?.focus();
+        if (tabs[nextIndex]) selectTransactionTab(tabs[nextIndex]);
+      });
+    });
+
+    const loadTransactions = async () => {
+      if (transactionsStatus) transactionsStatus.textContent = "Actualizando…";
+      if (transactionsEmpty) transactionsEmpty.hidden = true;
+      try {
+        const response = await fetch("/api/transacciones", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          window.location.assign("login.html");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error(result.error || "No se pudieron cargar tus transacciones.");
+        }
+        if (!Array.isArray(result.transacciones)) {
+          throw new Error("La respuesta de transacciones no tiene un formato válido.");
+        }
+        transactionRecords = result.transacciones;
+        if (transactionsStatus) transactionsStatus.textContent = "";
+        renderTransactions();
+      } catch (error) {
+        console.error("No se pudieron cargar las transacciones.", error);
+        if (transactionsStatus) {
+          transactionsStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudieron cargar tus transacciones.";
+        }
+      }
+    };
+
+    transactionsList?.addEventListener("click", async (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const button = target?.closest("[data-transaction-action]");
+      if (!button || !transactionsList.contains(button)) return;
+      const card = button.closest("[data-transaction-id]");
+      const id = card?.dataset.transactionId;
+      const action = button.dataset.transactionAction;
+      if (!id || !action || !window.confirm(button.dataset.confirmation || "")) {
+        return;
+      }
+
+      button.disabled = true;
+      if (transactionsStatus) {
+        transactionsStatus.textContent = "Guardando el cambio…";
+      }
+      try {
+        const response = await fetch("/api/transacciones", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ id, accion: action }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          window.location.assign("login.html");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error(result.error || "No se pudo actualizar la transacción.");
+        }
+        await loadTransactions();
+        refreshPendingTransactions();
+      } catch (error) {
+        console.error("No se pudo actualizar la transacción.", error);
+        if (transactionsStatus) {
+          transactionsStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "No se pudo actualizar la transacción.";
+        }
+        button.disabled = false;
+      }
+    });
+    void loadTransactions();
+  }
 
   const reportModal = document.querySelector("[data-report-modal]");
   document.querySelectorAll("[data-report-trigger]").forEach((button) => {

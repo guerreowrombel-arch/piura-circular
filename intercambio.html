@@ -126,6 +126,7 @@
             <div class="equipment-content">
               <div class="equipment-tags">
                 <span class="tag tag-operational">Operativo</span
+                ><span class="tag tag-neutral">Intercambio</span
                 ><span class="equipment-category">Computadoras</span>
               </div>
               <h3>Laptop Lenovo ThinkPad</h3>
@@ -176,6 +177,7 @@
             <div class="equipment-content">
               <div class="equipment-tags">
                 <span class="tag tag-operational">Operativo</span
+                ><span class="tag tag-neutral">Intercambio</span
                 ><span class="equipment-category">Celulares</span>
               </div>
               <h3>Samsung Galaxy A52</h3>
@@ -226,6 +228,7 @@
             <div class="equipment-content">
               <div class="equipment-tags">
                 <span class="tag tag-repair">Requiere reparación</span
+                ><span class="tag tag-neutral">Donación</span
                 ><span class="equipment-category">Electrodomésticos</span>
               </div>
               <h3>Ventilador Electrolux</h3>
@@ -276,6 +279,7 @@
             <div class="equipment-content">
               <div class="equipment-tags">
                 <span class="tag tag-operational">Operativo</span
+                ><span class="tag tag-neutral">Intercambio</span
                 ><span class="equipment-category">Computadoras</span>
               </div>
               <h3>Monitor Dell 22 pulgadas</h3>
@@ -372,6 +376,38 @@
           Enviar reporte <span>↗</span>
         </button>
         <p class="form-notice" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+    <dialog class="report-modal purchase-dialog" data-buy-dialog>
+      <form class="modal-card" data-buy-form>
+        <button class="modal-close" type="button" aria-label="Cerrar" data-buy-cancel>
+          ×
+        </button>
+        <p class="eyebrow">COMPRA SIMULADA</p>
+        <h2>Confirma los importes</h2>
+        <p class="purchase-item" data-buy-title></p>
+        <dl class="purchase-breakdown">
+          <div><dt>Precio</dt><dd data-buy-price></dd></div>
+          <div>
+            <dt>Comisión de la plataforma 5 % (la paga el vendedor)</dt>
+            <dd data-buy-fee></dd>
+          </div>
+          <div class="purchase-net">
+            <dt>El vendedor recibe</dt><dd data-buy-net></dd>
+          </div>
+        </dl>
+        <p class="purchase-simulation-note">
+          Pago simulado: no se cobra dinero real.
+        </p>
+        <p class="form-notice" role="status" aria-live="polite" data-buy-status></p>
+        <div class="purchase-dialog-actions">
+          <button class="profile-cancel-button" type="button" data-buy-cancel>
+            Volver
+          </button>
+          <button class="button" type="submit" data-buy-confirm>
+            Continuar con compra simulada
+          </button>
+        </div>
       </form>
     </dialog>
     <div class="toast" role="status" aria-live="polite" data-toast></div>
